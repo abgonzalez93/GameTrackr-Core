@@ -1,9 +1,9 @@
 {
   "type": "module",
-  "name": "@trackpplay/core",
+  "name": "@trackplay/core",
   "author": "Antonio Bueno Gonzalez",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
