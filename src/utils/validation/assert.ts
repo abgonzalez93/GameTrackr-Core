@@ -1,5 +1,5 @@
-import { HTTP_STATUS } from '@constants/index'
-import { ApiError } from '@errors/index'
+import { HTTP_STATUS } from '../../constants'
+import { ApiError } from '../../errors'
 import { ZodTypeAny } from 'zod'
 
 /**
@@ -14,11 +14,7 @@ import { ZodTypeAny } from 'zod'
  *
  * @module utils/validation
  */
-export const assertValid = <T>(
-  schema: ZodTypeAny,
-  data: unknown,
-  message: string = 'Invalid input',
-): T => {
+export const assertValid = <T>(schema: ZodTypeAny, data: unknown, message: string = 'Invalid input'): T => {
   const parsed = schema.safeParse(data)
 
   if (!parsed.success) {
@@ -39,10 +35,7 @@ export const assertValid = <T>(
  *
  * @module utils/validation
  */
-export const assertExists = <T>(
-  value: T | null | undefined,
-  message: string = 'Resource not found',
-): T => {
+export const assertExists = <T>(value: T | null | undefined, message: string = 'Resource not found'): T => {
   if (value === null || value === undefined) {
     throw new ApiError(message, HTTP_STATUS.NOT_FOUND)
   }
@@ -60,10 +53,7 @@ export const assertExists = <T>(
  *
  * @module utils/validation
  */
-export const assertNotExists = <T>(
-  value: T | null,
-  message: string = 'Resource already exists',
-): void => {
+export const assertNotExists = <T>(value: T | null, message: string = 'Resource already exists'): void => {
   if (value) {
     throw new ApiError(message, HTTP_STATUS.CONFLICT)
   }
@@ -138,10 +128,7 @@ export const assertAcceptable = (condition: boolean, message = 'Not acceptable')
  *
  * @module utils/validation
  */
-export const assertMediaTypeSupported = (
-  condition: boolean,
-  message = 'Unsupported media type',
-): void => {
+export const assertMediaTypeSupported = (condition: boolean, message = 'Unsupported media type'): void => {
   if (condition) {
     throw new ApiError(message, HTTP_STATUS.UNSUPPORTED_MEDIA_TYPE)
   }

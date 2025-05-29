@@ -1,4 +1,4 @@
-import { EnvError } from '@errors/index'
+import { EnvError } from '../errors'
 
 /**
  * Gets a required environment variable. Throws if not present.

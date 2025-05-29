@@ -1,4 +1,4 @@
-import { HTTP_STATUS } from '@constants/index'
+import { HTTP_STATUS } from '../constants'
 
 /**
  * Error thrown when a required environment variable is missing or invalid.

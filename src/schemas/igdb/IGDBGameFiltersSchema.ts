@@ -1,4 +1,4 @@
-import { IGDB } from '@constants/index'
+import { IGDB } from '../../constants'
 import { z } from 'zod'
 
 /**

@@ -1,4 +1,4 @@
-import { env } from '@config/index'
+import { env } from '../config'
 
 /**
  * Application-level constants and environment flags.
