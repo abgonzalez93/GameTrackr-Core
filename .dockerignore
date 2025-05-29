@@ -5,6 +5,10 @@ node_modules/
 .git
 .gitignore
 
+# Build output
+dist/
+*.tsbuildinfo
+
 # Editor / IDE config
 .vscode/
 .idea/
