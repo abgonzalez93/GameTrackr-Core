@@ -4,6 +4,7 @@ node_modules/
 # Build output
 dist/
 *.tsbuildinfo
+*.tgz
 
 # Environment variables
 .env
@@ -25,3 +26,6 @@ barrelsby.log
 # Misc
 .DS_Store
 Thumbs.db
+
+#npm
+.npmrc
