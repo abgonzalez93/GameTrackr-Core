@@ -1,14 +1,17 @@
 {
-  "name": "gametrackr-core",
-  "version": "1.0.0",
   "type": "module",
+  "name": "@trackpplay/core",
+  "author": "Antonio Bueno Gonzalez",
+  "version": "1.0.0",
+  "private": true,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js"
   },
   "publishConfig": {
-    "access": "public"
+    "registry": "https://npm.pkg.github.com/",
+    "access": "restricted"
   },
   "files": [
     "dist",

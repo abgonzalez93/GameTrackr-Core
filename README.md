@@ -1,3 +1,3 @@
-# GameTrackr Core
+# TrackPlay Core
 
 APP en desarrollo
