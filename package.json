@@ -1,5 +1,5 @@
 {
-  "name": "@gametrackr/core",
+  "name": "gametrackr-core",
   "version": "1.0.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -8,8 +8,7 @@
     ".": "./dist/index.js"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/",
-    "access": "restricted"
+    "access": "public"
   },
   "files": [
     "dist",
