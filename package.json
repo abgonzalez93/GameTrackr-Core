@@ -1,5 +1,5 @@
 {
-  "name": "@abgonzalez93/gametrackr-core",
+  "name": "gametrackr-core",
   "version": "1.0.0",
   "type": "module",
   "main": "./dist/index.js",
