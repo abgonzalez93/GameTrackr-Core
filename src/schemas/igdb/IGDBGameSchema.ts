@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 /**
- * Zod schema to validate a game from IGDB API.
+ * Schema to validate a game from IGDB API.
  */
 export const IGDBGameSchema = z.object({
   id: z.number(),

@@ -1,5 +1,5 @@
-import { HTTP_STATUS } from '../../constants'
-import { ApiError } from '../../errors'
+import { HTTP_STATUS } from '@constants/index'
+import { ApiError } from '@errors/index'
 import { ZodTypeAny } from 'zod'
 
 /**

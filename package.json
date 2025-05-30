@@ -2,7 +2,7 @@
   "type": "module",
   "name": "@trackplay/core",
   "author": "Antonio Bueno Gonzalez",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": false,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -54,6 +54,7 @@
     "eslint-plugin-prettier": "^5.4.1",
     "globals": "^16.2.0",
     "prettier": "^3.5.3",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.33.0"
   }

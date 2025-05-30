@@ -1,4 +1,4 @@
-import { HTTP_STATUS } from '../constants'
+import { HTTP_STATUS } from '@constants/index'
 
 /**
  * Custom application-level error with optional status code.
