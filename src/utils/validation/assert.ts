@@ -1,6 +1,6 @@
 import { HTTP_STATUS } from '@constants/index'
 import { ApiError } from '@errors/index'
-import { ZodTypeAny } from 'zod'
+import { ZodSchema } from 'zod'
 
 /**
  * Validates a value using a Zod schema and throws a BAD_REQUEST error if invalid.
@@ -14,7 +14,7 @@ import { ZodTypeAny } from 'zod'
  *
  * @module utils/validation
  */
-export const assertValid = <T>(schema: ZodTypeAny, data: unknown, message: string = 'Invalid input'): T => {
+export const assertValid = <T>(schema: ZodSchema<T>, data: unknown, message: string = 'Invalid input'): T => {
   const parsed = schema.safeParse(data)
 
   if (!parsed.success) {
