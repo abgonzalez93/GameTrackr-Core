@@ -23,6 +23,8 @@
       "@config/*": ["config/*"],
       "@constants/*": ["constants/*"],
       "@errors/*": ["errors/*"],
+      "@logger/*": ["logger/*"],
+      "@middlewares/*": ["middlewares/*"],
       "@schemas/*": ["schemas/*"],
       "@utils/*": ["utils/*"]
     }

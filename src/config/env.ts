@@ -24,6 +24,9 @@ export const required = (name: string): string => {
  * @module config/env
  */
 export const env = {
+  HOST: required('HOST'),
+  PORT: parseInt(required('PORT'), 10),
+
   NODE_ENV: process.env.NODE_ENV || 'development',
   IS_PRODUCTION: process.env.NODE_ENV === 'production',
   IS_DEVELOPMENT: !process.env.NODE_ENV || process.env.NODE_ENV === 'development',

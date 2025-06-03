@@ -6,6 +6,9 @@ import { env } from '@config/index'
  * @module constants
  */
 export const APP = {
+  HOST: env.HOST,
+  PORT: env.PORT,
+
   NODE_ENV: env.NODE_ENV,
   IS_PRODUCTION: env.IS_PRODUCTION,
   IS_DEVELOPMENT: env.IS_DEVELOPMENT,
