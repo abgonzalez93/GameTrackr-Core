@@ -98,7 +98,7 @@ const performRequest = async (
  * @returns Parsed body as `unknown`
  */
 const parseResponseBody = async (res: Response): Promise<unknown> => {
-  if (res.status === HTTP_STATUS.NO_CONTENT) return null
+  if (res.status === HTTP_STATUS.NO_CONTENT || res.headers.get('Content-Length') === '0') return null
   const contentType = res.headers.get('content-type')
   if (contentType?.includes('application/json')) return await res.json()
   return await res.text()
@@ -112,6 +112,10 @@ const parseResponseBody = async (res: Response): Promise<unknown> => {
  * @throws ApiError - If the response represents an API error
  */
 const handleErrorResponse = (res: Response, parsed: unknown): never => {
+  if (res.status === HTTP_STATUS.NOT_FOUND) {
+    throw new ApiError('Resource not found', HTTP_STATUS.NOT_FOUND)
+  }
+
   const result = ApiErrorResponseSchema.safeParse(parsed)
 
   if (result.success) {
