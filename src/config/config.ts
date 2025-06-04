@@ -23,44 +23,41 @@ export const required = (name: string): string => {
  *
  * These flags indicate the current runtime environment mode and are computed
  * from the value of `NODE_ENV`.
- *
- * @property NODE_ENV - Node environment mode (`development`, `production`, or other)
- * @property IS_PRODUCTION - `true` if `NODE_ENV === 'production'`
- * @property IS_DEVELOPMENT - `true` if `NODE_ENV === 'development'` or not defined
  */
-const commonConf = {
+const getCommonConf = () => ({
   NODE_ENV: process.env.NODE_ENV || 'development',
   IS_PRODUCTION: process.env.NODE_ENV === 'production',
   IS_DEVELOPMENT: !process.env.NODE_ENV || process.env.NODE_ENV === 'development',
-}
+})
 
 /**
- * Server-side environment configuration.
+ * Returns the server-side environment configuration.
  *
- * Includes variables that are only available in the Node.js runtime (e.g., Express apps).
- * Uses `required()` to enforce presence of critical variables at startup.
+ * Uses `required()` to enforce presence of critical variables at runtime.
+ * This function should only be called in a Node.js context.
  *
- * @property HOST - Hostname or IP where the server listens (e.g., '0.0.0.0')
- * @property PORT - Port number on which the server listens
- * @property CORS_ORIGINS - Comma-separated list of allowed CORS origins
+ * @returns An object containing server-only environment configuration
+ * @throws EnvError if any required variable is missing
  *
  * @module config
  */
-export const serverConf = {
-  ...commonConf,
+export const getServerConf = () => ({
+  ...getCommonConf(),
   HOST: required('HOST'),
   PORT: parseInt(required('PORT'), 10),
   CORS_ORIGINS: required('CORS_ORIGINS'),
-}
+})
 
 /**
- * Client-side environment configuration.
+ * Returns the client-side environment configuration.
  *
- * Only includes environment flags that are safe and relevant for the browser runtime.
- * Should not access any server-only variables or sensitive information.
+ * Includes only variables that are safe and relevant for browser usage.
+ * Should never include secrets or server-specific values.
+ *
+ * @returns An object containing client-only configuration
  *
  * @module config
  */
-export const clientConf = {
-  ...commonConf,
-}
+export const getClientConf = () => ({
+  ...getCommonConf(),
+})
