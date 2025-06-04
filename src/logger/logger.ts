@@ -1,4 +1,4 @@
-import { serverConf } from '@config/index'
+import { getServerConf } from '@config/index'
 import winston from 'winston'
 
 const { combine, timestamp, label, printf, colorize } = winston.format
@@ -11,6 +11,8 @@ const consoleFormat = printf(({ level, message, label, timestamp }) => {
   return `[${timestamp}] [${label}] ${level}: ${message}`
 })
 
+const { IS_PRODUCTION } = getServerConf()
+
 /**
  * Winston logger configuration.
  *
@@ -21,11 +23,11 @@ export const logger = winston.createLogger({
   format: combine(
     label({ label: 'TrackPlay' }),
     timestamp({ format: 'HH:mm:ss' }),
-    serverConf.IS_PRODUCTION ? winston.format.json() : combine(colorize(), consoleFormat),
+    IS_PRODUCTION ? winston.format.json() : combine(colorize(), consoleFormat),
   ),
   transports: [
     new winston.transports.Console(),
-    ...(serverConf.IS_PRODUCTION
+    ...(IS_PRODUCTION
       ? [
           new winston.transports.File({
             filename: 'logs/error.log',
