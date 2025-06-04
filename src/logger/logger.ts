@@ -1,4 +1,4 @@
-import { APP } from '@constants/index'
+import { serverConf } from '@config/index'
 import winston from 'winston'
 
 const { combine, timestamp, label, printf, colorize } = winston.format
@@ -21,11 +21,11 @@ export const logger = winston.createLogger({
   format: combine(
     label({ label: 'TrackPlay' }),
     timestamp({ format: 'HH:mm:ss' }),
-    APP.IS_PRODUCTION ? winston.format.json() : combine(colorize(), consoleFormat),
+    serverConf.IS_PRODUCTION ? winston.format.json() : combine(colorize(), consoleFormat),
   ),
   transports: [
     new winston.transports.Console(),
-    ...(APP.IS_PRODUCTION
+    ...(serverConf.IS_PRODUCTION
       ? [
           new winston.transports.File({
             filename: 'logs/error.log',
