@@ -1,4 +1,4 @@
-import { serverConf } from '@config/index'
+import { getServerConf } from '@config/index'
 
 /**
  * Computes the base URL of the application based on environment settings.
@@ -10,6 +10,7 @@ import { serverConf } from '@config/index'
  * @module utils/net
  */
 export const getBaseURL = (): string => {
-  const protocol = serverConf.IS_PRODUCTION ? 'https' : 'http'
-  return `${protocol}://${serverConf.HOST}:${serverConf.PORT}`
+  const { IS_PRODUCTION, HOST, PORT } = getServerConf()
+  const protocol = IS_PRODUCTION ? 'https' : 'http'
+  return `${protocol}://${HOST}:${PORT}`
 }
