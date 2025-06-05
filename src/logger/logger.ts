@@ -11,17 +11,22 @@ const consoleFormat = printf(({ level, message, label, timestamp }) => {
   return `[${timestamp}] [${label}] ${level}: ${message}`
 })
 
+let loggerInstance: winston.Logger | null = null
+
 /**
- * Creates a new Winston logger instance based on the environment.
+ * Returns a singleton instance of Winston logger.
+ * Lazy-initialized to prevent premature evaluation of environment variables.
  *
- * @returns A configured Winston logger.
+ * @returns A configured Winston logger instance.
  *
  * @module logger
  */
-export const logger = () => {
+export const logger = (): winston.Logger => {
+  if (loggerInstance) return loggerInstance
+
   const { IS_PRODUCTION } = getServerConf()
 
-  return winston.createLogger({
+  loggerInstance = winston.createLogger({
     level: 'info',
     format: combine(
       label({ label: 'TrackPlay' }),
@@ -41,4 +46,6 @@ export const logger = () => {
     rejectionHandlers: [new winston.transports.File({ filename: 'logs/rejections.log' })],
     exitOnError: false,
   })
+
+  return loggerInstance
 }
