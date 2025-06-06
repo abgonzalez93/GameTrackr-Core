@@ -25,7 +25,7 @@ export const required = (name: string): string => {
  * from the value of `NODE_ENV`.
  */
 const getCommonConf = () => ({
-  NODE_ENV: process.env.NODE_ENV || 'development',
+  NODE_ENV: process.env.NODE_ENV ?? 'development',
   IS_PRODUCTION: process.env.NODE_ENV === 'production',
   IS_DEVELOPMENT: !process.env.NODE_ENV || process.env.NODE_ENV === 'development',
 })
