@@ -4,8 +4,6 @@
  * @module constants
  */
 export const IGDB = {
-  TOKEN_URL: 'https://id.twitch.tv/oauth2/token',
-  API_URL: 'https://api.igdb.com/v4',
   MAX_GAME_LIMIT: 50,
   GAME_FIELDS: `
     id, name, slug, summary, first_release_date, rating, aggregated_rating,
