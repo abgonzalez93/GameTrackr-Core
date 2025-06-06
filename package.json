@@ -2,7 +2,7 @@
   "type": "module",
   "name": "@trackplay/core",
   "author": "Antonio Bueno Gonzalez",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "private": false,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -30,6 +30,10 @@
     "./schemas": {
       "import": "./dist/schemas/index.js",
       "types": "./dist/schemas/index.d.ts"
+    },
+    "./server": {
+      "import": "./dist/server/index.js",
+      "types": "./dist/server/index.d.ts"
     },
     "./utils": {
       "import": "./dist/utils/index.js",

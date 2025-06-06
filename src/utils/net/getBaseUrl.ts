@@ -1,16 +1,15 @@
-import { getServerConf } from '@config/index'
+export interface BaseURLOptions {
+  protocol: 'http' | 'https'
+  host: string
+  port: number
+}
 
 /**
- * Computes the base URL of the application based on environment settings.
+ * Computes the base URL from provided options.
  *
- * Uses `env.HOST`, `env.PORT` and `env.IS_PRODUCTION` by default.
- *
- * @returns The full base URL (e.g., http://localhost:4000).
- *
- * @module utils/net
+ * @param options - Protocol, host and port
+ * @returns A complete URL string (e.g., http://localhost:4000)
  */
-export const getBaseURL = (): string => {
-  const { IS_PRODUCTION, HOST, PORT } = getServerConf()
-  const protocol = IS_PRODUCTION ? 'https' : 'http'
-  return `${protocol}://${HOST}:${PORT}`
+export const getBaseUrl = ({ protocol, host, port }: BaseURLOptions): string => {
+  return `${protocol}://${host}:${port}`
 }

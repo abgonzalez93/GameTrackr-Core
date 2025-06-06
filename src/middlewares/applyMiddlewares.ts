@@ -3,7 +3,7 @@ import cors, { CorsOptions } from 'cors'
 import { Express, json } from 'express'
 import compression from 'compression'
 
-interface MiddlewareOptions {
+export interface MiddlewareOptions {
   helmet?: HelmetOptions | false
   cors?: CorsOptions | false
   enableCompression?: boolean
@@ -16,12 +16,7 @@ interface MiddlewareOptions {
  * @module middlewares
  */
 export const applyMiddlewares = (app: Express, options: MiddlewareOptions = {}): void => {
-  const {
-    helmet: helmetOpts = {},
-    cors: corsOpts = {},
-    enableCompression = true,
-    enableJson = true,
-  } = options
+  const { helmet: helmetOpts = {}, cors: corsOpts = {}, enableCompression = true, enableJson = true } = options
 
   if (helmetOpts !== false) app.use(helmet(helmetOpts))
   if (corsOpts !== false) app.use(cors(corsOpts))

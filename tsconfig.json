@@ -26,6 +26,7 @@
       "@logger/*": ["logger/*"],
       "@middlewares/*": ["middlewares/*"],
       "@schemas/*": ["schemas/*"],
+      "@server/*": ["server/*"],
       "@utils/*": ["utils/*"]
     }
   },
