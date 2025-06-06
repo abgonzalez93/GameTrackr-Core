@@ -1,3 +1,3 @@
 export * from './applyMiddlewares'
-export * from './errorHandler'
-export * from './notFoundHandler'
+export * from './createErrorHandler'
+export * from './createNotFoundHandler'

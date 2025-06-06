@@ -1,22 +1,17 @@
-import { getServerConf } from '@config/index'
-import { getBaseUrl } from '@utils/index'
-import { logger } from '@logger/index'
+import { BaseURLOptions, getBaseUrl } from '@utils/index'
+import { getLogger } from '@logger/index'
 import { Express } from 'express'
 
 /**
  * Starts an HTTP server for the provided Express application.
  *
- * @param app - The Express application instance to start
- * @param options - Base URL options including host, port and protocol
- *
- * @module server
+ * @param app - The Express app instance
+ * @param options - Base URL configuration (protocol, host, port)
  */
-export const startServer = (app: Express): void => {
-  const { IS_PRODUCTION, PORT, HOST } = getServerConf()
-  const protocol = IS_PRODUCTION ? 'https' : 'http'
-  const log = logger()
+export const startServer = (app: Express, options: BaseURLOptions): void => {
+  const log = getLogger()
 
-  app.listen(PORT, HOST, () => {
-    log.info(`🚀 Server running at ${getBaseUrl({ protocol, host: HOST, port: PORT })}`)
+  app.listen(options.port, options.host, () => {
+    log.info(`🚀 Server running at ${getBaseUrl(options)}`)
   })
 }

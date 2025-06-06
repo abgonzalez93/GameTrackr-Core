@@ -1,8 +1,7 @@
+import { MiddlewareOptions, applyMiddlewares, createErrorHandler, createNotFoundHandler } from '@middlewares/index'
 import express, { Express } from 'express'
-import { MiddlewareOptions, applyMiddlewares } from '@middlewares/index'
-import { errorHandler, notFoundHandler } from '../middlewares'
 
-type CreateAppOptions = {
+export interface CreateAppOptions {
   routes: (app: Express) => void
   middlewares?: MiddlewareOptions
 }
@@ -16,15 +15,15 @@ type CreateAppOptions = {
  *
  * @module server
  */
-export function createApp({ routes, middlewares }: CreateAppOptions): Express {
+export const createApp = ({ routes, middlewares }: CreateAppOptions): Express => {
   const app = express()
 
   applyMiddlewares(app, middlewares)
 
   routes(app)
 
-  app.use(notFoundHandler)
-  app.use(errorHandler)
+  app.use(createNotFoundHandler(middlewares?.notFoundHandler))
+  app.use(createErrorHandler(middlewares?.errorHandler))
 
   return app
 }

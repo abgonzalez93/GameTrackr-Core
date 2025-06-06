@@ -1,3 +1,4 @@
+import { ErrorHandlerOptions, NotFoundHandlerOptions } from '@middlewares/index'
 import helmet, { HelmetOptions } from 'helmet'
 import cors, { CorsOptions } from 'cors'
 import { Express, json } from 'express'
@@ -8,6 +9,8 @@ export interface MiddlewareOptions {
   cors?: CorsOptions | false
   enableCompression?: boolean
   enableJson?: boolean
+  errorHandler?: ErrorHandlerOptions
+  notFoundHandler?: NotFoundHandlerOptions
 }
 
 /**
