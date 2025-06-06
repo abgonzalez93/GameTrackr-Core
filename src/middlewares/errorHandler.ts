@@ -17,6 +17,7 @@ export const errorHandler = (error: unknown, _req: Request, res: Response, _next
 
   const isApiError = error instanceof ApiError
   const statusCode = isApiError ? error.statusCode : HTTP_STATUS.INTERNAL_SERVER_ERROR
+  const isNotFound = statusCode === HTTP_STATUS.NOT_FOUND
   const message = isApiError ? error.message : 'Unexpected error'
 
   const response: Record<string, unknown> = { error: message }
@@ -28,8 +29,8 @@ export const errorHandler = (error: unknown, _req: Request, res: Response, _next
     log.error('Unhandled error:', error)
   }
 
-  if (IS_DEVELOPMENT && error instanceof Error) {
-    response.stack = error.stack
+  if (IS_DEVELOPMENT && !isNotFound && error instanceof Error) {
+    response.stack = error.stack?.split('\n').slice(0, 5).join('\n')
   }
 
   res.status(statusCode).json(response)
