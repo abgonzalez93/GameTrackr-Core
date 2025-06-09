@@ -1,7 +1,6 @@
 {
   "directory": [
     "./src",
-    "./src/config",
     "./src/constants",
     "./src/errors",
     "./src/logger",
