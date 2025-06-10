@@ -1,3 +1,4 @@
+import { EmailSchema } from '@schemas/index'
 import { z } from 'zod'
 
 /**
@@ -5,7 +6,7 @@ import { z } from 'zod'
  */
 export const CreateUserSchema = z
   .object({
-    email: z.string().email(),
+    email: EmailSchema,
     name: z.string().min(1).optional(),
     password: z.string().min(8),
     username: z.string().min(3),
@@ -18,15 +19,13 @@ export const CreateUserSchema = z
     path: ['passwordConfirm'],
   })
 
-export const CreateUserDTOSchema = CreateUserSchema.transform(
-  ({ email, name, password, username, avatarUrl, bio }) => ({
-    email,
-    name,
-    password,
-    username,
-    avatarUrl,
-    bio,
-  }),
-)
+export const CreateUserDTOSchema = CreateUserSchema.transform(({ email, name, password, username, avatarUrl, bio }) => ({
+  email,
+  name,
+  password,
+  username,
+  avatarUrl,
+  bio,
+}))
 
 export type CreateUserDTO = z.infer<typeof CreateUserDTOSchema>
