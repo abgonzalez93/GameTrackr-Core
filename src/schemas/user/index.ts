@@ -1,2 +1,2 @@
 export * from './CreateUserSchema'
-export * from './email'
+export * from './UserEmailSchema'

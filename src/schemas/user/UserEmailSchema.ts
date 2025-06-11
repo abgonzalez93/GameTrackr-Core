@@ -5,7 +5,7 @@ const blockedDomains = ['mailinator.com', '10minutemail.com', 'tempmail.com']
 /**
  * Zod schema for validating a normalized, secure email address.
  */
-export const EmailSchema = z
+export const UserEmailSchema = z
   .string()
   .trim()
   .toLowerCase()
@@ -20,4 +20,4 @@ export const EmailSchema = z
     },
   )
 
-export type Email = z.infer<typeof EmailSchema>
+export type UserEmail = z.infer<typeof UserEmailSchema>

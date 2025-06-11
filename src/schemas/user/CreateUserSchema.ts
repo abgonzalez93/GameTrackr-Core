@@ -1,4 +1,4 @@
-import { EmailSchema } from '@schemas/index'
+import { UserEmailSchema } from '@schemas/index'
 import { z } from 'zod'
 
 /**
@@ -6,7 +6,7 @@ import { z } from 'zod'
  */
 export const CreateUserSchema = z
   .object({
-    email: EmailSchema,
+    email: UserEmailSchema,
     name: z.string().min(1).optional(),
     password: z.string().min(8),
     username: z.string().min(3),
