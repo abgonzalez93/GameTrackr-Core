@@ -1,6 +1,7 @@
-import { ApiErrorResponseSchema } from '@schemas/index'
+import { ApiErrorResponse, ApiErrorResponseSchema } from '@schemas/index'
+import { ApiError, NotFoundError } from '@errors/index'
 import { HTTP_STATUS } from '@constants/index'
-import { ApiError } from '@errors/index'
+import { parseOrThrow } from '@utils/index'
 
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
@@ -98,8 +99,9 @@ const performRequest = async (
  * @returns Parsed body as `unknown`
  */
 const parseResponseBody = async (res: Response): Promise<unknown> => {
-  if (res.status === HTTP_STATUS.NO_CONTENT || res.headers.get('Content-Length') === '0') return null
-  const contentType = res.headers.get('content-type')
+  const headers = res.headers
+  if (res.status === HTTP_STATUS.NO_CONTENT || headers.get('Content-Length') === '0') return null
+  const contentType = headers.get('content-type')
   if (contentType?.includes('application/json')) return await res.json()
   return await res.text()
 }
@@ -112,22 +114,20 @@ const parseResponseBody = async (res: Response): Promise<unknown> => {
  * @throws ApiError - If the response represents an API error
  */
 const handleErrorResponse = (res: Response, parsed: unknown): never => {
-  if (res.status === HTTP_STATUS.NOT_FOUND) {
-    throw new ApiError('Resource not found', HTTP_STATUS.NOT_FOUND)
+  if (res.status === HTTP_STATUS.NOT_FOUND) throw new NotFoundError('Resource not found')
+
+  try {
+    const errorData = parseOrThrow<ApiErrorResponse>(ApiErrorResponseSchema, parsed, 'Invalid error response')
+
+    throw new ApiError(errorData.error, res.status, errorData.details)
+  } catch {
+    const fallbackMessage =
+      typeof parsed === 'object' && parsed !== null && 'error' in parsed
+        ? String((parsed as { error: unknown }).error)
+        : `[${res.status}] ${res.statusText}`
+
+    throw new ApiError(fallbackMessage, res.status, parsed)
   }
-
-  const result = ApiErrorResponseSchema.safeParse(parsed)
-
-  if (result.success) {
-    throw new ApiError(result.data.error, res.status, result.data.details)
-  }
-
-  const fallbackMessage =
-    typeof parsed === 'object' && parsed !== null && 'error' in parsed
-      ? String((parsed as { error: unknown }).error)
-      : `[${res.status}] ${res.statusText}`
-
-  throw new ApiError(fallbackMessage, res.status, parsed)
 }
 
 /**

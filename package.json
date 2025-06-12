@@ -2,7 +2,7 @@
   "type": "module",
   "name": "@trackplay/core",
   "author": "Antonio Bueno Gonzalez",
-  "version": "1.0.25",
+  "version": "1.0.35",
   "private": false,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -58,14 +58,14 @@
     "express-rate-limit": "^7.5.0",
     "helmet": "^8.1.0",
     "winston": "^3.17.0",
-    "zod": "^3.25.61"
+    "zod": "^3.25.63"
   },
   "devDependencies": {
     "@eslint/js": "^9.28.0",
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
-    "@types/node": "^24.0.0",
+    "@types/node": "^24.0.1",
     "barrelsby": "^2.8.1",
     "eslint": "^9.28.0",
     "eslint-config-prettier": "^10.1.5",

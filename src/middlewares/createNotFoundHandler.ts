@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from 'express'
-import { HTTP_STATUS } from '@constants/index'
-import { ApiError } from '@errors/index'
+import { NotFoundError } from '@errors/index'
 
 export interface NotFoundHandlerOptions {
   message?: string
@@ -19,5 +18,5 @@ export const createNotFoundHandler =
   (req: Request, _res: Response, next: NextFunction): void => {
     const defaultMessage = `The route '${req.originalUrl}' does not exist.`
     const message = options.message ?? defaultMessage
-    next(new ApiError(message, HTTP_STATUS.NOT_FOUND))
+    next(new NotFoundError(message))
   }

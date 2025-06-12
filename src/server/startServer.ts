@@ -12,6 +12,6 @@ export const startServer = (app: Express, options: BaseURLOptions): void => {
   const log = getLogger()
 
   app.listen(options.port, options.host, () => {
-    log.info(`🚀 Server running at ${getBaseUrl(options)}`)
+    log.info(`✅ Server running at ${getBaseUrl(options)}`)
   })
 }

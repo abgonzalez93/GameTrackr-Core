@@ -1,4 +1,4 @@
-import { UserEmailSchema } from '@schemas/index'
+import { UserEmailSchema } from './UserEmailSchema'
 import { z } from 'zod'
 
 /**
@@ -19,13 +19,15 @@ export const CreateUserSchema = z
     path: ['passwordConfirm'],
   })
 
-export const CreateUserDTOSchema = CreateUserSchema.transform(({ email, name, password, username, avatarUrl, bio }) => ({
-  email,
-  name,
-  password,
-  username,
-  avatarUrl,
-  bio,
-}))
+export const CreateUserDTOSchema = CreateUserSchema.transform(
+  ({ email, name, password, username, avatarUrl, bio }) => ({
+    email,
+    name,
+    password,
+    username,
+    avatarUrl,
+    bio,
+  }),
+)
 
 export type CreateUserDTO = z.infer<typeof CreateUserDTOSchema>

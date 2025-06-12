@@ -5,7 +5,7 @@ import { z } from 'zod'
  *
  * Accepts only 'development', 'production', or 'test'.
  */
-export const NodeEnvSchema = z.enum(['development', 'production', 'test'])
+export const NodeEnvSchema = z.enum(['development', 'production', 'test']).default('development')
 
 /**
  * Zod schema for validating a valid IPv4 or IPv6 address.
@@ -20,10 +20,7 @@ export const IpAddressSchema = z.string().ip({ message: 'Must be a valid IP addr
  * Coerces the input to a number, checks for positivity and integer.
  * Example: 3000
  */
-export const PortSchema = z.coerce
-  .number({ invalid_type_error: 'Must be a number' })
-  .int()
-  .positive()
+export const PortSchema = z.coerce.number({ invalid_type_error: 'Must be a number' }).int().positive()
 
 /**
  * Zod schema for validating a non-empty string.
@@ -40,15 +37,6 @@ export const NonEmptyStringSchema = z.string().min(1, { message: 'Must be a non-
 export const UrlStringSchema = z.string().url({ message: 'Must be a valid URL' })
 
 /**
- * Zod schema for validating a base64-encoded JWT secret.
- *
- * Minimum 32 characters (256 bits) for security.
- */
-export const JwtSecretSchema = z
-  .string()
-  .min(32, { message: 'Must be at least 256 bits (32 characters base64)' })
-
-/**
  * Zod schema for validating a positive number in seconds.
  *
  * Coerces the input to an integer and checks that it is positive.
@@ -62,9 +50,6 @@ export const PositiveNumberSchema = z.coerce.number().int().positive()
  * Coerces the input (string or number) to an integer and ensures it's positive.
  * Suitable for use with URL parameters.
  */
-export const IdSchema = z.coerce
-  .number()
-  .int()
-  .positive({ message: 'ID must be a positive integer' })
+export const IdSchema = z.coerce.number().int().positive({ message: 'ID must be a positive integer' })
 
 export type Id = z.infer<typeof IdSchema>
