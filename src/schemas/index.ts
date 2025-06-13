@@ -1,3 +1,4 @@
+export * from './auth/index'
 export * from './errors/index'
 export * from './game/index'
 export * from './igdb/index'
