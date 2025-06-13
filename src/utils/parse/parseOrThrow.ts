@@ -11,8 +11,6 @@ import { ZodTypeAny } from 'zod'
  * @param message - Optional custom error message
  * @returns The parsed and typed data
  * @throws BadRequestError If validation fails
- *
- * @module utils/parse
  */
 export const parseOrThrow = <T>(schema: ZodTypeAny, data: unknown, message = 'Invalid input'): T => {
   const parsed = schema.safeParse(data)

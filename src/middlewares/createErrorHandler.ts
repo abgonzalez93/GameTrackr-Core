@@ -12,8 +12,6 @@ export interface ErrorHandlerOptions {
  *
  * @param options - Configuration flags (e.g., isDevelopment)
  * @returns Express-compatible error-handling middleware
- *
- * @module middlewares
  */
 export const createErrorHandler =
   ({ isDevelopment = false }: ErrorHandlerOptions = {}) =>

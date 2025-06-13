@@ -1,10 +1,11 @@
+import { IGDBIdSchema } from './IGDBIdSchema'
 import { z } from 'zod'
 
 /**
  * Schema to validate a game from IGDB API.
  */
 export const IGDBGameSchema = z.object({
-  id: z.number(),
+  id: IGDBIdSchema,
   name: z.string(),
   slug: z.string(),
   summary: z.string().optional(),

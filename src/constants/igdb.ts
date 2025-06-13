@@ -1,7 +1,5 @@
 /**
  * All available fields for an IGDB Game query, expanded for nested objects like cover, genres, etc.
- *
- * @module constants
  */
 export const IGDB = {
   MAX_GAME_LIMIT: 50,

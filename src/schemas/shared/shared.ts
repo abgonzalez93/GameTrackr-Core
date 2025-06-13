@@ -15,14 +15,6 @@ export const NodeEnvSchema = z.enum(['development', 'production', 'test']).defau
 export const IpAddressSchema = z.string().ip({ message: 'Must be a valid IP address' })
 
 /**
- * Zod schema for validating a positive port number.
- *
- * Coerces the input to a number, checks for positivity and integer.
- * Example: 3000
- */
-export const PortSchema = z.coerce.number({ invalid_type_error: 'Must be a number' }).int().positive()
-
-/**
  * Zod schema for validating a non-empty string.
  *
  * Ensures the string is not empty (min length: 1).
@@ -42,14 +34,15 @@ export const UrlStringSchema = z.string().url({ message: 'Must be a valid URL' }
  * Coerces the input to an integer and checks that it is positive.
  * Useful for durations, expirations, etc.
  */
-export const PositiveNumberSchema = z.coerce.number().int().positive()
+export const PositiveNumberSchema = z.coerce
+  .number({ invalid_type_error: 'Must be a number' })
+  .int()
+  .positive({ message: 'Must be a positive integer' })
 
 /**
- * Zod schema for validating a positive integer ID.
+ * Zod schema for validating a development port number (1–9999).
  *
- * Coerces the input (string or number) to an integer and ensures it's positive.
- * Suitable for use with URL parameters.
+ * Coerces input to a positive integer and restricts the max value to 9999.
+ * Suitable for typical local development ports (e.g., 3000, 8080).
  */
-export const IdSchema = z.coerce.number().int().positive({ message: 'ID must be a positive integer' })
-
-export type Id = z.infer<typeof IdSchema>
+export const PortSchema = PositiveNumberSchema.max(9999, { message: 'Port must be between 1 and 9999' })

@@ -2,11 +2,15 @@ import { HTTP_STATUS } from '@constants/index'
 import { ApiError } from './ApiError'
 
 /**
- * Error representing a 400 Bad Request.
+ * Represents an HTTP 400 Bad Request error.
  *
- * @class
+ * Typically thrown when the client sends invalid data.
+ *
+ * @class BadRequestError
  * @extends ApiError
- * @module errors
+ *
+ * @example
+ * throw new BadRequestError('Missing required fields', { fields: ['email', 'password'] })
  */
 export class BadRequestError extends ApiError {
   constructor(message = 'Bad request', meta?: unknown) {
@@ -16,11 +20,15 @@ export class BadRequestError extends ApiError {
 }
 
 /**
- * Error representing a 401 Unauthorized.
+ * Represents an HTTP 401 Unauthorized error.
  *
- * @class
+ * Thrown when authentication is required but missing or invalid.
+ *
+ * @class UnauthorizedError
  * @extends ApiError
- * @module errors
+ *
+ * @example
+ * throw new UnauthorizedError('Invalid credentials')
  */
 export class UnauthorizedError extends ApiError {
   constructor(message = 'Unauthorized', meta?: unknown) {
@@ -30,11 +38,15 @@ export class UnauthorizedError extends ApiError {
 }
 
 /**
- * Error representing a 403 Forbidden.
+ * Represents an HTTP 403 Forbidden error.
  *
- * @class
+ * Thrown when the user is authenticated but not authorized to access the resource.
+ *
+ * @class ForbiddenError
  * @extends ApiError
- * @module errors
+ *
+ * @example
+ * throw new ForbiddenError('Access denied')
  */
 export class ForbiddenError extends ApiError {
   constructor(message = 'Forbidden', meta?: unknown) {
@@ -44,11 +56,15 @@ export class ForbiddenError extends ApiError {
 }
 
 /**
- * Error representing a 404 Not Found.
+ * Represents an HTTP 404 Not Found error.
  *
- * @class
+ * Thrown when a requested resource does not exist.
+ *
+ * @class NotFoundError
  * @extends ApiError
- * @module errors
+ *
+ * @example
+ * throw new NotFoundError('User not found')
  */
 export class NotFoundError extends ApiError {
   constructor(message = 'Not found', meta?: unknown) {
@@ -58,11 +74,15 @@ export class NotFoundError extends ApiError {
 }
 
 /**
- * Error representing a 409 Conflict.
+ * Represents an HTTP 409 Conflict error.
  *
- * @class
+ * Thrown when a request could not be completed due to a conflict with the current state of the resource.
+ *
+ * @class ConflictError
  * @extends ApiError
- * @module errors
+ *
+ * @example
+ * throw new ConflictError('Username already exists')
  */
 export class ConflictError extends ApiError {
   constructor(message = 'Conflict', meta?: unknown) {
@@ -72,11 +92,15 @@ export class ConflictError extends ApiError {
 }
 
 /**
- * Error representing a 422 Unprocessable Entity.
+ * Represents an HTTP 422 Unprocessable Entity error.
  *
- * @class
+ * Thrown when the server understands the request but is unable to process it due to semantic errors.
+ *
+ * @class UnprocessableEntityError
  * @extends ApiError
- * @module errors
+ *
+ * @example
+ * throw new UnprocessableEntityError('Validation failed', { errors: { email: 'Invalid format' } })
  */
 export class UnprocessableEntityError extends ApiError {
   constructor(message = 'Unprocessable entity', meta?: unknown) {
@@ -86,11 +110,15 @@ export class UnprocessableEntityError extends ApiError {
 }
 
 /**
- * Error representing a 429 Too Many Requests.
+ * Represents an HTTP 429 Too Many Requests error.
  *
- * @class
+ * Thrown when the user has sent too many requests in a given amount of time (rate limiting).
+ *
+ * @class TooManyRequestsError
  * @extends ApiError
- * @module errors
+ *
+ * @example
+ * throw new TooManyRequestsError('Rate limit exceeded')
  */
 export class TooManyRequestsError extends ApiError {
   constructor(message = 'Too many requests', meta?: unknown) {

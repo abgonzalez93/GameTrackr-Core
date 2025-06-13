@@ -15,8 +15,6 @@ export interface MiddlewareOptions {
 
 /**
  * Registers global middlewares for the Express app.
- *
- * @module middlewares
  */
 export const applyMiddlewares = (app: Express, options: MiddlewareOptions = {}): void => {
   const { helmet: helmetOpts = {}, cors: corsOpts = {}, enableCompression = true, enableJson = true } = options

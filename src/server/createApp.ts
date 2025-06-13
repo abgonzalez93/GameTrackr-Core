@@ -12,8 +12,6 @@ export interface CreateAppOptions {
  * @param routes - Function to register service-specific routes
  * @param middlewares - Optional per-service middleware configuration
  * @returns Configured Express app
- *
- * @module server
  */
 export const createApp = ({ routes, middlewares }: CreateAppOptions): Express => {
   const app = express()

@@ -28,8 +28,6 @@ let loggerInstance: winston.Logger | null = null
  *
  * @param options - Configuration options for the logger
  * @returns The configured Winston logger instance
- *
- * @module logger
  */
 export const createLogger = (options: LoggerOptions = {}): winston.Logger => {
   if (loggerInstance) return loggerInstance
@@ -67,8 +65,6 @@ export const createLogger = (options: LoggerOptions = {}): winston.Logger => {
  *
  * @returns The previously created Winston logger instance
  * @throws Error if `createLogger()` has not been called yet
- *
- * @module logger
  */
 export const getLogger = (): winston.Logger => {
   if (!loggerInstance) throw new Error('Logger has not been initialized. Call createLogger() first.')

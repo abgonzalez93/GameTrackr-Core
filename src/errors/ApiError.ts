@@ -1,11 +1,16 @@
 import { HTTP_STATUS } from '@constants/index'
 
 /**
- * Custom application-level error with optional status code.
+ * Represents a custom error used across the application.
  *
- * @class
+ * Extends the built-in `Error` class to include an HTTP status code
+ * and optional metadata for additional error context (e.g., validation issues).
+ *
+ * @class ApiError
  * @extends Error
- * @module errors
+ *
+ * @example
+ * throw new ApiError('User not found', HTTP_STATUS.NOT_FOUND)
  */
 export class ApiError extends Error {
   public statusCode: number

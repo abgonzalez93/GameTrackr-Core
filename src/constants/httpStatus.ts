@@ -1,7 +1,5 @@
 /**
  * Common HTTP status codes used in API responses.
- *
- * @module constants
  */
 export const HTTP_STATUS = {
   CONTINUE: 100,

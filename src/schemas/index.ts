@@ -1,6 +1,7 @@
 export * from './errors/index'
 export * from './game/index'
 export * from './igdb/index'
+export * from './jwt/index'
 export * from './shared/index'
 export * from './trackGame/index'
 export * from './user/index'

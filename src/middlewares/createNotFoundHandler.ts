@@ -10,8 +10,6 @@ export interface NotFoundHandlerOptions {
  *
  * @param options - Optional configuration such as a custom message
  * @returns Express-compatible middleware for handling 404 errors
- *
- * @module middlewares
  */
 export const createNotFoundHandler =
   (options: NotFoundHandlerOptions = {}) =>
