@@ -1,4 +1,5 @@
 export * from './GenerateTokenSchema'
+export * from './IsRevokedSchema'
 export * from './RefreshTokenPayloadSchema'
 export * from './RevokeTokenSchema'
 export * from './TokenCommon'
