@@ -1,7 +1,4 @@
-import { ApiErrorResponse, ApiErrorResponseSchema } from '@schemas/index'
-import { ApiError, NotFoundError } from '@errors/index'
 import { HTTP_STATUS } from '@constants/index'
-import { parseOrThrow } from '@utils/index'
 
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
@@ -107,30 +104,6 @@ const parseResponseBody = async (res: Response): Promise<unknown> => {
 }
 
 /**
- * Handles failed HTTP responses by parsing and validating error content.
- *
- * @param res - The Response object
- * @param parsed - The already parsed body
- * @throws ApiError - If the response represents an API error
- */
-const handleErrorResponse = (res: Response, parsed: unknown): never => {
-  if (res.status === HTTP_STATUS.NOT_FOUND) throw new NotFoundError('Resource not found')
-
-  try {
-    const errorData = parseOrThrow<ApiErrorResponse>(ApiErrorResponseSchema, parsed, 'Invalid error response')
-
-    throw new ApiError(errorData.error, res.status, errorData.details)
-  } catch {
-    const fallbackMessage =
-      typeof parsed === 'object' && parsed !== null && 'error' in parsed
-        ? String((parsed as { error: unknown }).error)
-        : `[${res.status}] ${res.statusText}`
-
-    throw new ApiError(fallbackMessage, res.status, parsed)
-  }
-}
-
-/**
  * Makes an HTTP request to the external API using the specified method.
  *
  * @template T - The expected response type
@@ -138,12 +111,10 @@ const handleErrorResponse = (res: Response, parsed: unknown): never => {
  * @param endpoint - Relative path to the API endpoint (e.g., "/games")
  * @param options - Optional fetch configuration (headers, body, etc.)
  * @returns A promise resolving to the parsed JSON response as type T
- * @throws ApiError if the request fails or the response is not OK
  */
 const request = async <T>(method: Method, endpoint: string, options: FetchParams = {}): Promise<T> => {
   const res = await performRequest(method, endpoint, options)
   const parsed = await parseResponseBody(res)
-  if (!res.ok) handleErrorResponse(res, parsed)
   return parsed as T
 }
 

@@ -1,5 +1,5 @@
+import { TrackPlayError } from './TrackPlayError'
 import { HTTP_STATUS } from '@constants/index'
-import { ApiError } from './ApiError'
 
 /**
  * Represents an HTTP 400 Bad Request error.
@@ -7,15 +7,11 @@ import { ApiError } from './ApiError'
  * Typically thrown when the client sends invalid data.
  *
  * @class BadRequestError
- * @extends ApiError
- *
- * @example
- * throw new BadRequestError('Missing required fields', { fields: ['email', 'password'] })
+ * @extends TrackPlayError
  */
-export class BadRequestError extends ApiError {
-  constructor(message = 'Bad request', meta?: unknown) {
-    super(message, HTTP_STATUS.BAD_REQUEST, meta)
-    this.name = 'BadRequestError'
+export class BadRequestError extends TrackPlayError {
+  constructor(message = 'Bad request', details?: unknown) {
+    super(message, HTTP_STATUS.BAD_REQUEST, details)
   }
 }
 
@@ -25,15 +21,11 @@ export class BadRequestError extends ApiError {
  * Thrown when authentication is required but missing or invalid.
  *
  * @class UnauthorizedError
- * @extends ApiError
- *
- * @example
- * throw new UnauthorizedError('Invalid credentials')
+ * @extends TrackPlayError
  */
-export class UnauthorizedError extends ApiError {
-  constructor(message = 'Unauthorized', meta?: unknown) {
-    super(message, HTTP_STATUS.UNAUTHORIZED, meta)
-    this.name = 'UnauthorizedError'
+export class UnauthorizedError extends TrackPlayError {
+  constructor(message = 'Unauthorized', details?: unknown) {
+    super(message, HTTP_STATUS.UNAUTHORIZED, details)
   }
 }
 
@@ -43,15 +35,11 @@ export class UnauthorizedError extends ApiError {
  * Thrown when the user is authenticated but not authorized to access the resource.
  *
  * @class ForbiddenError
- * @extends ApiError
- *
- * @example
- * throw new ForbiddenError('Access denied')
+ * @extends TrackPlayError
  */
-export class ForbiddenError extends ApiError {
-  constructor(message = 'Forbidden', meta?: unknown) {
-    super(message, HTTP_STATUS.FORBIDDEN, meta)
-    this.name = 'ForbiddenError'
+export class ForbiddenError extends TrackPlayError {
+  constructor(message = 'Forbidden', details?: unknown) {
+    super(message, HTTP_STATUS.FORBIDDEN, details)
   }
 }
 
@@ -61,15 +49,11 @@ export class ForbiddenError extends ApiError {
  * Thrown when a requested resource does not exist.
  *
  * @class NotFoundError
- * @extends ApiError
- *
- * @example
- * throw new NotFoundError('User not found')
+ * @extends TrackPlayError
  */
-export class NotFoundError extends ApiError {
-  constructor(message = 'Not found', meta?: unknown) {
-    super(message, HTTP_STATUS.NOT_FOUND, meta)
-    this.name = 'NotFoundError'
+export class NotFoundError extends TrackPlayError {
+  constructor(message = 'Not found', details?: unknown) {
+    super(message, HTTP_STATUS.NOT_FOUND, details)
   }
 }
 
@@ -79,15 +63,11 @@ export class NotFoundError extends ApiError {
  * Thrown when a request could not be completed due to a conflict with the current state of the resource.
  *
  * @class ConflictError
- * @extends ApiError
- *
- * @example
- * throw new ConflictError('Username already exists')
+ * @extends TrackPlayError
  */
-export class ConflictError extends ApiError {
-  constructor(message = 'Conflict', meta?: unknown) {
-    super(message, HTTP_STATUS.CONFLICT, meta)
-    this.name = 'ConflictError'
+export class ConflictError extends TrackPlayError {
+  constructor(message = 'Conflict', details?: unknown) {
+    super(message, HTTP_STATUS.CONFLICT, details)
   }
 }
 
@@ -97,15 +77,11 @@ export class ConflictError extends ApiError {
  * Thrown when the server understands the request but is unable to process it due to semantic errors.
  *
  * @class UnprocessableEntityError
- * @extends ApiError
- *
- * @example
- * throw new UnprocessableEntityError('Validation failed', { errors: { email: 'Invalid format' } })
+ * @extends TrackPlayError
  */
-export class UnprocessableEntityError extends ApiError {
-  constructor(message = 'Unprocessable entity', meta?: unknown) {
-    super(message, HTTP_STATUS.UNPROCESSABLE_ENTITY, meta)
-    this.name = 'UnprocessableEntityError'
+export class UnprocessableEntityError extends TrackPlayError {
+  constructor(message = 'Unprocessable entity', details?: unknown) {
+    super(message, HTTP_STATUS.UNPROCESSABLE_ENTITY, details)
   }
 }
 
@@ -115,14 +91,10 @@ export class UnprocessableEntityError extends ApiError {
  * Thrown when the user has sent too many requests in a given amount of time (rate limiting).
  *
  * @class TooManyRequestsError
- * @extends ApiError
- *
- * @example
- * throw new TooManyRequestsError('Rate limit exceeded')
+ * @extends TrackPlayError
  */
-export class TooManyRequestsError extends ApiError {
-  constructor(message = 'Too many requests', meta?: unknown) {
-    super(message, HTTP_STATUS.TOO_MANY_REQUESTS, meta)
-    this.name = 'TooManyRequestsError'
+export class TooManyRequestsError extends TrackPlayError {
+  constructor(message = 'Too many requests', details?: unknown) {
+    super(message, HTTP_STATUS.TOO_MANY_REQUESTS, details)
   }
 }

@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express'
 import { HTTP_STATUS } from '@constants/index'
+import { TrackPlayError } from '@errors/index'
 import { getLogger } from '@logger/index'
-import { ApiError } from '@errors/index'
 
 export interface ErrorHandlerOptions {
   isDevelopment?: boolean
@@ -20,28 +20,22 @@ export const createErrorHandler =
 
     const log = getLogger()
 
-    const isApiError = error instanceof ApiError
-    const statusCode = isApiError ? error.statusCode : HTTP_STATUS.INTERNAL_SERVER_ERROR
-    const message = isApiError ? error.message : 'Unexpected error'
-    const errorName = error instanceof Error ? error.name : 'Error'
+    const isTrackPlayError = error instanceof TrackPlayError
+    const statusCode = isTrackPlayError ? error.statusCode : HTTP_STATUS.INTERNAL_SERVER_ERROR
+    const message = isTrackPlayError ? error.message : 'Unexpected error'
+    const name = error instanceof Error ? error.name : 'Error'
+
+    if (statusCode >= HTTP_STATUS.INTERNAL_SERVER_ERROR || isDevelopment) {
+      log.error(`${name}: ${message}`, { error })
+    }
 
     const response: Record<string, unknown> = {
-      error: errorName,
+      error: name,
       message,
     }
 
-    if (isApiError && error.meta !== undefined) {
-      response.details = typeof error.meta === 'object' ? error.meta : { info: error.meta }
-    }
-
-    if (isApiError) {
-      log.warn(`[${statusCode}] ${errorName}: ${message}`)
-    } else {
-      log.error('Unhandled error:', error)
-    }
-
-    if (isDevelopment && statusCode >= 500 && error instanceof Error) {
-      response.stack = error.stack?.split('\n').slice(0, 5).join('\n')
+    if (isDevelopment && error instanceof Error && error.stack) {
+      response.stack = error.stack
     }
 
     res.status(statusCode).json(response)

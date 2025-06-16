@@ -1,3 +1,4 @@
+import { TrackPlayError } from '@errors/index'
 import winston from 'winston'
 
 export interface LoggerOptions {
@@ -67,6 +68,6 @@ export const createLogger = (options: LoggerOptions = {}): winston.Logger => {
  * @throws Error if `createLogger()` has not been called yet
  */
 export const getLogger = (): winston.Logger => {
-  if (!loggerInstance) throw new Error('Logger has not been initialized. Call createLogger() first.')
+  if (!loggerInstance) throw new TrackPlayError('Logger has not been initialized. Call createLogger() first.')
   return loggerInstance
 }
