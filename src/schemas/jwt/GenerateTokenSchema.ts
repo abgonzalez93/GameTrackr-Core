@@ -8,4 +8,4 @@ export const GenerateTokenSchema = z.object({
   sub: TokenSubSchema,
 })
 
-export type GenerateTokenDTO = z.infer<typeof GenerateTokenSchema>
+export type GenerateToken = z.infer<typeof GenerateTokenSchema>

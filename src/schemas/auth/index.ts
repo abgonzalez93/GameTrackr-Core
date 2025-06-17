@@ -1,1 +1,1 @@
-export * from './AuthTokenSchema'
+export * from './AuthorizationHeaderSchema'

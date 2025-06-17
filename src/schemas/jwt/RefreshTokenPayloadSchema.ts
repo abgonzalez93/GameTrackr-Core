@@ -12,4 +12,4 @@ export const RefreshTokenPayloadSchema = z.object({
   exp: TokenExpSchema,
 })
 
-export type RefreshTokenPayloadDTO = z.infer<typeof RefreshTokenPayloadSchema>
+export type RefreshTokenPayload = z.infer<typeof RefreshTokenPayloadSchema>

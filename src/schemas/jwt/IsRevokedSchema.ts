@@ -10,4 +10,4 @@ export const IsRevokedSchema = z.object({
   jti: TokenJtiSchema,
 })
 
-export type IsRevokedDTO = z.infer<typeof IsRevokedSchema>
+export type IsRevoked = z.infer<typeof IsRevokedSchema>

@@ -4,7 +4,7 @@ import { z } from 'zod'
 /**
  * Zod schema for creating a new user.
  */
-export const CreateUserSchema = z
+export const CreateUserBaseSchema = z
   .object({
     email: UserEmailSchema,
     name: z.string().min(1).optional(),
@@ -19,15 +19,13 @@ export const CreateUserSchema = z
     path: ['passwordConfirm'],
   })
 
-export const CreateUserDTOSchema = CreateUserSchema.transform(
-  ({ email, name, password, username, avatarUrl, bio }) => ({
-    email,
-    name,
-    password,
-    username,
-    avatarUrl,
-    bio,
-  }),
-)
+export const CreateUserSchema = CreateUserBaseSchema.transform(({ email, name, password, username, avatarUrl, bio }) => ({
+  email,
+  name,
+  password,
+  username,
+  avatarUrl,
+  bio,
+}))
 
-export type CreateUserDTO = z.infer<typeof CreateUserDTOSchema>
+export type CreateUser = z.infer<typeof CreateUserSchema>

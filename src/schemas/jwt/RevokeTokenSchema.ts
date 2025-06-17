@@ -10,4 +10,4 @@ export const RevokeTokenSchema = z.object({
   exp: TokenExpSchema,
 })
 
-export type RevokeTokenDTO = z.infer<typeof RevokeTokenSchema>
+export type RevokeToken = z.infer<typeof RevokeTokenSchema>

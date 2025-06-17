@@ -13,6 +13,4 @@ export const CreateGameSchema = z.object({
   platforms: z.array(z.string()),
 })
 
-export const CreateGameDTOSchema = CreateGameSchema.transform((data) => data)
-
-export type CreateGameDTO = z.infer<typeof CreateGameDTOSchema>
+export type CreateGame = z.infer<typeof CreateGameSchema>
