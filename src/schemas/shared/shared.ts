@@ -46,3 +46,5 @@ export const PositiveNumberSchema = z.coerce
  * Suitable for typical local development ports (e.g., 3000, 8080).
  */
 export const PortSchema = PositiveNumberSchema.max(9999, { message: 'Port must be between 1 and 9999' })
+
+export const OptionalStringArraySchema = z.array(z.string().min(1)).optional()
