@@ -1,14 +1,15 @@
-import { NonEmptyStringSchema, OptionalStringArraySchema, PositiveNumberSchema } from '@schemas/index'
+import { JWTSubSchema, JWTExpSchema, JWTJtiSchema, JWTTypSchema } from './jwt.shared'
+import { OptionalStringArraySchema } from '@schemas/index'
 import { z } from 'zod'
 
 /**
  * Common base for both access and refresh tokens.
  */
 const BaseTokenPayloadSchema = z.object({
-  sub: NonEmptyStringSchema.regex(/^\d+$/, { message: 'sub must be a numeric string' }),
-  exp: PositiveNumberSchema,
-  jti: z.string().uuid(),
-  typ: z.enum(['access', 'refresh']),
+  sub: JWTSubSchema,
+  exp: JWTExpSchema,
+  jti: JWTJtiSchema,
+  typ: JWTTypSchema,
 })
 
 /**
