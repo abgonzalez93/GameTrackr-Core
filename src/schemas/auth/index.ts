@@ -1,2 +1,2 @@
 export * from './AuthorizationHeaderSchema'
-export * from './authSchemas'
+export * from './InternalAuthHeaderSchema'
