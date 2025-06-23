@@ -11,7 +11,7 @@ export class TrackPlayError extends Error {
   constructor(
     message: string,
     statusCode: number = HTTP_STATUS.INTERNAL_SERVER_ERROR,
-    statusName: string = 'Internal Server Error',
+    statusName: string = 'Internal Server',
     details?: unknown,
   ) {
     super(message)
