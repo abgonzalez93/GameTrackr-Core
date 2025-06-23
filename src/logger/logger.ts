@@ -39,7 +39,13 @@ export const createLogger = (options: LoggerOptions = {}): winston.Logger => {
     level,
     format: combine(
       label({ label: serviceLabel }),
-      timestamp({ format: 'HH:mm:ss' }),
+      timestamp({
+        format: () =>
+          new Date().toLocaleString('es-ES', {
+            timeZone: 'Europe/Madrid',
+            hour12: false,
+          }),
+      }),
       isDevelopment ? combine(colorize(), consoleFormat) : winston.format.json(),
     ),
     transports: [
