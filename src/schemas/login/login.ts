@@ -1,4 +1,5 @@
-import { SignedTokenPairSchema, PublicUserSchema, UserEmailSchema, UserIdSchema } from '@schemas/index'
+import { PublicUserSchema, UserEmailSchema, UserIdSchema } from '@schemas/user'
+import { SignedTokenPairSchema } from '@schemas/jwt'
 import z from 'zod'
 
 /**

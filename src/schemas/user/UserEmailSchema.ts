@@ -21,7 +21,7 @@ const getDomain = (email: string): string => email.split('@')[1] ?? ''
  * - Rejects emails from known disposable domains
  */
 export const UserEmailSchema = z
-  .string()
+  .string({ required_error: 'Email is required' })
   .trim()
   .toLowerCase()
   .email('Invalid email address format')
