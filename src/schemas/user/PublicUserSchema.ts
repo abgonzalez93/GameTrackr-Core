@@ -1,4 +1,5 @@
-import { UserEmailSchema, UserIdSchema } from './index'
+import { UserEmailSchema } from './UserEmailSchema'
+import { UserIdSchema } from './UserIdSchema'
 import { z } from 'zod'
 
 /**
