@@ -36,6 +36,10 @@ export const createErrorHandler =
 
     if (isDevelopment && error instanceof Error && error.stack) {
       response.stack = error.stack
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0)
+        .join(' ')
     }
 
     res.status(statusCode).json(response)
