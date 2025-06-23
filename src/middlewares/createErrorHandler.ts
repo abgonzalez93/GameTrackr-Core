@@ -26,7 +26,7 @@ export const createErrorHandler =
     const name = error instanceof Error ? error.name : 'Error'
 
     if (statusCode >= HTTP_STATUS.INTERNAL_SERVER_ERROR || isDevelopment) {
-      log.error(`${name}: ${message}`, { error })
+      log.error(`❌ [${name}] ${message}`, { error })
     }
 
     const response: Record<string, unknown> = {
