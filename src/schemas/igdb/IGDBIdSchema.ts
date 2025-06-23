@@ -1,4 +1,4 @@
-import { PositiveNumberSchema } from '@schemas/shared'
+import { PositiveNumberSchema } from '@schemas/index'
 import z from 'zod'
 
 /**

@@ -1,5 +1,5 @@
-import { TrackPlayError } from './TrackPlayError'
 import { HTTP_STATUS } from '@constants/index'
+import { TrackPlayError } from './index'
 
 /**
  * Represents an HTTP 400 Bad Request Error.
