@@ -1,4 +1,4 @@
-import { PublicUserSchema, UserEmailSchema, UserIdSchema } from '@schemas/user'
+import { UserEmailSchema, UserIdSchema } from '@schemas/user'
 import { SignedTokenPairSchema } from '@schemas/jwt'
 import z from 'zod'
 
@@ -17,11 +17,10 @@ export type LoginInput = z.infer<typeof LoginInputSchema>
 /**
  * Zod schema for the response returned by the login service.
  *
- * Includes a signed token pair and public user information.
+ * Only includes the signed token pair.
  */
 export const LoginResponseSchema = z.object({
   tokens: SignedTokenPairSchema,
-  user: PublicUserSchema,
 })
 
 export type LoginResponse = z.infer<typeof LoginResponseSchema>
