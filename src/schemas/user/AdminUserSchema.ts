@@ -1,4 +1,5 @@
 import { PublicUserSchema } from './PublicUserSchema'
+import { nullToUndefined } from '@schemas/index'
 import { z } from 'zod'
 
 /**
@@ -17,7 +18,7 @@ export const AdminUserSchema = PublicUserSchema.extend({
   isActive: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
-  lastLoginAt: z.string().nullable(),
+  lastLoginAt: nullToUndefined(z.string()),
 })
 
 export type AdminUser = z.infer<typeof AdminUserSchema>

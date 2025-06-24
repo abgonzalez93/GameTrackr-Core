@@ -1,3 +1,4 @@
+import { nullToUndefined } from '@schemas/index'
 import { z } from 'zod'
 
 /**
@@ -6,9 +7,9 @@ import { z } from 'zod'
 export const CreateGameSchema = z.object({
   igdbId: z.number().int(),
   name: z.string().min(1),
-  summary: z.string().optional(),
-  coverUrl: z.string().url().optional(),
-  releaseDate: z.coerce.date().optional(),
+  summary: nullToUndefined(z.string()),
+  coverUrl: nullToUndefined(z.string().url()),
+  releaseDate: nullToUndefined(z.coerce.date()),
   genres: z.array(z.string()),
   platforms: z.array(z.string()),
 })

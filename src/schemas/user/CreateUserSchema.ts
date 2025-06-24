@@ -1,4 +1,5 @@
 import { UserEmailSchema } from './UserEmailSchema'
+import { nullToUndefined } from '@schemas/index'
 import { z } from 'zod'
 
 const passwordRequirementsRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/
@@ -9,14 +10,14 @@ const passwordRequirementsRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\
 export const CreateUserBaseSchema = z
   .object({
     email: UserEmailSchema,
-    name: z.string().min(1).optional(),
+    name: nullToUndefined(z.string().min(1)),
     password: z
       .string()
       .min(8)
       .regex(passwordRequirementsRegex, 'Password must include uppercase, lowercase, number and special character'),
     username: z.string().min(3),
-    avatarUrl: z.string().url().optional(),
-    bio: z.string().max(280).optional(),
+    avatarUrl: nullToUndefined(z.string().url()),
+    bio: nullToUndefined(z.string().max(280)),
     passwordConfirm: z.string().min(8),
   })
   .refine((data) => data.password === data.passwordConfirm, {

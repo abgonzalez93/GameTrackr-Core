@@ -1,4 +1,5 @@
 import { UserEmailSchema } from './UserEmailSchema'
+import { nullToUndefined } from '@schemas/index'
 import { UserIdSchema } from './UserIdSchema'
 import { z } from 'zod'
 
@@ -11,9 +12,9 @@ export const PublicUserSchema = z.object({
   id: UserIdSchema,
   email: UserEmailSchema,
   username: z.string().min(3),
-  name: z.string().optional(),
-  avatarUrl: z.string().url().optional(),
-  bio: z.string().max(280).optional(),
+  name: nullToUndefined(z.string()),
+  avatarUrl: nullToUndefined(z.string().url()),
+  bio: nullToUndefined(z.string().max(280)),
 })
 
 export type PublicUser = z.infer<typeof PublicUserSchema>
