@@ -1,5 +1,5 @@
 import { UserEmailSchema } from './UserEmailSchema'
-import { nullToUndefined } from '@schemas/index'
+import { nullToUndefined } from '@schemas/shared'
 import { z } from 'zod'
 
 const passwordRequirementsRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/

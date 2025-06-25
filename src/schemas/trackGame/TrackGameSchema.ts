@@ -1,4 +1,4 @@
-import { nullToUndefined } from '@schemas/index'
+import { nullToUndefined } from '@schemas/shared'
 import { z } from 'zod'
 
 /**

@@ -1,4 +1,4 @@
-import { UserEmailSchema, UserIdSchema } from '@schemas/user'
+import { UserEmailSchema, UsernameSchema, UserIdSchema } from '@schemas/user'
 import { SignedTokenPairSchema } from '@schemas/jwt'
 import z from 'zod'
 
@@ -7,10 +7,18 @@ import z from 'zod'
  *
  * Requires a valid email address and a non-empty password.
  */
-export const LoginInputSchema = z.object({
-  email: UserEmailSchema,
-  password: z.string({ required_error: 'Password is required' }).min(1, 'Password is required'),
-})
+export const LoginInputSchema = z
+  .object({
+    identifier: z.string().min(3, 'Email or username is required'),
+    password: z.string({ required_error: 'Password is required' }).min(1, 'Password is required'),
+  })
+  .refine(
+    ({ identifier }) => UserEmailSchema.safeParse(identifier).success || UsernameSchema.safeParse(identifier).success,
+    {
+      path: ['identifier'],
+      message: 'Identifier must be a valid email or username',
+    },
+  )
 
 export type LoginInput = z.infer<typeof LoginInputSchema>
 

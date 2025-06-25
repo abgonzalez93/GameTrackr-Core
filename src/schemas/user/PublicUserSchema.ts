@@ -1,5 +1,5 @@
 import { UserEmailSchema } from './UserEmailSchema'
-import { nullToUndefined } from '@schemas/index'
+import { nullToUndefined } from '@schemas/shared'
 import { UserIdSchema } from './UserIdSchema'
 import { z } from 'zod'
 
