@@ -1,4 +1,7 @@
+import { getI18n } from '@i18n/index'
 import { z } from 'zod'
+
+const i18n = getI18n()
 
 /**
  * List of blocked disposable or temporary email domains.
@@ -21,10 +24,10 @@ const getDomain = (email: string): string => email.split('@')[1] ?? ''
  * - Rejects emails from known disposable domains
  */
 export const UserEmailSchema = z
-  .string({ required_error: 'Email is required' })
+  .string({ required_error: i18n.t('core.schemas.login.email_required') })
   .trim()
   .toLowerCase()
-  .email('Invalid email address format')
-  .refine((email) => !blockedDomains.includes(getDomain(email)), { message: 'Disposable email addresses are not allowed' })
+  .email(i18n.t('core.schemas.login.email_invalid'))
+  .refine((email) => !blockedDomains.includes(getDomain(email)), { message: i18n.t('core.schemas.login.email_disposable') })
 
 export type UserEmail = z.infer<typeof UserEmailSchema>

@@ -1,5 +1,8 @@
 import type { Request, Response, NextFunction } from 'express'
 import { NotFoundError } from '@errors/index'
+import { getI18n } from '@i18n/index'
+
+const i18n = getI18n()
 
 export interface NotFoundHandlerOptions {
   message?: string
@@ -14,7 +17,7 @@ export interface NotFoundHandlerOptions {
 export const createNotFoundHandler =
   (options: NotFoundHandlerOptions = {}) =>
   (req: Request, _res: Response, next: NextFunction): void => {
-    const defaultMessage = `The route '${req.originalUrl}' does not exist.`
+    const defaultMessage = i18n.t('core.middlewares.createNotFoundHandler.route_not_found', { url: req.originalUrl })
     const message = options.message ?? defaultMessage
     next(new NotFoundError(message))
   }

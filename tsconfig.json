@@ -20,8 +20,10 @@
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
     "paths": {
+      "@clients/*": ["clients/*"],
       "@constants/*": ["constants/*"],
       "@errors/*": ["errors/*"],
+      "@i18n/*": ["i18n/*"],
       "@logger/*": ["logger/*"],
       "@middlewares/*": ["middlewares/*"],
       "@schemas/*": ["schemas/*"],

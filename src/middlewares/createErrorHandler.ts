@@ -3,6 +3,8 @@ import { HTTP_STATUS } from '@constants/index'
 import { TrackPlayError } from '@errors/index'
 import { getLogger } from '@logger/index'
 
+const log = getLogger()
+
 export interface ErrorHandlerOptions {
   isDevelopment?: boolean
 }
@@ -17,8 +19,6 @@ export const createErrorHandler =
   ({ isDevelopment = false }: ErrorHandlerOptions = {}) =>
   (error: unknown, _req: Request, res: Response, _next: NextFunction): void => {
     if (res.headersSent) return
-
-    const log = getLogger()
 
     const isTrackPlayError = error instanceof TrackPlayError
     const statusCode = isTrackPlayError ? error.statusCode : HTTP_STATUS.INTERNAL_SERVER_ERROR

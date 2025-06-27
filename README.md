@@ -1,6 +1,47 @@
 # 🧩 @trackplay/core
 
-Este paquete contiene la lógica, esquemas, constantes, errores y utilidades compartidas entre los distintos servicios de la plataforma TrackPlay (backend, frontend, microservicios, etc.).
+Este paquete contiene la lógica y recursos compartidos entre los distintos servicios de la plataforma **TrackPlay** (backend, frontend y microservicios como Auth, IGDB, Notifications...).
+
+Su propósito es **centralizar, estandarizar y mantener DRY** todo aquello que se usa de forma común en la aplicación.
+
+---
+
+## 📦 Contenido
+
+El paquete incluye:
+
+### ✅ Schemas y Tipados
+
+- Validaciones Zod compartidas para entidades como `User`, `Game`, `Token`, etc.
+- Tipos inferidos reutilizables entre frontend y backend.
+
+### ✅ Utilidades
+
+- Funciones genéricas (`parseOrThrow`, `toPublicUser`, etc.)
+- Utilidades de hashing, validación, formateo, etc.
+
+### ✅ Errores
+
+- Clases de error tipadas y personalizadas (`NotFoundError`, `UnauthorizedError`, `ConflictError`...).
+
+### ✅ Middlewares
+
+- Middlewares reutilizables para Express (como validación de JWT, cabeceras, etc.).
+
+### ✅ Logger
+
+- Logger preconfigurado para todos los servicios (basado en consola y coloreado).
+
+### ✅ Cliente Redis
+
+- Cliente Redis reutilizable e inicializable dinámicamente.
+- Útil para features como blacklist de tokens o envío de notificaciones.
+
+### ✅ Sistema de Traducciones (i18n)
+
+- Traductor centralizado con `i18next`.
+- Soporte multilenguaje con interpolación (`{{variable}}`) y fallbacks.
+- Permite a los servicios responder en el idioma del cliente (por ejemplo, según `Accept-Language`).
 
 ---
 

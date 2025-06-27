@@ -1,4 +1,7 @@
+import { getI18n } from '@i18n/index'
 import z from 'zod'
+
+const i18n = getI18n()
 
 /**
  * Zod schema for validating a username (used as login identifier).
@@ -8,9 +11,10 @@ import z from 'zod'
  * - No spaces or special characters
  */
 export const UsernameSchema = z
-  .string({ required_error: 'Username is required' })
-  .min(3, 'Username must be at least 3 characters')
-  .max(30, 'Username must be at most 30 characters')
-  .regex(/^[a-zA-Z0-9_]+$/, 'Only letters, numbers and underscores are allowed')
+  .string({ required_error: i18n.t('core.schemas.login.username_required') })
+  .trim()
+  .min(3, i18n.t('core.schemas.login.username_min'))
+  .max(30, i18n.t('core.schemas.login.username_max'))
+  .regex(/^[a-zA-Z0-9_]+$/, i18n.t('core.schemas.login.username_invalid'))
 
 export type Username = z.infer<typeof UsernameSchema>

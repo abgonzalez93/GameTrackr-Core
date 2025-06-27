@@ -1,6 +1,9 @@
 import { UserEmailSchema, UsernameSchema, UserIdSchema } from '@schemas/user'
 import { SignedTokenPairSchema } from '@schemas/jwt'
+import { getI18n } from '@i18n/index'
 import z from 'zod'
+
+const i18n = getI18n()
 
 /**
  * Zod schema for validating user login input.
@@ -9,14 +12,14 @@ import z from 'zod'
  */
 export const LoginInputSchema = z
   .object({
-    identifier: z.string().min(3, 'Email or username is required'),
-    password: z.string({ required_error: 'Password is required' }).min(1, 'Password is required'),
+    identifier: z.string().min(3, i18n.t('core.schemas.login.identifier_required')),
+    password: z.string().min(1, i18n.t('core.schemas.login.password_required')),
   })
   .refine(
     ({ identifier }) => UserEmailSchema.safeParse(identifier).success || UsernameSchema.safeParse(identifier).success,
     {
       path: ['identifier'],
-      message: 'Identifier must be a valid email or username',
+      message: i18n.t('core.schemas.login.identifier_invalid'),
     },
   )
 

@@ -2,11 +2,15 @@
   "type": "module",
   "name": "@trackplay/core",
   "author": "Antonio Bueno Gonzalez",
-  "version": "1.0.71",
+  "version": "1.0.74",
   "private": false,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
+    "./clients": {
+      "import": "./dist/clients/index.js",
+      "types": "./dist/clients/index.d.ts"
+    },
     "./constants": {
       "import": "./dist/constants/index.js",
       "types": "./dist/constants/index.d.ts"
@@ -14,6 +18,10 @@
     "./errors": {
       "import": "./dist/errors/index.js",
       "types": "./dist/errors/index.d.ts"
+    },
+    "./i18n": {
+      "import": "./dist/i18n/index.js",
+      "types": "./dist/i18n/index.d.ts"
     },
     "./logger": {
       "import": "./dist/logger/index.js",
@@ -57,6 +65,8 @@
     "express": "^5.1.0",
     "express-rate-limit": "^7.5.1",
     "helmet": "^8.1.0",
+    "i18next": "^25.2.1",
+    "redis": "^5.5.6",
     "winston": "^3.17.0",
     "zod": "^3.25.67"
   },
@@ -69,10 +79,10 @@
     "barrelsby": "^2.8.1",
     "eslint": "^9.29.0",
     "eslint-config-prettier": "^10.1.5",
-    "eslint-plugin-prettier": "^5.5.0",
+    "eslint-plugin-prettier": "^5.5.1",
     "globals": "^16.2.0",
     "madge": "^8.0.0",
-    "prettier": "^3.6.1",
+    "prettier": "^3.6.2",
     "rimraf": "^6.0.1",
     "tsc-alias": "^1.8.16",
     "tsconfig-paths": "^4.2.0",

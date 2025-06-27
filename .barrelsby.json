@@ -1,8 +1,10 @@
 {
   "directory": [
     "./src",
+    "./src/clients",
     "./src/constants",
     "./src/errors",
+    "./src/i18n",
     "./src/logger",
     "./src/middlewares",
     "./src/schemas",

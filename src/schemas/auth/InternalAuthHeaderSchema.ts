@@ -6,8 +6,6 @@ import { z } from 'zod'
  * Expected: A base64-encoded secret string (64 bytes).
  * Example: generated with `openssl rand -base64 64`
  */
-export const InternalAuthHeaderSchema = z
-  .string()
-  .regex(/^[A-Za-z0-9+/=]{88}$/, { message: 'Invalid internal auth token format' })
+export const InternalAuthHeaderSchema = z.string().regex(/^[A-Za-z0-9+/=]{88}$/)
 
 export type InternalAuthHeader = z.infer<typeof InternalAuthHeaderSchema>

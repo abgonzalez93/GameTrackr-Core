@@ -1,11 +1,10 @@
 import { TrackPlayError } from '@errors/index'
+import { getI18n } from '@i18n/index'
 import winston from 'winston'
 
-export interface LoggerOptions {
-  isDevelopment?: boolean
-  label?: string
-  level?: 'info' | 'debug' | 'warn' | 'error'
-}
+const i18n = getI18n()
+
+let loggerInstance: winston.Logger | null = null
 
 const { combine, timestamp, label, printf, colorize } = winston.format
 
@@ -16,7 +15,11 @@ const consoleFormat = printf(({ level, message, label, timestamp }) => {
   return `[${timestamp}] [${label}] ${level}: ${message}`
 })
 
-let loggerInstance: winston.Logger | null = null
+export interface LoggerOptions {
+  isDevelopment?: boolean
+  label?: string
+  level?: 'info' | 'debug' | 'warn' | 'error'
+}
 
 /**
  * Initializes a singleton Winston logger instance with the provided options.
@@ -74,6 +77,6 @@ export const createLogger = (options: LoggerOptions = {}): winston.Logger => {
  * @throws Error if `createLogger()` has not been called yet
  */
 export const getLogger = (): winston.Logger => {
-  if (!loggerInstance) throw new TrackPlayError('Logger has not been initialized. Call createLogger() first.')
+  if (!loggerInstance) throw new TrackPlayError(i18n.t('core.logger.logger.uninitialized_logger'))
   return loggerInstance
 }

@@ -4,9 +4,7 @@ import { z } from 'zod'
 /**
  * Schema for a numeric string identifier (`sub`).
  */
-export const JWTSubSchema = NonEmptyStringSchema.regex(/^\d+$/, {
-  message: 'sub must be a numeric string',
-})
+export const JWTSubSchema = NonEmptyStringSchema.regex(/^\d+$/)
 
 /**
  * Schema for a unique JWT ID (`jti`), used for token revocation tracking.
