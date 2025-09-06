@@ -1,30 +1,25 @@
+import { TranslationParams } from '@utils/index'
 import { BadRequestError } from '@errors/index'
-import { ZodTypeAny } from 'zod'
+import z, { ZodType } from 'zod'
 
 /**
  * Parses and validates data using a Zod schema.
  * Throws a customizable error if validation fails.
  *
- * @template T - Inferred type from the schema
  * @param schema - Zod schema to validate against
  * @param data - Raw data to be validated
- * @param message - Optional custom error message
+ * @param message - Custom error message
  * @param ErrorClass - Optional custom error class to throw (default: BadRequestError)
  * @returns The parsed and typed data
- * @throws ErrorClass If validation fails
+ * @throws ErrorClass if validation fails
  */
-export const parseOrThrow = <T>(
-  schema: ZodTypeAny,
+export const parseOrThrow = <TSchema extends ZodType>(
+  schema: TSchema,
   data: unknown,
-  message = 'Invalid input',
-  ErrorClass: new (message: string, details?: unknown) => Error = BadRequestError,
-): T => {
+  message: string | TranslationParams = 'core.utils.parse.parseOrThrow.invalid_input',
+  ErrorClass: new (message: string | TranslationParams, details?: unknown) => Error = BadRequestError,
+): z.infer<TSchema> => {
   const parsed = schema.safeParse(data)
-
-  if (!parsed.success) {
-    const details = parsed.error.flatten?.() ?? parsed.error
-    throw new ErrorClass(message, details)
-  }
-
+  if (!parsed.success) throw new ErrorClass(message, z.treeifyError(parsed.error))
   return parsed.data
 }

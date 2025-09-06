@@ -1,6 +1,6 @@
-import { UserEmailSchema } from './UserEmailSchema'
 import { nullToUndefined } from '@schemas/shared'
-import { UserIdSchema } from './UserIdSchema'
+import { UserEmailSchema } from './UserEmail'
+import { UserIdSchema } from './UserCommon'
 import { z } from 'zod'
 
 /**

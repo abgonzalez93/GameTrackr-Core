@@ -1,4 +1,3 @@
-export * from './IGDBGameFiltersSchema'
-export * from './IGDBGameSchema'
-export * from './IGDBIdSchema'
-export * from './IGDBTokenSchema'
+export * from './IGDBCommon'
+export * from './IGDBGame'
+export * from './IGDBGameFilters'

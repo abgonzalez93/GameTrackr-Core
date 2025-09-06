@@ -15,11 +15,6 @@ export const en = {
     },
   },
   backend: {
-    clients: {
-      prisma: {
-        uninitialized_client: 'Prisma client has not been initialized. Make sure to call startPrisma() before usage.',
-      },
-    },
     services: {
       trackGameService: {
         already_tracking: 'You are already tracking this game.',
@@ -28,41 +23,42 @@ export const en = {
         user_not_found_by_id: 'We couldn’t find a user with that ID.',
         email_not_found: 'No account found with the email {{email}}.',
         username_not_found: 'No account found with the username {{username}}.',
-        invalid_credentials: 'Invalid email or password. Please try again.',
+        invalid_credentials: 'Invalid email, username or password. Please try again.',
         email_taken: 'The email {{email}} is already in use.',
         username_taken: 'The username {{username}} is already taken.',
       },
     },
     utils: {
-      requireToken: {
-        token_missing: '{{token}} is required but was not provided.',
-        token_header_invalid: '{{token}} is malformed or invalid.',
-        token_payload_invalid: '{{token}} contains invalid data.',
+      auth: {
+        requireToken: {
+          token_missing: '{{token}} is required but was not provided.',
+          token_header_invalid: '{{token}} is malformed or invalid.',
+          token_payload_invalid: '{{token}} contains invalid data.',
+        },
+        verifyToken: {
+          token_type_invalid: 'Token type mismatch. Expected "{{expectedType}}".',
+          token_expired: 'Your session has expired or the token is invalid. Please log in again.',
+        },
       },
-      verifyToken: {
-        token_type_invalid: 'Token type mismatch. Expected "{{expectedType}}".',
-        token_expired: 'Your session has expired or the token is invalid. Please log in again.',
+      mappers: {
+        toPublicUser: {
+          invalid_format: 'Unexpected user data format. Please contact support.',
+        },
       },
-      toPublicUser: {
-        invalid_format: 'Unexpected user data format. Please contact support.',
-      },
-      passwordUtils: {
-        invalid_credentials: 'Incorrect email or password.',
+      password: {
+        passwordUtils: {
+          invalid_credentials: 'Incorrect email or password.',
+        },
       },
     },
   },
   core: {
-    clients: {
-      redis: {
-        uninitialized_client: 'Redis client has not been initialized. Make sure to call startRedis() before usage.',
-      },
-    },
-    logger: {
-      logger: {
-        uninitialized_logger: 'Logger has not been initialized. Make sure to call createLogger() before usage.',
-      },
-    },
     middlewares: {
+      createErrorHandler: {
+        buildErrorResponse: {
+          unexpected_error: 'Unexpected error',
+        },
+      },
       createNotFoundHandler: {
         route_not_found: "The requested route '{{url}}' does not exist on this server.",
       },
@@ -78,24 +74,32 @@ export const en = {
         string_empty: 'This field cannot be empty',
         url_invalid: 'Please enter a valid URL',
         number_invalid: 'This field must be a number',
-        number_positive: 'Please enter a positive number',
+        number_integer: 'This field must be an integer number',
+        number_positive: 'This field must be a positive number',
         port_range: 'Port must be between 1 and 9999',
       },
-      CreateUserSchema: {
+      CreateUser: {
         password_invalid: 'Password must include uppercase, lowercase, number and special character',
         password_confirm_required: 'Password confirmation is required',
         password_mismatch: 'Passwords must match',
       },
-      UserEmailSchema: {
+      UserEmail: {
         email_required: 'Email is required',
         email_invalid: 'Invalid email address format',
         email_disposable: 'Disposable email addresses are not allowed',
       },
-      UsernameSchema: {
+      UserName: {
         username_required: 'Username is required',
         username_min: 'Username must be at least 3 characters',
         username_max: 'Username must be at most 30 characters',
         username_invalid: 'Only letters, numbers and underscores are allowed',
+      },
+    },
+    utils: {
+      parse: {
+        parseOrThrow: {
+          invalid_input: 'Invalid input',
+        },
       },
     },
   },

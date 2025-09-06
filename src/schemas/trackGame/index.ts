@@ -1,1 +1,1 @@
-export * from './TrackGameSchema'
+export * from './TrackGame'

@@ -1,9 +1,8 @@
-import { UserEmailSchema, UsernameSchema, UserIdSchema } from '@schemas/user'
+import { UserEmailSchema, UserNameSchema, UserIdSchema } from '@schemas/user'
 import { SignedTokenPairSchema } from '@schemas/jwt'
-import { getI18n } from '@i18n/index'
 import z from 'zod'
 
-const i18n = getI18n()
+const path = 'core.schemas.login'
 
 /**
  * Zod schema for validating user login input.
@@ -12,14 +11,14 @@ const i18n = getI18n()
  */
 export const LoginInputSchema = z
   .object({
-    identifier: z.string().min(3, i18n.t('core.schemas.login.identifier_required')),
-    password: z.string().min(1, i18n.t('core.schemas.login.password_required')),
+    identifier: z.string().min(3, `${path}.identifier_required`),
+    password: z.string().min(1, `${path}.password_required`),
   })
   .refine(
-    ({ identifier }) => UserEmailSchema.safeParse(identifier).success || UsernameSchema.safeParse(identifier).success,
+    ({ identifier }) => UserEmailSchema.safeParse(identifier).success || UserNameSchema.safeParse(identifier).success,
     {
       path: ['identifier'],
-      message: i18n.t('core.schemas.login.identifier_invalid'),
+      error: () => `${path}.identifier_invalid`,
     },
   )
 
@@ -45,7 +44,7 @@ export const ForgotPasswordSchema = z.object({
   email: UserEmailSchema,
 })
 
-export type ForgotPasswordInput = z.infer<typeof ForgotPasswordSchema>
+export type ForgotPassword = z.infer<typeof ForgotPasswordSchema>
 
 /**
  * Zod schema for validating a password change request.
@@ -57,7 +56,7 @@ export const ChangePasswordSchema = z.object({
   newPassword: z.string().min(8),
 })
 
-export type ChangePasswordInput = z.infer<typeof ChangePasswordSchema>
+export type ChangePassword = z.infer<typeof ChangePasswordSchema>
 
 /**
  * Zod schema for validating a username change request.
@@ -69,4 +68,4 @@ export const ChangeUsernameSchema = z.object({
   newUsername: z.string().min(3),
 })
 
-export type ChangeUsernameInput = z.infer<typeof ChangeUsernameSchema>
+export type ChangeUsername = z.infer<typeof ChangeUsernameSchema>

@@ -1,4 +1,4 @@
-import { ZodTypeAny } from 'zod'
+import { ZodType } from 'zod'
 
 /**
  * Transforms a nullable Zod schema to output `undefined` instead of `null`.
@@ -6,7 +6,7 @@ import { ZodTypeAny } from 'zod'
  * @param schema - The base Zod schema
  * @returns A new schema that accepts `null` but transforms it to `undefined`
  */
-export const nullToUndefined = <T extends ZodTypeAny>(schema: T) =>
+export const nullToUndefined = <TSchema extends ZodType>(schema: TSchema) =>
   schema
     .nullable()
     .transform((v) => v ?? undefined)

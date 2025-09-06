@@ -5,7 +5,7 @@ import { z } from 'zod'
 /**
  * Common base for both access and refresh tokens.
  */
-const BaseTokenPayloadSchema = z.object({
+const BaseTokenPayload = z.object({
   sub: JWTSubSchema,
   exp: JWTExpSchema,
   jti: JWTJtiSchema,
@@ -15,7 +15,7 @@ const BaseTokenPayloadSchema = z.object({
 /**
  * Schema for access token payload.
  */
-export const AccessTokenPayloadSchema = BaseTokenPayloadSchema.extend({
+export const AccessTokenPayloadSchema = BaseTokenPayload.extend({
   typ: z.literal('access'),
   roles: OptionalStringArraySchema,
   scopes: OptionalStringArraySchema,
@@ -26,7 +26,7 @@ export type AccessTokenPayload = z.infer<typeof AccessTokenPayloadSchema>
 /**
  * Schema for refresh token payload.
  */
-export const RefreshTokenPayloadSchema = BaseTokenPayloadSchema.extend({
+export const RefreshTokenPayloadSchema = BaseTokenPayload.extend({
   typ: z.literal('refresh'),
 })
 
@@ -37,4 +37,4 @@ export type RefreshTokenPayload = z.infer<typeof RefreshTokenPayloadSchema>
  */
 export const JWTPayloadUnionSchema = z.union([AccessTokenPayloadSchema, RefreshTokenPayloadSchema])
 
-export type JWTPayload = AccessTokenPayload | RefreshTokenPayload
+export type JWTPayloadUnion = z.infer<typeof JWTPayloadUnionSchema>

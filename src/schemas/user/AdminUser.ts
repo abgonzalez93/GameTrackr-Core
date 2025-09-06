@@ -1,5 +1,5 @@
-import { PublicUserSchema } from './PublicUserSchema'
 import { nullToUndefined } from '@schemas/shared'
+import { PublicUserSchema } from './PublicUser'
 import { z } from 'zod'
 
 /**
@@ -11,7 +11,7 @@ import { z } from 'zod'
  * This schema is intended for use in backend services, dashboards,
  * or administrative tools where full user data is required.
  *
- * @see PublicUserSchema for the public-facing subset of this schema
+ * @see PublicUser for the public-facing subset of this schema
  */
 export const AdminUserSchema = PublicUserSchema.extend({
   isAdmin: z.boolean(),

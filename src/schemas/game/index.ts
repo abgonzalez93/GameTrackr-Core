@@ -1,1 +1,1 @@
-export * from './CreateGameSchema'
+export * from './CreateGame'

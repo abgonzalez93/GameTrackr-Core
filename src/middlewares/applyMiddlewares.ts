@@ -1,7 +1,7 @@
-import { ErrorHandlerOptions, NotFoundHandlerOptions } from '@middlewares/index'
+import { ErrorHandlerOptions } from '@middlewares/index'
+import { Express, json, RequestHandler } from 'express'
 import helmet, { HelmetOptions } from 'helmet'
 import cors, { CorsOptions } from 'cors'
-import { Express, json } from 'express'
 import compression from 'compression'
 
 export interface MiddlewareOptions {
@@ -10,7 +10,13 @@ export interface MiddlewareOptions {
   enableCompression?: boolean
   enableJson?: boolean
   errorHandler?: ErrorHandlerOptions
-  notFoundHandler?: NotFoundHandlerOptions
+}
+
+/**
+ * Applies a middleware only if its options are not false.
+ */
+const useIfEnabled = <Options>(app: Express, middleware: (options?: Options) => RequestHandler, opts?: Options | false) => {
+  if (opts !== false) app.use(middleware(opts))
 }
 
 /**
@@ -19,8 +25,9 @@ export interface MiddlewareOptions {
 export const applyMiddlewares = (app: Express, options: MiddlewareOptions = {}): void => {
   const { helmet: helmetOpts = {}, cors: corsOpts = {}, enableCompression = true, enableJson = true } = options
 
-  if (helmetOpts !== false) app.use(helmet(helmetOpts))
-  if (corsOpts !== false) app.use(cors(corsOpts))
+  useIfEnabled(app, helmet, helmetOpts)
+  useIfEnabled(app, cors, corsOpts)
+
   if (enableCompression) app.use(compression())
   if (enableJson) app.use(json())
 }

@@ -1,4 +1,5 @@
 import { TrackPlayError } from './TrackPlayError'
+import { TranslationParams } from '@utils/index'
 import { HTTP_STATUS } from '@constants/index'
 
 /**
@@ -10,7 +11,7 @@ import { HTTP_STATUS } from '@constants/index'
  * @extends TrackPlayError
  */
 export class BadRequestError extends TrackPlayError {
-  constructor(message = 'Bad request', details?: unknown) {
+  constructor(message: string | TranslationParams = 'Bad request', details?: unknown) {
     super(message, HTTP_STATUS.BAD_REQUEST, 'Bad Request', details)
   }
 }
@@ -24,7 +25,7 @@ export class BadRequestError extends TrackPlayError {
  * @extends TrackPlayError
  */
 export class UnauthorizedError extends TrackPlayError {
-  constructor(message = 'Unauthorized', details?: unknown) {
+  constructor(message: string | TranslationParams = 'Unauthorized', details?: unknown) {
     super(message, HTTP_STATUS.UNAUTHORIZED, 'Unauthorized', details)
   }
 }
@@ -38,7 +39,7 @@ export class UnauthorizedError extends TrackPlayError {
  * @extends TrackPlayError
  */
 export class ForbiddenError extends TrackPlayError {
-  constructor(message = 'Forbidden', details?: unknown) {
+  constructor(message: string | TranslationParams = 'Forbidden', details?: unknown) {
     super(message, HTTP_STATUS.FORBIDDEN, 'Forbidden', details)
   }
 }
@@ -52,7 +53,7 @@ export class ForbiddenError extends TrackPlayError {
  * @extends TrackPlayError
  */
 export class NotFoundError extends TrackPlayError {
-  constructor(message = 'Not found', details?: unknown) {
+  constructor(message: string | TranslationParams = 'Not found', details?: unknown) {
     super(message, HTTP_STATUS.NOT_FOUND, 'Not Found', details)
   }
 }
@@ -66,7 +67,7 @@ export class NotFoundError extends TrackPlayError {
  * @extends TrackPlayError
  */
 export class ConflictError extends TrackPlayError {
-  constructor(message = 'Conflict', details?: unknown) {
+  constructor(message: string | TranslationParams = 'Conflict', details?: unknown) {
     super(message, HTTP_STATUS.CONFLICT, 'Conflict', details)
   }
 }
@@ -80,7 +81,7 @@ export class ConflictError extends TrackPlayError {
  * @extends TrackPlayError
  */
 export class UnprocessableEntityError extends TrackPlayError {
-  constructor(message = 'Unprocessable entity', details?: unknown) {
+  constructor(message: string | TranslationParams = 'Unprocessable entity', details?: unknown) {
     super(message, HTTP_STATUS.UNPROCESSABLE_ENTITY, 'Unprocessable Entity', details)
   }
 }
@@ -94,7 +95,7 @@ export class UnprocessableEntityError extends TrackPlayError {
  * @extends TrackPlayError
  */
 export class TooManyRequestsError extends TrackPlayError {
-  constructor(message = 'Too many requests', details?: unknown) {
+  constructor(message: string | TranslationParams = 'Too many requests', details?: unknown) {
     super(message, HTTP_STATUS.TOO_MANY_REQUESTS, 'Too Many Requests', details)
   }
 }

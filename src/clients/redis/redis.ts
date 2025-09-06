@@ -1,51 +1,26 @@
-import { createClient, RedisClientType } from 'redis'
-import { TrackPlayError } from '@errors/index'
-import { getLogger } from '@logger/index'
-import { getI18n } from '@i18n/index'
-
-const i18n = getI18n()
-const log = getLogger()
-
-let redisClient: RedisClientType | null = null
-
-export type RedisOptions = {
-  url: string
-}
+import { RedisClientType, createClient } from 'redis'
+import { Logger } from 'winston'
 
 /**
- * Initializes and connects a shared Redis client with the given URL.
+ * Creates a Redis client instance.
  *
- * This function must be called once during app bootstrap.
- *
- * @param options - Redis connection configuration
+ * @param url - The URL of the Redis server.
+ * @returns A Redis client instance.
  */
-export const startRedis = async ({ url }: RedisOptions): Promise<void> => {
-  if (redisClient) {
-    log.warn('Redis client already initialized. Skipping.')
-    return
-  }
+export const createRedis = (url: string): RedisClientType => createClient({ url })
 
-  redisClient = createClient({ url })
-
-  redisClient.on('error', (error) => {
-    log.error('❌ Redis client error:', error)
-  })
-
+/**
+ * Connects to the Redis server using the provided client.
+ *
+ * @param client - The Redis client instance.
+ * @param logger - The Wiston logger instance.
+ */
+export const connectRedis = async (client: RedisClientType, logger: Logger): Promise<void> => {
   try {
-    await redisClient.connect()
-    log.info('✅ Redis connected')
+    await client.connect()
+    logger.info('✅ Redis connected')
   } catch (error) {
-    log.error('❌ Failed to connect to Redis:', error)
+    logger.error('❌ Failed to connect to Redis:', error)
     process.exit(1)
   }
-}
-
-/**
- * Returns the initialized Redis client.
- *
- * @throws If called before `startRedis`
- */
-export const getRedis = (): RedisClientType => {
-  if (!redisClient) throw new TrackPlayError(i18n.t('core.clients.redis.uninitialized_client'))
-  return redisClient
 }

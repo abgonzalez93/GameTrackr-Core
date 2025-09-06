@@ -1,4 +1,4 @@
-import { IGDBIdSchema } from './IGDBIdSchema'
+import { IGDBIdSchema } from './IGDBCommon'
 import { z } from 'zod'
 
 /**

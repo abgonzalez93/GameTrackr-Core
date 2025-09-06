@@ -1,22 +1,27 @@
 import i18next, { i18n as I18nInstance } from 'i18next'
-import { TrackPlayError } from '@errors/index'
 import { en, es } from './locales'
 
-let i18nInstance: I18nInstance | null = null
+/**
+ * Creates a new i18n instance.
+ *
+ * This function returns a fresh instance of i18next.
+ * It does not initialize it — use `initI18n` after creation.
+ *
+ * @returns A new uninitialized i18n instance
+ */
+export const createI18n = (): I18nInstance => {
+  return i18next.createInstance()
+}
 
 /**
- * Initializes the i18n instance with core translations.
+ * Initializes the provided i18n instance with default translations and options.
  *
- * This should be called once per service at startup.
- *
- * @param initialLang - Initial language (default: 'en')
+ * @param instance - A fresh i18n instance (created with `createI18n`)
+ * @param initialLang - Initial language code (default: 'en')
+ * @returns The initialized i18n instance
  */
-export const createI18n = async (initialLang = 'en'): Promise<I18nInstance> => {
-  if (i18nInstance) return i18nInstance
-
-  i18nInstance = i18next.createInstance()
-
-  await i18nInstance.init({
+export const initI18n = async (instance: I18nInstance, initialLang: string = 'en'): Promise<I18nInstance> => {
+  await instance.init({
     lng: initialLang,
     fallbackLng: 'en',
     resources: {
@@ -28,25 +33,5 @@ export const createI18n = async (initialLang = 'en'): Promise<I18nInstance> => {
     },
   })
 
-  return i18nInstance
-}
-
-/**
- * Returns the initialized i18n instance.
- *
- * @throws If `createI18n()` has not been called yet.
- */
-export const getI18n = (): I18nInstance => {
-  if (!i18nInstance) throw new TrackPlayError('i18n has not been initialized. Call createI18n() first.')
-  return i18nInstance
-}
-
-/**
- * Changes the current language.
- *
- * @param lang - Language code (e.g. 'en', 'es')
- */
-export const setLanguage = (lang: string): void => {
-  if (!i18nInstance) throw new TrackPlayError('i18n has not been initialized. Call createI18n() first.')
-  i18nInstance.changeLanguage(lang)
+  return instance
 }
