@@ -1,6 +1,7 @@
+import { CorePath } from '@i18n/index'
 import { z } from 'zod'
 
-const path = 'core.schemas.shared'
+const path: CorePath = 'core.schemas.shared'
 
 /**
  * Zod schema for validating the Node environment.

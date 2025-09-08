@@ -101,6 +101,10 @@ export const en = {
           invalid_input: 'Invalid input',
         },
       },
+      translate: {
+        invalid_key: 'Invalid translation key "{key}"',
+        invalid_key_type: 'Translation key "{key}" must be a string',
+      },
     },
   },
   igdb: {
@@ -117,4 +121,4 @@ export const en = {
     },
   },
   notifications: {},
-}
+} as const

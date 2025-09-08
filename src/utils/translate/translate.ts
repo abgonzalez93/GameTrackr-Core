@@ -1,4 +1,5 @@
-import { en } from '@i18n/index'
+import { BadRequestError } from '@errors/index'
+import { CorePath, en } from '@i18n/index'
 import { i18n } from 'i18next'
 
 export type TranslationVariables = Record<string, string | number>
@@ -8,26 +9,41 @@ export interface TranslationParams {
   variables?: TranslationVariables
 }
 
+const path: CorePath = 'core.utils.translate'
+
 /**
- * Checks if a given string exists as a translation key within a nested JSON object.
- * Supports nested keys separated by dots (e.g., "core.schemas.login").
+ * Validates whether a given string is a valid translation key within the provided translations object.
  *
- * @param key - The translation key to check.
- * @param obj - The JSON object containing translation keys. Defaults to the English translations (`en`).
- * @returns `true` if the key exists and points to a string value, otherwise `false`.
+ * - Supports nested keys separated by dots (e.g., `"core.schemas.login"`).
+ * - Throws an error if the key does not exist or does not map to a string value.
+ *
+ * @param key - The translation key to validate.
+ * @param obj - The translation dictionary to check against. Defaults to English translations (`en`).
+ * @throws Error if the key is invalid or does not map to a string.
  */
-const isTranslationKey = (key: string, obj: Record<string, unknown> = en): boolean => {
-  if (!key?.trim()) return false
+const isTranslationKey = (key: string, obj: Record<string, unknown> = en): void => {
+  if (!key.includes('.')) return
 
   const parts = key.split('.')
   let current: unknown = obj
 
   for (const part of parts) {
-    if (!current || typeof current !== 'object' || !(part in current)) return false
+    if (!current || typeof current !== 'object' || !(part in current)) {
+      throw new BadRequestError({
+        key: `${path}.invalid_key`,
+        variables: { key },
+      })
+    }
+
     current = (current as Record<string, unknown>)[part]
   }
 
-  return typeof current === 'string'
+  if (typeof current !== 'string') {
+    throw new BadRequestError({
+      key: `${path}.invalid_key_type`,
+      variables: { key },
+    })
+  }
 }
 
 /**
@@ -42,20 +58,26 @@ const serializeTranslation = (key: string, variables?: TranslationVariables): st
   JSON.stringify({ key, variables: variables || undefined })
 
 /**
- * Determines the final error message for TrackPlay errors.
+ * Formats an error message into a consistent string format.
  *
  * Behavior:
- * - If `message` is a string and matches a translation key → serializes it using `serializeTranslation`.
- * - If `message` is a string but not a translation key → returns it as-is (plain text).
- * - If `message` is an object of type `TranslationParams` → serializes key + variables.
+ * - If `message` is a valid translation key → returns a serialized JSON string.
+ * - If `message` is a plain string without matching translation → returns it as-is.
+ * - If `message` is a `TranslationParams` object → serializes its key + variables.
  *
- * @param message - The message to format, either a plain string or `TranslationParams`.
- * @returns A string ready to be used in error handling or logs. If the message is a translation, it is JSON-serialized.
+ * @param message - The message to format, either a string or a `TranslationParams` object.
+ * @returns A string suitable for logs, responses, or error handling.
  */
 export const formatErrorMessage = (message: string | TranslationParams): string => {
   if (typeof message === 'string') {
-    return isTranslationKey(message) ? serializeTranslation(message) : message
+    try {
+      isTranslationKey(message)
+      return serializeTranslation(message)
+    } catch {
+      return message
+    }
   } else {
+    isTranslationKey(message.key)
     return serializeTranslation(message.key, message.variables)
   }
 }

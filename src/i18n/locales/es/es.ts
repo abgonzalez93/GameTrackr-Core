@@ -117,4 +117,4 @@ export const es = {
     },
   },
   notifications: {},
-}
+} as const
