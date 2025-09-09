@@ -1,5 +1,5 @@
 import { JWTSubSchema, JWTExpSchema, JWTJtiSchema } from './jwt.shared'
-import { NonEmptyStringSchema } from '@schemas/index'
+import { NonEmptyStringSchema } from '@schemas/shared'
 import { z } from 'zod'
 
 /**

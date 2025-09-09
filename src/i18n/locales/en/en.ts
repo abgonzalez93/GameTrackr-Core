@@ -102,8 +102,8 @@ export const en = {
         },
       },
       translate: {
-        invalid_key: 'Invalid translation key "{key}"',
-        invalid_key_type: 'Translation key "{key}" must be a string',
+        invalid_key: 'Invalid translation key',
+        invalid_key_type: 'Translation key must be a string',
       },
     },
   },
@@ -121,4 +121,4 @@ export const en = {
     },
   },
   notifications: {},
-} as const
+}

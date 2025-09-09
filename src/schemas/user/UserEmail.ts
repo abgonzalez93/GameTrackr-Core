@@ -1,7 +1,6 @@
-import { CorePath } from '@i18n/index'
 import { z } from 'zod'
 
-const path: CorePath = 'core.schemas.UserEmail'
+const path = 'core.schemas.UserEmail'
 
 /**
  * List of blocked disposable or temporary email domains.

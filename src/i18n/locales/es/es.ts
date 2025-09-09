@@ -101,6 +101,10 @@ export const es = {
           invalid_input: 'Entrada no válida',
         },
       },
+      translate: {
+        invalid_key: 'Clave de traducción inválida',
+        invalid_key_type: 'La clave de traducción debe ser un string',
+      },
     },
   },
   igdb: {
@@ -117,4 +121,4 @@ export const es = {
     },
   },
   notifications: {},
-} as const
+}

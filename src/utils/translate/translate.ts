@@ -1,5 +1,5 @@
 import { BadRequestError } from '@errors/index'
-import { CorePath, en } from '@i18n/index'
+import { en } from '@i18n/index'
 import { i18n } from 'i18next'
 
 export type TranslationVariables = Record<string, string | number>
@@ -9,7 +9,7 @@ export interface TranslationParams {
   variables?: TranslationVariables
 }
 
-const path: CorePath = 'core.utils.translate'
+const path = 'core.utils.translate'
 
 /**
  * Validates whether a given string is a valid translation key within the provided translations object.
@@ -28,22 +28,11 @@ const isTranslationKey = (key: string, obj: Record<string, unknown> = en): void 
   let current: unknown = obj
 
   for (const part of parts) {
-    if (!current || typeof current !== 'object' || !(part in current)) {
-      throw new BadRequestError({
-        key: `${path}.invalid_key`,
-        variables: { key },
-      })
-    }
-
+    if (!current || typeof current !== 'object' || !(part in current)) throw new BadRequestError(`${path}.invalid_key`)
     current = (current as Record<string, unknown>)[part]
   }
 
-  if (typeof current !== 'string') {
-    throw new BadRequestError({
-      key: `${path}.invalid_key_type`,
-      variables: { key },
-    })
-  }
+  if (typeof current !== 'string') throw new BadRequestError(`${path}.invalid_key_type`)
 }
 
 /**

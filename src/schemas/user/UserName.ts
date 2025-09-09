@@ -1,7 +1,6 @@
-import { CorePath } from '@i18n/index'
 import { z } from 'zod'
 
-const path: CorePath = 'core.schemas.UserName'
+const path = 'core.schemas.UserName'
 
 /**
  * Zod schema for validating a username (used as login identifier).

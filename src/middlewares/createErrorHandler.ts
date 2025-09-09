@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express'
 import { TrackPlayError } from '@errors/index'
 import { HTTP_STATUS } from '@constants/index'
 import { translate } from '@utils/index'
-import { CorePath } from '@i18n/index'
 import { Logger } from 'winston'
 import { i18n } from 'i18next'
 
@@ -17,8 +16,9 @@ const buildErrorResponse = (error: unknown, i18n: i18n, isDevelopment: boolean) 
   const isTrackPlayError = error instanceof TrackPlayError
   const statusCode = isTrackPlayError ? error.statusCode : HTTP_STATUS.INTERNAL_SERVER_ERROR
 
-  const path: CorePath = 'core.middlewares.createErrorHandler.buildErrorResponse.unexpected_error'
-  const rawMessage = isTrackPlayError ? error.message : path
+  const rawMessage = isTrackPlayError
+    ? error.message
+    : 'core.middlewares.createErrorHandler.buildErrorResponse.unexpected_error'
   const message = translate(i18n, rawMessage)
 
   const name = isTrackPlayError ? error.name : 'Error'

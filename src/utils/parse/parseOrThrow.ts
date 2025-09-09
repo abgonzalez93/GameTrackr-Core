@@ -1,9 +1,6 @@
 import { TranslationParams } from '@utils/index'
 import { BadRequestError } from '@errors/index'
-import { CorePath } from '@i18n/index'
 import z, { ZodType } from 'zod'
-
-const path: CorePath = 'core.utils.parse.parseOrThrow.invalid_input'
 
 /**
  * Parses and validates data using a Zod schema.
@@ -19,7 +16,7 @@ const path: CorePath = 'core.utils.parse.parseOrThrow.invalid_input'
 export const parseOrThrow = <TSchema extends ZodType>(
   schema: TSchema,
   data: unknown,
-  message: string | TranslationParams = path,
+  message: string | TranslationParams = 'core.utils.parse.parseOrThrow.invalid_input',
   ErrorClass: new (message: string | TranslationParams, details?: unknown) => Error = BadRequestError,
 ): z.infer<TSchema> => {
   const parsed = schema.safeParse(data)

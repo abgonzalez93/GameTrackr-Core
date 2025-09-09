@@ -1,7 +1,6 @@
-import { CorePath } from '@i18n/index'
 import { z } from 'zod'
 
-const path: CorePath = 'core.schemas.shared'
+const path = 'core.schemas.shared'
 
 /**
  * Zod schema for validating the Node environment.
@@ -29,7 +28,7 @@ export const NonEmptyStringSchema = z.string().min(1, { error: () => `${path}.st
  *
  * Ensures the string is a properly formatted HTTP(S)/FTP/etc. URL.
  */
-export const UrlStringSchema = z.url({ error: () => `${path}.url_invalid` })
+export const UrlSchema = z.url({ error: () => `${path}.url_invalid` })
 
 /**
  * Zod schema for validating a positive number in seconds.

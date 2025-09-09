@@ -1,11 +1,10 @@
 import { nullToUndefined } from '@schemas/shared'
 import { UserEmailSchema } from './UserEmail'
 import { UserNameSchema } from './UserName'
-import { CorePath } from '@i18n/index'
 import { z } from 'zod'
 
-const path: CorePath = 'core.schemas.CreateUser'
 const passwordRequirementsRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/
+const path = 'core.schemas.CreateUser'
 
 /**
  * Zod schema for creating a new user.

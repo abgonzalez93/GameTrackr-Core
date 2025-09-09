@@ -1,9 +1,8 @@
 import { UserEmailSchema, UserNameSchema, UserIdSchema } from '@schemas/user'
 import { SignedTokenPairSchema } from '@schemas/jwt'
-import { CorePath } from '@i18n/index'
 import z from 'zod'
 
-const path: CorePath = 'core.schemas.login'
+const path = 'core.schemas.login'
 
 /**
  * Zod schema for validating user login input.
