@@ -1,6 +1,5 @@
 export * from './auth/index'
 export * from './game/index'
-export * from './igdb/index'
 export * from './jwt/index'
 export * from './login/index'
 export * from './shared/index'

@@ -1,1 +1,1 @@
-export * from './parseOrThrow'
+export * from './validateSchema'

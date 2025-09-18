@@ -1,4 +1,3 @@
-import { nullToUndefined } from '@schemas/shared'
 import { z } from 'zod'
 
 /**
@@ -8,8 +7,8 @@ export const TrackGameSchema = z.object({
   userId: z.number().int(),
   gameId: z.number().int(),
   status: z.enum(['wishlist', 'playing', 'completed', 'dropped']),
-  rating: nullToUndefined(z.number().int().min(1).max(10)),
-  notes: nullToUndefined(z.string().max(1000)),
+  rating: z.number().int().min(1).max(10),
+  notes: z.string().max(1000),
 })
 
 export type TrackGame = z.infer<typeof TrackGameSchema>

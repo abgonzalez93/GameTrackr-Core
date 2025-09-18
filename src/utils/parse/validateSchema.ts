@@ -13,10 +13,10 @@ import z, { ZodType } from 'zod'
  * @returns The parsed and typed data
  * @throws ErrorClass if validation fails
  */
-export const parseOrThrow = <TSchema extends ZodType>(
+export const validateSchema = <TSchema extends ZodType>(
   schema: TSchema,
   data: unknown,
-  message: string | TranslationParams = 'core.utils.parse.parseOrThrow.invalid_input',
+  message: string | TranslationParams = 'core.utils.parse.validateSchema.invalid_input',
   ErrorClass: new (message: string | TranslationParams, details?: unknown) => Error = BadRequestError,
 ): z.infer<TSchema> => {
   const parsed = schema.safeParse(data)

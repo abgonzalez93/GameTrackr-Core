@@ -17,7 +17,7 @@ El paquete incluye:
 
 ### ✅ Utilidades
 
-- Funciones genéricas (`parseOrThrow`, `toPublicUser`, etc.)
+- Funciones genéricas (`validateSchema`, `toPublicUser`, etc.)
 - Utilidades de hashing, validación, formateo, etc.
 
 ### ✅ Errores

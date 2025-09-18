@@ -1,4 +1,3 @@
-import { nullToUndefined } from '@schemas/shared'
 import { PublicUserSchema } from './PublicUser'
 import { z } from 'zod'
 
@@ -18,7 +17,7 @@ export const AdminUserSchema = PublicUserSchema.extend({
   isActive: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
-  lastLoginAt: nullToUndefined(z.string()),
+  lastLoginAt: z.string().nullable().optional(),
 })
 
 export type AdminUser = z.infer<typeof AdminUserSchema>

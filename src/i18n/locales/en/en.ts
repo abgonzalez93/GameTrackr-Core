@@ -40,11 +40,6 @@ export const en = {
           token_expired: 'Your session has expired or the token is invalid. Please log in again.',
         },
       },
-      mappers: {
-        toPublicUser: {
-          invalid_format: 'Unexpected user data format. Please contact support.',
-        },
-      },
       password: {
         passwordUtils: {
           invalid_credentials: 'Incorrect email or password.',
@@ -97,7 +92,7 @@ export const en = {
     },
     utils: {
       parse: {
-        parseOrThrow: {
+        validateSchema: {
           invalid_input: 'Invalid input',
         },
       },
@@ -108,15 +103,33 @@ export const en = {
     },
   },
   igdb: {
+    controllers: {
+      igdbController: {
+        invalid_filters: 'Invalid filters format in query parameters.',
+        invalid_id: 'Invalid game ID format in path parameter.',
+      },
+    },
     services: {
-      igdbService: {
+      igdbAuthService: {
         token_invalid_format: 'IGDB token response is not in a valid format',
         auth_failed: 'Unable to authenticate with IGDB. Please check your credentials.',
+      },
+      igdbGameService: {
         games_invalid_format: 'IGDB game list response is not in a valid format',
         games_fetch_failed: 'An error occurred while retrieving games from IGDB',
         game_not_found: 'No game found with the provided IGDB ID',
-        game_invalid_format: 'IGDB game response is not in a valid format',
-        game_fetch_failed: 'An error occurred while fetching the game details from IGDB',
+      },
+      igdbGenreService: {
+        genres_invalid_format: 'IGDB genre list response is not in a valid format',
+        genres_fetch_failed: 'An error occurred while retrieving genres from IGDB',
+      },
+      igdbPlatformService: {
+        platforms_invalid_format: 'IGDB platform list response is not in a valid format',
+        platforms_fetch_failed: 'An error occurred while retrieving platforms from IGDB',
+      },
+      igdbThemeService: {
+        themes_invalid_format: 'IGDB theme list response is not in a valid format',
+        themes_fetch_failed: 'An error occurred while retrieving themes from IGDB',
       },
     },
   },

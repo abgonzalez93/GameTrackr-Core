@@ -1,6 +1,6 @@
 export * from './AdminUser'
 export * from './CreateUser'
 export * from './PublicUser'
-export * from './UserCommon'
 export * from './UserEmail'
+export * from './UserId'
 export * from './UserName'

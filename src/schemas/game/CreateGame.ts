@@ -1,15 +1,15 @@
-import { nullToUndefined } from '@schemas/shared'
+import { PositiveNumberSchema } from '@schemas/shared'
 import { z } from 'zod'
 
 /**
  * Zod schema for creating a game entry.
  */
 export const CreateGameSchema = z.object({
-  igdbId: z.number().int(),
+  id: PositiveNumberSchema,
   name: z.string().min(1),
-  summary: nullToUndefined(z.string()),
-  coverUrl: nullToUndefined(z.string().url()),
-  releaseDate: nullToUndefined(z.coerce.date()),
+  summary: z.string().nullable().optional(),
+  coverUrl: z.url().nullable().optional(),
+  releaseDate: z.coerce.date().nullable().optional(),
   genres: z.array(z.string()),
   platforms: z.array(z.string()),
 })

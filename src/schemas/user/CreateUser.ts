@@ -1,4 +1,3 @@
-import { nullToUndefined } from '@schemas/shared'
 import { UserEmailSchema } from './UserEmail'
 import { UserNameSchema } from './UserName'
 import { z } from 'zod'
@@ -12,11 +11,11 @@ const path = 'core.schemas.CreateUser'
 export const CreateUserBaseSchema = z
   .object({
     email: UserEmailSchema,
-    name: nullToUndefined(z.string()),
+    name: z.string().nullable().optional(),
     password: z.string().min(8).regex(passwordRequirementsRegex, `${path}.password_invalid`),
     username: UserNameSchema,
-    avatarUrl: nullToUndefined(z.url()),
-    bio: nullToUndefined(z.string().max(280)),
+    avatarUrl: z.url().nullable().optional(),
+    bio: z.string().max(280).nullable().optional(),
     passwordConfirm: z.string().min(8, `${path}.password_confirm_required`),
   })
   .refine((data) => data.password === data.passwordConfirm, {

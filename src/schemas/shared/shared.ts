@@ -31,7 +31,7 @@ export const NonEmptyStringSchema = z.string().min(1, { error: () => `${path}.st
 export const UrlSchema = z.url({ error: () => `${path}.url_invalid` })
 
 /**
- * Zod schema for validating a positive number in seconds.
+ * Zod schema for validating a positive number.
  *
  * Coerces the input to an integer and checks that it is positive.
  * Useful for durations, expirations, etc.

@@ -7,6 +7,7 @@
     "./src/i18n",
     "./src/logger",
     "./src/middlewares",
+    "./src/providers",
     "./src/schemas",
     "./src/server",
     "./src/utils"
