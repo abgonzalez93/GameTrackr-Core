@@ -2,7 +2,7 @@
   "type": "module",
   "name": "@trackplay/core",
   "author": "Antonio Bueno Gonzalez",
-  "version": "1.1.17",
+  "version": "1.1.19",
   "private": false,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -31,9 +31,9 @@
       "import": "./dist/middlewares/index.js",
       "types": "./dist/middlewares/index.d.ts"
     },
-    "./providers": {
-      "import": "./dist/providers/index.js",
-      "types": "./dist/providers/index.d.ts"
+    "./ports": {
+      "import": "./dist/ports/index.js",
+      "types": "./dist/ports/index.d.ts"
     },
     "./schemas": {
       "import": "./dist/schemas/index.js",
@@ -61,7 +61,8 @@
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "barrelsby:generate": "barrelsby --config .barrelsby.json",
-    "madge": "madge --circular src/"
+    "madge": "madge --circular src/",
+    "release": "pnpm barrelsby:generate && pnpm build && pnpm pack && pnpm publish --no-git-checks"
   },
   "dependencies": {
     "compression": "^1.8.1",
@@ -72,16 +73,16 @@
     "i18next": "^25.5.2",
     "redis": "^5.8.2",
     "winston": "^3.17.0",
-    "zod": "^4.1.9"
+    "zod": "^4.1.11"
   },
   "devDependencies": {
-    "@eslint/js": "^9.35.0",
+    "@eslint/js": "^9.36.0",
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.5.2",
     "barrelsby": "^2.8.1",
-    "eslint": "^9.35.0",
+    "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "globals": "^16.4.0",
@@ -91,7 +92,7 @@
     "tsc-alias": "^1.8.16",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.2",
-    "typescript-eslint": "^8.44.0"
+    "typescript-eslint": "^8.44.1"
   },
-  "packageManager": "pnpm@10.17.0+sha512.fce8a3dd29a4ed2ec566fb53efbb04d8c44a0f05bc6f24a73046910fb9c3ce7afa35a0980500668fa3573345bd644644fa98338fa168235c80f4aa17aa17fbef"
+  "packageManager": "pnpm@10.17.1"
 }

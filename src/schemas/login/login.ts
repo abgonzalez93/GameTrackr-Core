@@ -1,5 +1,6 @@
-import { UserEmailSchema, UserNameSchema, UserIdSchema } from '@schemas/user'
+import { UserEmailSchema, UserNameSchema } from '@schemas/user'
 import { SignedTokenPairSchema } from '@schemas/jwt'
+import { IdSchema } from '@schemas/shared'
 import z from 'zod'
 
 const path = 'core.schemas.login'
@@ -52,7 +53,7 @@ export type ForgotPassword = z.infer<typeof ForgotPasswordSchema>
  * Requires a valid user ID and a new password.
  */
 export const ChangePasswordSchema = z.object({
-  userId: UserIdSchema,
+  userId: IdSchema,
   newPassword: z.string().min(8),
 })
 
@@ -64,7 +65,7 @@ export type ChangePassword = z.infer<typeof ChangePasswordSchema>
  * Requires a valid user ID and a new username.
  */
 export const ChangeUsernameSchema = z.object({
-  userId: UserIdSchema,
+  userId: IdSchema,
   newUsername: z.string().min(3),
 })
 

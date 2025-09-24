@@ -26,7 +26,7 @@
       "@i18n/*": ["i18n/*"],
       "@logger/*": ["logger/*"],
       "@middlewares/*": ["middlewares/*"],
-      "@providers/*": ["providers/*"],
+      "@ports/*": ["ports/*"],
       "@schemas/*": ["schemas/*"],
       "@server/*": ["server/*"],
       "@utils/*": ["utils/*"]

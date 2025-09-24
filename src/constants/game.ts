@@ -8,6 +8,7 @@ export const GAME = {
   MAX_GAME_LIMIT: 50,
   GAME_FIELDS: [
     'igdb_id',
+    'rawg_id',
     'title',
     'slug',
     'summary',

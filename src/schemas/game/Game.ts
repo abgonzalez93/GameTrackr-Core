@@ -1,14 +1,15 @@
-import { GameIdSchema } from './GameId'
+import { IdSchema, IdListSchema } from '@schemas/shared'
 import { z } from 'zod'
-
-const GameIdArray = z.array(GameIdSchema)
 
 /**
  * Neutral schema for a Game entity.
  * Independent of IGDB, RAWG, Steam, etc.
  */
 export const GameSchema = z.object({
-  igdb_id: GameIdSchema,
+  ids: z.object({
+    igdb: IdSchema.nullable().optional(),
+    rawg: IdSchema.nullable().optional(),
+  }),
   title: z.string(),
   slug: z.string(),
   summary: z.string().nullable().optional(),
@@ -19,9 +20,9 @@ export const GameSchema = z.object({
   hypes: z.number().int().nullable().optional(),
   first_release_date: z.date().nullable().optional(),
   cover: z.number().int().nullable().optional(),
-  genres: GameIdArray.optional(),
-  platforms: GameIdArray.optional(),
-  themes: GameIdArray.optional(),
+  genres: IdListSchema.optional(),
+  platforms: IdListSchema.optional(),
+  themes: IdListSchema.optional(),
   provider: z.enum(['igdb', 'rawg', 'steam']),
   url: z.url().nullable().optional(),
   updatedAt: z.date().optional(),

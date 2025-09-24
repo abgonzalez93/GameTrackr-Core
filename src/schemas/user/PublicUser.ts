@@ -1,5 +1,5 @@
 import { UserEmailSchema } from './UserEmail'
-import { UserIdSchema } from './UserId'
+import { IdSchema } from '@schemas/shared'
 import { z } from 'zod'
 
 /**
@@ -8,7 +8,7 @@ import { z } from 'zod'
  * This is safe to expose to the frontend or third-party consumers.
  */
 export const PublicUserSchema = z.object({
-  id: UserIdSchema,
+  id: IdSchema,
   email: UserEmailSchema,
   username: z.string().min(3),
   name: z.string().nullable().optional(),

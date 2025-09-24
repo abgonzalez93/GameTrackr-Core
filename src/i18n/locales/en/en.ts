@@ -47,6 +47,50 @@ export const en = {
       },
     },
   },
+  catalog: {
+    application: {
+      useCases: {
+        gameUseCase: {
+          game_not_found: 'No game found with the provided ID',
+        },
+      },
+    },
+    infrastructure: {
+      adapters: {
+        igdb: {
+          igdbAuthAdapter: {
+            wrong_provider: 'The current provider is not IGDB. Please check your configuration.',
+            invalid_format: 'Token response is not in a valid format',
+            auth_failed: 'Unable to authenticate with provider. Please check your credentials.',
+          },
+        },
+        rawg: {
+          rawgAuthAdapter: {
+            wrong_provider: 'The current provider is not RAWG. Please check your configuration.',
+          },
+        },
+        authAdapter: {
+          unsupported_provider: 'The selected provider is not supported or has no authentication implementation.',
+        },
+        categoryAdapter: {
+          invalid_format: 'Category list response is not in a valid format',
+          fetch_failed: 'An error occurred while retrieving categories from provider',
+        },
+        gameAdapter: {
+          invalid_format: 'Game list response is not in a valid format',
+          fetch_failed: 'An error occurred while retrieving games from provider',
+        },
+      },
+    },
+    interfaces: {
+      controllers: {
+        gameController: {
+          invalid_filters: 'Invalid filters format in query parameters.',
+          invalid_id: 'Invalid game ID format in path parameter.',
+        },
+      },
+    },
+  },
   core: {
     middlewares: {
       createErrorHandler: {
@@ -99,37 +143,6 @@ export const en = {
       translate: {
         invalid_key: 'Invalid translation key',
         invalid_key_type: 'Translation key must be a string',
-      },
-    },
-  },
-  igdb: {
-    controllers: {
-      igdbController: {
-        invalid_filters: 'Invalid filters format in query parameters.',
-        invalid_id: 'Invalid game ID format in path parameter.',
-      },
-    },
-    services: {
-      igdbAuthService: {
-        token_invalid_format: 'IGDB token response is not in a valid format',
-        auth_failed: 'Unable to authenticate with IGDB. Please check your credentials.',
-      },
-      igdbGameService: {
-        games_invalid_format: 'IGDB game list response is not in a valid format',
-        games_fetch_failed: 'An error occurred while retrieving games from IGDB',
-        game_not_found: 'No game found with the provided IGDB ID',
-      },
-      igdbGenreService: {
-        genres_invalid_format: 'IGDB genre list response is not in a valid format',
-        genres_fetch_failed: 'An error occurred while retrieving genres from IGDB',
-      },
-      igdbPlatformService: {
-        platforms_invalid_format: 'IGDB platform list response is not in a valid format',
-        platforms_fetch_failed: 'An error occurred while retrieving platforms from IGDB',
-      },
-      igdbThemeService: {
-        themes_invalid_format: 'IGDB theme list response is not in a valid format',
-        themes_fetch_failed: 'An error occurred while retrieving themes from IGDB',
       },
     },
   },
