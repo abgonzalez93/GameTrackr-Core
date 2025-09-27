@@ -2,7 +2,7 @@
   "type": "module",
   "name": "@trackplay/core",
   "author": "Antonio Bueno Gonzalez",
-  "version": "1.1.19",
+  "version": "1.1.22",
   "private": false,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -62,6 +62,7 @@
     "lint:fix": "eslint src --fix",
     "barrelsby:generate": "barrelsby --config .barrelsby.json",
     "madge": "madge --circular src/",
+    "update": "ncu -u -e 2 && pnpm install",
     "release": "pnpm barrelsby:generate && pnpm build && pnpm pack && pnpm publish --no-git-checks"
   },
   "dependencies": {

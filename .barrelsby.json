@@ -18,5 +18,6 @@
   "delete": true,
   "singleQuotes": true,
   "noHeader": true,
-  "noSemicolon": true
+  "noSemicolon": true,
+  "exclude": ["internal"]
 }
