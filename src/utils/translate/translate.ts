@@ -1,15 +1,26 @@
+import { getTranslationPath } from './getTranslationPath'
 import { BadRequestError } from '@errors/index'
 import { en } from '@i18n/index'
 import { i18n } from 'i18next'
 
 export type TranslationVariables = Record<string, string | number>
 
+/**
+ * Defines the parameters required to resolve a translation key.
+ *
+ * Typically used when retrieving localized strings from a dictionary.
+ * The `variables` field allows dynamic placeholder replacement within
+ * the translated message.
+ *
+ * @property key - The translation key (e.g. `"errors.auth.invalid_token"`).
+ * @property variables - Optional mapping of placeholder names to their values.
+ */
 export interface TranslationParams {
   key: string
   variables?: TranslationVariables
 }
 
-const path = 'core.utils.translate'
+const path = getTranslationPath(import.meta.url)
 
 /**
  * Validates whether a given string is a valid translation key within the provided translations object.

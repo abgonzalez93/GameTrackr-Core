@@ -2,15 +2,15 @@ export const es = {
   auth: {
     middlewares: {
       validateAuthToken: {
-        auth_token_missing: 'Se requiere un token de autorización',
-        auth_token_invalid: 'El token de autorización proporcionado es inválido o está mal formado',
-        internal_token_unauthorized: 'El token de servicio interno es incorrecto o no está autorizado',
+        auth_token_missing: 'El token de autorización es obligatorio',
+        auth_token_invalid: 'El token de autorización proporcionado es inválido o tiene un formato incorrecto',
+        internal_token_unauthorized: 'El token interno del servicio es incorrecto o no está autorizado',
       },
     },
     services: {
       authService: {
-        expired_refresh: 'El token de actualización ya ha expirado',
-        revoked_refresh: 'El token de actualización ha sido revocado y no puede usarse',
+        expired_refresh: 'El token de actualización ha expirado',
+        revoked_refresh: 'El token de actualización ha sido revocado y no puede utilizarse',
       },
     },
   },
@@ -20,10 +20,10 @@ export const es = {
         already_tracking: 'Ya estás siguiendo este juego.',
       },
       userService: {
-        user_not_found_by_id: 'No pudimos encontrar un usuario con ese ID.',
-        email_not_found: 'No se encontró ninguna cuenta con el correo {{email}}.',
-        username_not_found: 'No se encontró ninguna cuenta con el usuario {{username}}.',
-        invalid_credentials: 'Correo, usuario o contraseña inválidos. Por favor, inténtalo de nuevo.',
+        user_not_found_by_id: 'No se encontró un usuario con ese ID.',
+        email_not_found: 'No existe ninguna cuenta con el correo {{email}}.',
+        username_not_found: 'No existe ninguna cuenta con el nombre de usuario {{username}}.',
+        invalid_credentials: 'Correo electrónico, nombre de usuario o contraseña inválidos. Inténtalo de nuevo.',
         email_taken: 'El correo {{email}} ya está en uso.',
         username_taken: 'El nombre de usuario {{username}} ya está en uso.',
       },
@@ -31,12 +31,12 @@ export const es = {
     utils: {
       auth: {
         requireToken: {
-          token_missing: 'Se requiere {{token}} pero no fue proporcionado.',
-          token_header_invalid: '{{token}} está mal formado o es inválido.',
+          token_missing: '{{token}} es obligatorio pero no fue proporcionado.',
+          token_header_invalid: '{{token}} tiene un formato incorrecto o es inválido.',
           token_payload_invalid: '{{token}} contiene datos inválidos.',
         },
         verifyToken: {
-          token_type_invalid: 'Tipo de token no coincide. Se esperaba "{{expectedType}}".',
+          token_type_invalid: 'Tipo de token no válido. Se esperaba "{{expectedType}}".',
           token_expired: 'Tu sesión ha expirado o el token es inválido. Por favor, inicia sesión nuevamente.',
         },
       },
@@ -50,43 +50,52 @@ export const es = {
   catalog: {
     application: {
       useCases: {
-        gameUseCase: {
-          game_not_found: 'No se encontró ningún juego con el ID proporcionado',
+        game: {
+          gameUseCase: {
+            game_not_found: 'No se encontró ningún juego con el ID proporcionado',
+          },
         },
       },
     },
     infrastructure: {
       adapters: {
-        igdb: {
+        auth: {
           igdbAuthAdapter: {
-            wrong_provider: 'El proveedor actual no es IGDB. Por favor, revisa tu configuración.',
+            auth_failed: 'No se pudo autenticar con el proveedor. Verifica tus credenciales.',
             invalid_format: 'La respuesta del token no tiene un formato válido',
-            auth_failed: 'No se pudo autenticar con el proveedor. Por favor, revisa tus credenciales.',
           },
         },
-        rawg: {
-          rawgAuthAdapter: {
-            wrong_provider: 'El proveedor actual no es RAWG. Por favor, revisa tu configuración.',
+        category: {
+          igdbCategoryAdapter: {
+            invalid_format: 'La respuesta de la lista de categorías no tiene un formato válido',
           },
         },
-        authAdapter: {
-          unsupported_provider: 'El proveedor seleccionado no está soportado o no tiene implementación de autenticación.',
+        game: {
+          igdbGameAdapter: {
+            invalid_format: 'La respuesta de la lista de juegos no tiene un formato válido',
+          },
         },
-        categoryAdapter: {
-          invalid_format: 'La respuesta de la lista de categorías no tiene un formato válido',
-          fetch_failed: 'Ocurrió un error al recuperar las categorías del proveedor',
+      },
+      utils: {
+        container: {
+          resolveAdapters: {
+            unsupported_provider: 'El proveedor configurado no es compatible',
+          },
         },
-        gameAdapter: {
-          invalid_format: 'La respuesta de la lista de juegos no tiene un formato válido',
-          fetch_failed: 'Ocurrió un error al recuperar los juegos del proveedor',
+        provider: {
+          fetchFromProvider: {
+            unsupported_method:
+              'El proveedor seleccionado no es compatible o no tiene una implementación de autenticación.',
+            fetch_failed: 'Ocurrió un error al obtener {{endpoint}} del proveedor',
+          },
         },
       },
     },
     interfaces: {
       controllers: {
         gameController: {
-          invalid_filters: 'Formato de filtros inválido en los parámetros de consulta.',
-          invalid_id: 'Formato de ID de juego inválido en el parámetro de ruta.',
+          invalid_filters: 'El formato de los filtros en los parámetros de consulta es inválido.',
+          invalid_id: 'El formato del ID del juego en el parámetro de ruta es inválido.',
         },
       },
     },
@@ -104,9 +113,9 @@ export const es = {
     },
     schemas: {
       login: {
-        identifier_required: 'Se requiere correo o usuario',
-        password_required: 'Se requiere contraseña',
-        identifier_invalid: 'Por favor, introduce un correo electrónico o usuario válido',
+        identifier_required: 'Se requiere un correo electrónico o nombre de usuario',
+        password_required: 'La contraseña es obligatoria',
+        identifier_invalid: 'Por favor, introduce un correo electrónico o nombre de usuario válido',
       },
       shared: {
         ip_invalid: 'Por favor, introduce una dirección IP válida',
@@ -119,16 +128,16 @@ export const es = {
       },
       CreateUser: {
         password_invalid: 'La contraseña debe incluir mayúsculas, minúsculas, un número y un carácter especial',
-        password_confirm_required: 'Se requiere confirmación de la contraseña',
+        password_confirm_required: 'La confirmación de la contraseña es obligatoria',
         password_mismatch: 'Las contraseñas deben coincidir',
       },
       UserEmail: {
-        email_required: 'Se requiere correo electrónico',
+        email_required: 'El correo electrónico es obligatorio',
         email_invalid: 'Formato de correo electrónico inválido',
-        email_disposable: 'No se permiten correos electrónicos desechables',
+        email_disposable: 'No se permiten correos electrónicos temporales o desechables',
       },
       UserName: {
-        username_required: 'Se requiere nombre de usuario',
+        username_required: 'El nombre de usuario es obligatorio',
         username_min: 'El nombre de usuario debe tener al menos 3 caracteres',
         username_max: 'El nombre de usuario debe tener como máximo 30 caracteres',
         username_invalid: 'Solo se permiten letras, números y guiones bajos',
@@ -142,7 +151,7 @@ export const es = {
       },
       translate: {
         invalid_key: 'Clave de traducción inválida',
-        invalid_key_type: 'La clave de traducción debe ser una cadena',
+        invalid_key_type: 'La clave de traducción debe ser una cadena de texto',
       },
     },
   },

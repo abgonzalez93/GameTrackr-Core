@@ -1,9 +1,10 @@
 import { UserEmailSchema, UserNameSchema } from '@schemas/user'
 import { SignedTokenPairSchema } from '@schemas/jwt'
+import { getTranslationPath } from '@utils/index'
 import { IdSchema } from '@schemas/shared'
 import z from 'zod'
 
-const path = 'core.schemas.login'
+const path = getTranslationPath(import.meta.url)
 
 /**
  * Zod schema for validating user login input.

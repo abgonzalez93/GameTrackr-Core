@@ -50,35 +50,43 @@ export const en = {
   catalog: {
     application: {
       useCases: {
-        gameUseCase: {
-          game_not_found: 'No game found with the provided ID',
+        game: {
+          gameUseCase: {
+            game_not_found: 'No game found with the provided ID',
+          },
         },
       },
     },
     infrastructure: {
       adapters: {
-        igdb: {
+        auth: {
           igdbAuthAdapter: {
-            wrong_provider: 'The current provider is not IGDB. Please check your configuration.',
-            invalid_format: 'Token response is not in a valid format',
             auth_failed: 'Unable to authenticate with provider. Please check your credentials.',
+            invalid_format: 'Token response is not in a valid format',
           },
         },
-        rawg: {
-          rawgAuthAdapter: {
-            wrong_provider: 'The current provider is not RAWG. Please check your configuration.',
+        category: {
+          igdbCategoryAdapter: {
+            invalid_format: 'Category list response is not in a valid format',
           },
         },
-        authAdapter: {
-          unsupported_provider: 'The selected provider is not supported or has no authentication implementation.',
+        game: {
+          igdbGameAdapter: {
+            invalid_format: 'Game list response is not in a valid format',
+          },
         },
-        categoryAdapter: {
-          invalid_format: 'Category list response is not in a valid format',
-          fetch_failed: 'An error occurred while retrieving categories from provider',
+      },
+      utils: {
+        container: {
+          resolveAdapters: {
+            unsupported_provider: 'The configured provider is not supported',
+          },
         },
-        gameAdapter: {
-          invalid_format: 'Game list response is not in a valid format',
-          fetch_failed: 'An error occurred while retrieving games from provider',
+        provider: {
+          fetchFromProvider: {
+            unsupported_method: 'The selected provider is not supported or has no authentication implementation.',
+            fetch_failed: 'An error occurred while retrieving {{endpoint}} from provider',
+          },
         },
       },
     },

@@ -1,9 +1,10 @@
+import { getTranslationPath } from '@utils/index'
 import { UserEmailSchema } from './UserEmail'
 import { UserNameSchema } from './UserName'
 import { z } from 'zod'
 
 const passwordRequirementsRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/
-const path = 'core.schemas.CreateUser'
+const path = getTranslationPath(import.meta.url)
 
 /**
  * Zod schema for creating a new user.

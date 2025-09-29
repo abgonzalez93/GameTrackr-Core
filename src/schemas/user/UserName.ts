@@ -1,6 +1,7 @@
+import { getTranslationPath } from '@utils/index'
 import { z } from 'zod'
 
-const path = 'core.schemas.UserName'
+const path = getTranslationPath(import.meta.url)
 
 /**
  * Zod schema for validating a username (used as login identifier).
