@@ -10,38 +10,68 @@ Su propósito es **centralizar, estandarizar y mantener DRY** todo aquello que s
 
 El paquete incluye:
 
-### ✅ Schemas y Tipados
+### ✅ Clientes Externos
 
-- Validaciones Zod compartidas para entidades como `User`, `Game`, `Token`, etc.
-- Tipos inferidos reutilizables entre frontend y backend.
+- Conjunto de clientes reutilizables para integraciones externas como por ejemplo: cliente Redis (/clients/redis).
+- Diseñado para ampliarse fácilmente con nuevos conectores (e.g., Kafka, HTTP, S3...).
 
-### ✅ Utilidades
+### ✅ Constantes
 
-- Funciones genéricas (`validateSchema`, `toPublicUser`, etc.)
-- Utilidades de hashing, validación, formateo, etc.
+- Enumeraciones y constantes reutilizables:
+- httpStatus, jwt, game, etc.
+- Mantiene la coherencia de nombres y valores a lo largo de la aplicación.
 
 ### ✅ Errores
 
-- Clases de error tipadas y personalizadas (`NotFoundError`, `UnauthorizedError`, `ConflictError`...).
+- Clases de error tipadas y jerarquizadas (TrackPlayError, HttpErrors, etc.).
+- Códigos y mensajes de error estandarizados por servicio.
+- Integración con i18n para mensajes traducibles.
 
-### ✅ Middlewares
+### ✅ Sistema de Traducciones
 
-- Middlewares reutilizables para Express (como validación de JWT, cabeceras, etc.).
+- Basado en i18next con soporte multilenguaje.
+- Carga dinámica de locales desde /locales.
+- Interpolación ({{variable}}) y fallbacks configurables.
+- Permite respuestas localizadas según idioma del cliente.
 
 ### ✅ Logger
 
-- Logger preconfigurado para todos los servicios (basado en consola y coloreado).
+- Logger preconfigurado con colores y niveles.
+- Basado en consola y fácilmente extensible.
+- Ideal para unificar logs en todos los servicios.
 
-### ✅ Cliente Redis
+### ✅ Middlewares
 
-- Cliente Redis reutilizable e inicializable dinámicamente.
-- Útil para features como blacklist de tokens o envío de notificaciones.
+- Middlewares genéricos para Express:
+  - applyMiddlewares: aplicación masiva de middlewares.
+  - createErrorHandler: gestión centralizada de errores.
+  - createNotFoundHandler: control de rutas inexistentes.
+- Preparados para usarse en cualquier microservicio backend.
 
-### ✅ Sistema de Traducciones (i18n)
+### ✅ Puertos
 
-- Traductor centralizado con `i18next`.
-- Soporte multilenguaje con interpolación (`{{variable}}`) y fallbacks.
-- Permite a los servicios responder en el idioma del cliente (por ejemplo, según `Accept-Language`).
+- Interfaces contractuales (Ports) que definen la comunicación entre capas del dominio como: AuthPort, GamePort, CategoryPort, etc.
+- Garantizan independencia entre dominio e infraestructura.
+
+### ✅ Schemas y Tipados
+
+- Validaciones Zod centralizadas para todas las entidades del dominio (User, Game, Category, Auth, TrackGame, etc.).
+- Tipos inferidos reutilizables entre frontend, backend y microservicios.
+- Estructura modular por dominio (/auth, /game, /user, /jwt, /login, /providers, /shared…).
+
+### ✅ Servidor
+
+- Configuración base para bootstrap de servicios.
+- Mecanismos comunes de inicialización y carga interna (/internal, bootstrap.ts).
+
+### ✅ Utilidades
+
+- Helpers reutilizables para tareas comunes:
+  - /fetch: peticiones HTTP tipadas.
+  - /net: utilidades de red.
+  - /parse: validaciones y transformaciones genéricas.
+  - /translate: helpers para traducciones y generación de paths (getTranslationPath, etc.).
+- Funciones globales como validateSchema, toPublicUser, etc.
 
 ---
 
@@ -75,8 +105,8 @@ git push origin develop
 Ejecuta el build y genera el paquete comprimido:
 
 ```bash
-npm run build
-npm pack
+pnpm run build
+pnpm pack
 ```
 
 Esto generará un archivo como: `trackplay-core-1.2.0.tgz`
@@ -97,7 +127,7 @@ Para publicar en el registro de NPM (por ejemplo, GitHub Packages), necesitas te
 Luego publica con:
 
 ```bash
-npm publish
+pnpm publish
 ```
 
 ### 5. 🔄 Actualizar dependencias en los demás repositorios
@@ -107,5 +137,5 @@ Una vez publicada la nueva versión, actualiza la dependencia en cada repositori
 ```bash
 ncu
 ncu -u
-npm install
+pnpm install
 ```
