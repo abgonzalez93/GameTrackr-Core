@@ -3,60 +3,53 @@ import { NonEmptyStringSchema } from '@schemas/shared'
 import { z } from 'zod'
 
 /**
- * Input schema to generate new JWT tokens.
- * Used by backend when requesting new access+refresh pair.
+ * Input schema to generate new JWT tokens (access + refresh pair).
  */
-export const TokenGenerationInputSchema = z.object({
+export const TokenGenerateInputSchema = z.object({
   sub: JWTSubSchema,
 })
-
-export type TokenGenerationInput = z.infer<typeof TokenGenerationInputSchema>
+export type TokenGenerateInput = z.infer<typeof TokenGenerateInputSchema>
 
 /**
  * Input schema to revoke a refresh token.
  */
-export const RefreshTokenRevokeInputSchema = z.object({
+export const TokenRevokeInputSchema = z.object({
   exp: JWTExpSchema,
   jti: JWTJtiSchema,
 })
-
-export type RefreshTokenRevokeInput = z.infer<typeof RefreshTokenRevokeInputSchema>
+export type TokenRevokeInput = z.infer<typeof TokenRevokeInputSchema>
 
 /**
- * Input schema to check if a refresh token was revoked.
+ * Input schema to check the revocation status of a token.
  */
-export const RefreshTokenRevocationCheckSchema = z.object({
+export const TokenRevocationStatusInputSchema = z.object({
   jti: JWTJtiSchema,
 })
-
-export type RefreshTokenRevocationCheck = z.infer<typeof RefreshTokenRevocationCheckSchema>
+export type TokenRevocationStatusInput = z.infer<typeof TokenRevocationStatusInputSchema>
 
 /**
  * Input schema to rotate a refresh token.
  */
-export const RefreshTokenRotationInputSchema = z.object({
+export const TokenRotateInputSchema = z.object({
   sub: JWTSubSchema,
   exp: JWTExpSchema,
   jti: JWTJtiSchema,
 })
-
-export type RefreshTokenRotationInput = z.infer<typeof RefreshTokenRotationInputSchema>
+export type TokenRotateInput = z.infer<typeof TokenRotateInputSchema>
 
 /**
- * Output schema indicating if a refresh token was revoked.
+ * Output schema indicating if a token has been revoked.
  */
-export const RefreshTokenRevocationResponseSchema = z.object({
+export const TokenRevocationStatusSchema = z.object({
   revoked: z.boolean(),
 })
-
-export type RefreshTokenRevocationResponse = z.infer<typeof RefreshTokenRevocationResponseSchema>
+export type TokenRevocationStatus = z.infer<typeof TokenRevocationStatusSchema>
 
 /**
  * Output schema for pair of signed tokens.
  */
-export const SignedTokenPairSchema = z.object({
+export const TokenPairSchema = z.object({
   accessToken: NonEmptyStringSchema,
   refreshToken: NonEmptyStringSchema,
 })
-
-export type SignedTokenPair = z.infer<typeof SignedTokenPairSchema>
+export type TokenPair = z.infer<typeof TokenPairSchema>

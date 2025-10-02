@@ -9,7 +9,7 @@ import { ProviderToken } from '@schemas/index'
  * The application layer depends only on this interface and remains agnostic
  * of provider-specific details.
  */
-export interface AuthPort {
+export interface ProviderTokenPort {
   /**
    * Requests and returns a valid authentication token from the provider.
    *

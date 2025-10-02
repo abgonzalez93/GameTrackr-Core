@@ -50,7 +50,7 @@ El paquete incluye:
 
 ### ✅ Puertos
 
-- Interfaces contractuales (Ports) que definen la comunicación entre capas del dominio como: AuthPort, GamePort, CategoryPort, etc.
+- Interfaces contractuales (Ports) que definen la comunicación entre capas del dominio como: ProviderTokenPort, GamePort, CategoryPort, etc.
 - Garantizan independencia entre dominio e infraestructura.
 
 ### ✅ Schemas y Tipados

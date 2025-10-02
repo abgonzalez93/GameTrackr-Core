@@ -1,6 +1,6 @@
 import { UserEmailSchema, UserNameSchema } from '@schemas/user'
-import { SignedTokenPairSchema } from '@schemas/jwt'
 import { getTranslationPath } from '@utils/index'
+import { TokenPairSchema } from '@schemas/jwt'
 import { IdSchema } from '@schemas/shared'
 import z from 'zod'
 
@@ -32,7 +32,7 @@ export type LoginInput = z.infer<typeof LoginInputSchema>
  * Only includes the signed token pair.
  */
 export const LoginResponseSchema = z.object({
-  tokens: SignedTokenPairSchema,
+  tokens: TokenPairSchema,
 })
 
 export type LoginResponse = z.infer<typeof LoginResponseSchema>
