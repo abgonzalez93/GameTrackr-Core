@@ -1,31 +1,39 @@
 import { CategoryList } from '@schemas/index'
 
 /**
- * Port defining the contract for retrieving game-related categories
- * (genres, platforms, themes) from any external game provider.
+ * **CategoryPort**
  *
- * Implementations must normalize provider-specific structures into
- * domain-neutral {@link CategoryList} objects.
+ * Defines the **infrastructure-level contract** for retrieving
+ * game-related categories — such as genres, platforms, and themes —
+ * from external game data providers.
+ *
+ * ### Responsibilities
+ * - Fetch raw category data from an external provider.
+ * - Normalize provider-specific structures into domain-safe {@link CategoryList} objects.
+ *
+ * ### Layer
+ * - **Port (Infrastructure Contract)** — implemented by provider adapters (e.g., IGDB, RAWG).
+ * - Consumed by the {@link CategoryService} at the application layer.
  */
 export interface CategoryPort {
   /**
-   * Retrieves all available genres from the provider.
+   * Retrieves all available game genres from the external provider.
    *
-   * @returns {Promise<CategoryList>} A normalized list of genre categories.
+   * @returns A promise resolving to a normalized {@link CategoryList} of genres.
    */
   getGenres(): Promise<CategoryList>
 
   /**
-   * Retrieves all available platforms from the provider.
+   * Retrieves all available game platforms from the external provider.
    *
-   * @returns {Promise<CategoryList>} A normalized list of platform categories.
+   * @returns A promise resolving to a normalized {@link CategoryList} of platforms.
    */
   getPlatforms(): Promise<CategoryList>
 
   /**
-   * Retrieves all available themes from the provider.
+   * Retrieves all available game themes from the external provider.
    *
-   * @returns {Promise<CategoryList>} A normalized list of theme categories.
+   * @returns A promise resolving to a normalized {@link CategoryList} of themes.
    */
   getThemes(): Promise<CategoryList>
 }

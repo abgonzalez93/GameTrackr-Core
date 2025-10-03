@@ -1,25 +1,43 @@
 import { JWTPayload } from 'jose'
 
 /**
- * TokenPort
+ * **TokenPort**
  *
- * Defines the contract for issuing JWT tokens.
- * This port abstracts away the underlying signing library (e.g., jose).
+ * Defines the **infrastructure-level contract** for issuing signed JSON Web Tokens (JWT).
+ *
+ * ### Responsibilities
+ * - Encapsulate the low-level signing process for access and refresh tokens.
+ * - Abstract away the underlying JWT library (e.g. {@link jose}) and signing algorithm.
+ * - Provide a unified interface for the application to generate tokens without
+ *   depending on specific cryptographic details or key management.
+ *
+ * ### Layer
+ * - **Port (Infrastructure Contract)** — implemented by adapters using cryptographic libraries.
+ * - Consumed by the {@link TokenService} in the application layer.
+ *
+ * ### Notes
+ * - Implementations must sign tokens according to the configured algorithm and key pair.
+ * - Access tokens are typically short-lived; refresh tokens are longer-lived.
  */
 export interface TokenPort {
   /**
-   * Signs and issues a short-lived access token.
+   * Generates and signs a short-lived access token.
    *
-   * @param payload - Data to embed in the JWT (e.g., user id, roles, etc.)
-   * @returns A signed access token string
+   * Access tokens are used for authenticating API requests and should contain
+   * minimal claims (e.g., `sub`, `roles`, or `permissions`).
+   *
+   * @param payload - The claims to embed in the token (e.g., user ID, roles, etc.).
+   * @returns A promise resolving to a signed access token string.
    */
   generateAccessToken(payload: Partial<JWTPayload>): Promise<string>
 
   /**
-   * Signs and issues a long-lived refresh token.
+   * Generates and signs a long-lived refresh token.
    *
-   * @param payload - Data to embed in the JWT
-   * @returns A signed refresh token string
+   * Refresh tokens are used to obtain new access tokens once the previous ones expire.
+   *
+   * @param payload - The claims to embed in the token.
+   * @returns A promise resolving to a signed refresh token string.
    */
   generateRefreshToken(payload: Partial<JWTPayload>): Promise<string>
 }

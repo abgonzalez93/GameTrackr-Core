@@ -1,22 +1,39 @@
-import { TranslationParams } from '@utils/index'
+import { getTranslationPath, TranslationParams } from '@utils/index'
 import { BadRequestError } from '@errors/index'
 import z, { ZodType } from 'zod'
 
+const path = getTranslationPath(import.meta.url)
+
 /**
- * Parses and validates data using a Zod schema.
- * Throws a customizable error if validation fails.
+ * Validates and parses unknown input data against a given {@link ZodType} schema.
  *
- * @param schema - Zod schema to validate against
- * @param data - Raw data to be validated
- * @param message - Custom error message
- * @param ErrorClass - Optional custom error class to throw (default: BadRequestError)
- * @returns The parsed and typed data
- * @throws ErrorClass if validation fails
+ * ### Responsibilities
+ * - Performs safe runtime validation using {@link ZodType.safeParse}.
+ * - Returns fully typed and trusted data when validation succeeds.
+ * - Throws a customizable domain-level error (defaults to {@link BadRequestError})
+ *   when validation fails, embedding both a translatable message and detailed context.
+ *
+ * ### Notes
+ * - This helper acts as the standard validation entry point across controllers and use cases.
+ * - The default error class (`BadRequestError`) maps to HTTP 400 responses.
+ * - Custom error classes can be provided to fit specific domain contexts.
+ *
+ * @typeParam TSchema - The Zod schema type being used for validation.
+ *
+ * @param schema - Zod schema that defines the expected data structure.
+ * @param data - Raw or unknown data to be validated.
+ * @param message - Optional translation key or string describing the validation error.
+ * @param ErrorClass - Optional custom error class (default: {@link BadRequestError}).
+ *
+ * @returns The validated and typed data as inferred from the schema.
+ *
+ * @throws {ErrorClass} When validation fails, including detailed validation context.
+ *
  */
 export const validateSchema = <TSchema extends ZodType>(
   schema: TSchema,
   data: unknown,
-  message: string | TranslationParams = 'core.utils.parse.validateSchema.invalid_input',
+  message: string | TranslationParams = `${path}.invalid_input`,
   ErrorClass: new (message: string | TranslationParams, details?: unknown) => Error = BadRequestError,
 ): z.infer<TSchema> => {
   const parsed = schema.safeParse(data)

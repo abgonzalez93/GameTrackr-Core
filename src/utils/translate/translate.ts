@@ -6,14 +6,13 @@ import { i18n } from 'i18next'
 export type TranslationVariables = Record<string, string | number>
 
 /**
- * Defines the parameters required to resolve a translation key.
+ * Represents a structured translation message definition.
  *
- * Typically used when retrieving localized strings from a dictionary.
- * The `variables` field allows dynamic placeholder replacement within
- * the translated message.
+ * This object is used to describe a translatable key and its interpolation
+ * variables in a consistent, serializable format.
  *
- * @property key - The translation key (e.g. `"errors.auth.invalid_token"`).
- * @property variables - Optional mapping of placeholder names to their values.
+ * @property key - The translation key (e.g. `"core.errors.invalid_token"`).
+ * @property variables - Optional mapping of placeholders to their runtime values.
  */
 export interface TranslationParams {
   key: string
@@ -23,14 +22,16 @@ export interface TranslationParams {
 const path = getTranslationPath(import.meta.url)
 
 /**
- * Validates whether a given string is a valid translation key within the provided translations object.
+ * Validates whether a given key exists within a translation dictionary.
  *
+ * ### Responsibilities
  * - Supports nested keys separated by dots (e.g., `"core.schemas.login"`).
- * - Throws an error if the key does not exist or does not map to a string value.
+ * - Ensures that the final resolved value is a string (not an object).
+ * - Throws a {@link BadRequestError} if validation fails.
  *
- * @param key - The translation key to validate.
- * @param obj - The translation dictionary to check against. Defaults to English translations (`en`).
- * @throws Error if the key is invalid or does not map to a string.
+ * @param key - Translation key to validate.
+ * @param obj - Translation dictionary to check against (defaults to English).
+ * @throws {BadRequestError} If the key is missing or does not resolve to a string.
  */
 const isTranslationKey = (key: string, obj: Record<string, unknown> = en): void => {
   if (!key.includes('.')) return
@@ -48,25 +49,24 @@ const isTranslationKey = (key: string, obj: Record<string, unknown> = en): void 
 
 /**
  * Serializes a translation key and optional variables into a JSON string.
- * Useful for structured error messages or logs that need to carry translation information.
  *
  * @param key - The translation key to serialize.
- * @param variables - Optional object with interpolation variables for the translation.
- * @returns A JSON string representing the translation payload, e.g. `{"key":"some.key","variables":{"name":"John"}}`.
+ * @param variables - Optional variable placeholders for interpolation.
+ * @returns A JSON string representing the translation payload.
  */
 const serializeTranslation = (key: string, variables?: TranslationVariables): string =>
   JSON.stringify({ key, variables: variables || undefined })
 
 /**
- * Formats an error message into a consistent string format.
+ * Formats any message into a consistent, serializable string format.
  *
- * Behavior:
- * - If `message` is a valid translation key → returns a serialized JSON string.
- * - If `message` is a plain string without matching translation → returns it as-is.
- * - If `message` is a `TranslationParams` object → serializes its key + variables.
+ * ### Behavior
+ * - If the input is a **valid translation key**, returns a JSON-serialized payload.
+ * - If the input is a **plain string** with no matching translation, returns it as-is.
+ * - If the input is a {@link TranslationParams} object, serializes its key and variables.
  *
- * @param message - The message to format, either a string or a `TranslationParams` object.
- * @returns A string suitable for logs, responses, or error handling.
+ * @param message - Either a plain string or {@link TranslationParams} object.
+ * @returns A standardized string suitable for logs or API responses.
  */
 export const formatErrorMessage = (message: string | TranslationParams): string => {
   if (typeof message === 'string') {
@@ -83,11 +83,14 @@ export const formatErrorMessage = (message: string | TranslationParams): string 
 }
 
 /**
- * Parses a translation message string into an object.
- * If the input is not valid JSON or lacks `key`, it returns null.
+ * Attempts to parse a serialized translation payload into a {@link TranslationParams} object.
  *
- * @param serialized - JSON string created via serializeTranslation.
- * @returns Parsed object with `key` and optional `variables`, or null on failure.
+ * ### Behavior
+ * - Returns `null` if the string is not valid JSON or lacks a `key` property.
+ * - Safely handles malformed input.
+ *
+ * @param serialized - JSON string previously created via {@link serializeTranslation}.
+ * @returns Parsed {@link TranslationParams} object, or `null` on failure.
  */
 const parseTranslation = (serialized: string): TranslationParams | null => {
   if (typeof serialized !== 'string') return null
@@ -103,13 +106,16 @@ const parseTranslation = (serialized: string): TranslationParams | null => {
 }
 
 /**
- * Translates a message using the provided i18n instance.
+ * Resolves and translates a message using the provided {@link i18n} instance.
  *
- * @param i18n - The i18n instance used to perform the translation.
- * @param message - The message to translate. Can be:
- *   - A plain string (either a direct message or a serialized translation payload).
- *   - A `TranslationParams` object containing a translation key and optional variables.
- * @returns The translated string, or the original message if it cannot be translated.
+ * ### Responsibilities
+ * - Detects whether the input is a plain string, serialized payload, or translation object.
+ * - Uses `i18n.t()` internally for variable interpolation.
+ * - Falls back to the raw message when translation is unavailable.
+ *
+ * @param i18n - Active i18n instance.
+ * @param message - Message to translate (string, serialized payload, or {@link TranslationParams}).
+ * @returns The translated string, or original message on failure.
  */
 export const translate = (i18n: i18n, message: string | TranslationParams): string => {
   if (typeof message === 'string') {

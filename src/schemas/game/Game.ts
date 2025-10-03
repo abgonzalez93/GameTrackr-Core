@@ -6,7 +6,8 @@ import { z } from 'zod'
  * Independent of IGDB, RAWG, Steam, etc.
  */
 export const GameSchema = z.object({
-  ids: z.object({
+  id: IdSchema.optional(),
+  providerIds: z.object({
     igdb: IdSchema.nullable().optional(),
     rawg: IdSchema.nullable().optional(),
   }),
@@ -23,7 +24,6 @@ export const GameSchema = z.object({
   genres: IdListSchema.optional(),
   platforms: IdListSchema.optional(),
   themes: IdListSchema.optional(),
-  provider: z.enum(['igdb', 'rawg', 'steam']),
   url: z.url().nullable().optional(),
   updatedAt: z.date().optional(),
   createdAt: z.date().optional(),

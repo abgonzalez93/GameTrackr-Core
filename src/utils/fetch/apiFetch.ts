@@ -2,7 +2,7 @@ import { HTTP_STATUS } from '@constants/index'
 
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
-type FetchParams = {
+interface FetchParams {
   headers?: Record<string, string>
   body?: BodyInit | null
   cache?: RequestCache
@@ -11,10 +11,16 @@ type FetchParams = {
 }
 
 /**
- * Converts an object of filters to a query string.
+ * Converts a filter object into a query string suitable for URL appending.
  *
- * @param filters - Query parameters as key-value pairs
- * @returns A query string starting with "?" or an empty string
+ * ### Responsibilities
+ * - Serializes simple key–value pairs.
+ * - Handles arrays by appending multiple parameters (e.g. `?tag=1&tag=2`).
+ * - Skips nullish or empty values to keep URLs clean.
+ *
+ * @param filters - Key-value object representing query parameters.
+ * @returns A query string starting with `"?"` or an empty string if no valid filters exist.
+ *
  */
 const buildQueryParams = (filters: Record<string, unknown>): string => {
   const params = new URLSearchParams()
@@ -38,12 +44,12 @@ const buildQueryParams = (filters: Record<string, unknown>): string => {
 }
 
 /**
- * Prepares the final request URL and options by appending query parameters
- * and stripping internal-only fields like `query`.
+ * Prepares a final request URL by appending serialized query parameters
+ * and removing non-fetchable internal options.
  *
- * @param endpoint - Base endpoint path (e.g., "/games")
- * @param options - Fetch options, possibly including a `query` object
- * @returns An object with the final endpoint string and cleaned options
+ * @param endpoint - Base endpoint path (e.g., `"/games"`).
+ * @param options - Raw fetch options, possibly containing a `filters` object.
+ * @returns The normalized URL and cleaned fetch options ready for `fetch()`.
  */
 const prepareRequestInput = (
   endpoint: string,
@@ -58,12 +64,17 @@ const prepareRequestInput = (
 }
 
 /**
- * Sends an HTTP request using the Fetch API with predefined configuration.
+ * Executes a low-level HTTP request using the Fetch API with timeout handling.
  *
- * @param method - HTTP method (GET, POST, etc.)
- * @param endpoint - Relative API endpoint (e.g., "/games")
- * @param options - Optional fetch configuration
- * @returns The raw Response object
+ * ### Responsibilities
+ * - Adds default headers (`Content-Type: application/json`).
+ * - Automatically aborts if the request exceeds the configured timeout.
+ * - Ensures consistent behavior across all HTTP methods.
+ *
+ * @param method - HTTP verb (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`).
+ * @param endpoint - Target API URL.
+ * @param options - Optional fetch configuration (headers, body, timeout, etc.).
+ * @returns The raw {@link Response} object from the Fetch API.
  */
 const performRequest = async (
   method: Method,
@@ -90,10 +101,14 @@ const performRequest = async (
 }
 
 /**
- * Parses the response body from the API as either JSON or plain text.
+ * Safely parses an HTTP response body into JSON or plain text.
  *
- * @param res - The Response object
- * @returns Parsed body as `unknown`
+ * ### Responsibilities
+ * - Automatically handles `204 No Content` and empty bodies.
+ * - Parses `application/json` responses as JSON; falls back to `text()` otherwise.
+ *
+ * @param res - The {@link Response} object from a fetch call.
+ * @returns Parsed body content as `unknown`, or `null` if empty.
  */
 const parseResponseBody = async (res: Response): Promise<unknown> => {
   const headers = res.headers
@@ -104,13 +119,13 @@ const parseResponseBody = async (res: Response): Promise<unknown> => {
 }
 
 /**
- * Makes an HTTP request to the external API using the specified method.
+ * Performs a typed HTTP request and parses the response automatically.
  *
- * @template T - The expected response type
- * @param method - HTTP method (GET, POST, etc.)
- * @param endpoint - Relative path to the API endpoint (e.g., "/games")
- * @param options - Optional fetch configuration (headers, body, etc.)
- * @returns A promise resolving to the parsed JSON response as type T
+ * @template T - The expected shape of the response body.
+ * @param method - HTTP verb (e.g., `GET`, `POST`).
+ * @param endpoint - API endpoint or absolute URL.
+ * @param options - Optional configuration (headers, body, etc.).
+ * @returns Parsed response body as type `T`.
  */
 const request = async <T>(method: Method, endpoint: string, options: FetchParams = {}): Promise<T> => {
   const res = await performRequest(method, endpoint, options)
@@ -119,13 +134,14 @@ const request = async <T>(method: Method, endpoint: string, options: FetchParams
 }
 
 /**
- * Executes a typed HTTP request using a dynamic method.
+ * Internal helper that unifies request preparation, query serialization,
+ * and typed response parsing into a single flow.
  *
- * @template T - The expected response type
- * @param method - HTTP method (GET, POST, etc.)
- * @param endpoint - API endpoint (e.g., "/games")
- * @param options - Optional fetch configuration
- * @returns A promise resolving to the typed response
+ * @template T - Expected response type.
+ * @param method - HTTP method.
+ * @param endpoint - API endpoint.
+ * @param options - Optional fetch configuration.
+ * @returns Typed response data.
  */
 const method = <T>(method: Method, endpoint: string, options?: FetchParams): Promise<T> => {
   const { endpoint: finalEndpoint, options: finalOptions } = prepareRequestInput(endpoint, options)
@@ -133,8 +149,16 @@ const method = <T>(method: Method, endpoint: string, options?: FetchParams): Pro
 }
 
 /**
- * Typed API client for external HTTP requests.
- * Provides method shortcuts with consistent base URL, query string handling, and error processing.
+ * **apiFetch**
+ *
+ * A typed, provider-agnostic HTTP client wrapper for external API requests.
+ *
+ * ### Features
+ * - Strongly-typed return values via generics.
+ * - Automatic query serialization via `filters`.
+ * - Built-in timeout and JSON parsing.
+ * - Unified error-handling entry point.
+ *
  */
 export const apiFetch = {
   get: <T>(endpoint: string, options?: FetchParams) => method<T>('GET', endpoint, options),

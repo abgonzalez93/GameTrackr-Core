@@ -1,16 +1,32 @@
 export const en = {
   auth: {
-    middlewares: {
-      validateAuthToken: {
-        auth_token_missing: 'Authorization token is required',
-        auth_token_invalid: 'The provided authorization token is invalid or malformed',
-        internal_token_unauthorized: 'The internal service token is incorrect or unauthorized',
+    application: {
+      useCases: {
+        token: {
+          tokenUseCase: {
+            expired_refresh: 'Refresh token is already expired',
+            revoked_refresh: 'Refresh token has been revoked and cannot be used',
+          },
+        },
       },
     },
-    services: {
-      authService: {
-        expired_refresh: 'Refresh token is already expired',
-        revoked_refresh: 'Refresh token has been revoked and cannot be used',
+    infrastructure: {
+      middlewares: {
+        validateAuthToken: {
+          auth_token_missing: 'Authorization token is required',
+          auth_token_invalid: 'The provided authorization token is invalid or malformed',
+          internal_token_unauthorized: 'The internal service token is incorrect or unauthorized',
+        },
+      },
+    },
+    interfaces: {
+      controllers: {
+        tokenController: {
+          invalid_generate_input: 'The data provided to generate tokens is invalid.',
+          invalid_revoke_input: 'The data provided to revoke the token is invalid.',
+          invalid_revocation_status_input: 'The query parameters to check the token status are invalid.',
+          invalid_rotate_input: 'The data provided to rotate tokens is invalid.',
+        },
       },
     },
   },
@@ -61,8 +77,8 @@ export const en = {
       adapters: {
         auth: {
           igdbAuthAdapter: {
-            auth_failed: 'Unable to authenticate with provider. Please check your credentials.',
             invalid_format: 'Token response is not in a valid format',
+            auth_failed: 'Unable to authenticate with provider. Please check your credentials.',
           },
         },
         category: {
@@ -102,9 +118,7 @@ export const en = {
   core: {
     middlewares: {
       createErrorHandler: {
-        buildErrorResponse: {
-          unexpected_error: 'Unexpected error',
-        },
+        unexpected_error: 'Unexpected error',
       },
       createNotFoundHandler: {
         route_not_found: "The requested route '{{url}}' does not exist on this server.",

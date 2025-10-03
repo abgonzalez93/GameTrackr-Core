@@ -3,12 +3,33 @@ import { TranslationParams } from '@utils/index'
 import { HTTP_STATUS } from '@constants/index'
 
 /**
- * Represents an HTTP 400 Bad Request Error.
+ * **HTTP Error Classes**
  *
- * Typically thrown when the client sends invalid data.
+ * Defines domain-level error classes representing common HTTP response statuses.
  *
- * @class BadRequestError
- * @extends TrackPlayError
+ * ### Scope
+ * - Provides strongly typed, semantically meaningful error classes
+ *   that map directly to HTTP status codes.
+ * - Centralizes error creation for controllers, services, and middleware.
+ *
+ * ### Notes
+ * - All classes extend {@link TrackPlayError}, inheriting translation support
+ *   and structured metadata (`statusCode`, `statusName`, `details`).
+ * - Each subclass sets its corresponding {@link HTTP_STATUS} code and label.
+ * - The `message` parameter can be either a plain string or a {@link TranslationParams}
+ *   object for localized error responses.
+ *
+ * @see {@link TrackPlayError}
+ * @see {@link HTTP_STATUS}
+ */
+
+/**
+ * **BadRequestError (400)**
+ *
+ * ### When to Use
+ * - Thrown when the client sends invalid or malformed data.
+ * - Common in validation failures or missing parameters.
+ *
  */
 export class BadRequestError extends TrackPlayError {
   constructor(message: string | TranslationParams = 'Bad request', details?: unknown) {
@@ -17,12 +38,11 @@ export class BadRequestError extends TrackPlayError {
 }
 
 /**
- * Represents an HTTP 401 Unauthorized Error.
+ * **UnauthorizedError (401)**
  *
- * Thrown when authentication is required but missing or invalid.
- *
- * @class UnauthorizedError
- * @extends TrackPlayError
+ * ### When to Use
+ * - Thrown when authentication credentials are missing or invalid.
+ * - Indicates that re-authentication may resolve the issue.
  */
 export class UnauthorizedError extends TrackPlayError {
   constructor(message: string | TranslationParams = 'Unauthorized', details?: unknown) {
@@ -31,12 +51,11 @@ export class UnauthorizedError extends TrackPlayError {
 }
 
 /**
- * Represents an HTTP 403 Forbidden Error.
+ * **ForbiddenError (403)**
  *
- * Thrown when the user is authenticated but not authorized to access the resource.
- *
- * @class ForbiddenError
- * @extends TrackPlayError
+ * ### When to Use
+ * - Thrown when the user is authenticated but lacks permission
+ *   to perform the requested operation.
  */
 export class ForbiddenError extends TrackPlayError {
   constructor(message: string | TranslationParams = 'Forbidden', details?: unknown) {
@@ -45,12 +64,11 @@ export class ForbiddenError extends TrackPlayError {
 }
 
 /**
- * Represents an HTTP 404 Not Found Error.
+ * **NotFoundError (404)**
  *
- * Thrown when a requested resource does not exist.
- *
- * @class NotFoundError
- * @extends TrackPlayError
+ * ### When to Use
+ * - Thrown when a requested resource cannot be found.
+ * - Commonly used for missing database records or invalid IDs.
  */
 export class NotFoundError extends TrackPlayError {
   constructor(message: string | TranslationParams = 'Not found', details?: unknown) {
@@ -59,12 +77,12 @@ export class NotFoundError extends TrackPlayError {
 }
 
 /**
- * Represents an HTTP 409 Conflict Error.
+ * **ConflictError (409)**
  *
- * Thrown when a request could not be completed due to a conflict with the current state of the resource.
- *
- * @class ConflictError
- * @extends TrackPlayError
+ * ### When to Use
+ * - Thrown when a request cannot be completed due to
+ *   a conflict with the current state of a resource.
+ * - Example: attempting to register an already existing email.
  */
 export class ConflictError extends TrackPlayError {
   constructor(message: string | TranslationParams = 'Conflict', details?: unknown) {
@@ -73,12 +91,11 @@ export class ConflictError extends TrackPlayError {
 }
 
 /**
- * Represents an HTTP 422 Unprocessable Entity Error.
+ * **UnprocessableEntityError (422)**
  *
- * Thrown when the server understands the request but is unable to process it due to semantic errors.
- *
- * @class UnprocessableEntityError
- * @extends TrackPlayError
+ * ### When to Use
+ * - Thrown when a request is syntactically valid but semantically invalid.
+ * - Example: failed validation after parsing JSON body.
  */
 export class UnprocessableEntityError extends TrackPlayError {
   constructor(message: string | TranslationParams = 'Unprocessable entity', details?: unknown) {
@@ -87,12 +104,11 @@ export class UnprocessableEntityError extends TrackPlayError {
 }
 
 /**
- * Represents an HTTP 429 Too Many Requests Error.
+ * **TooManyRequestsError (429)**
  *
- * Thrown when the user has sent too many requests in a given amount of time (rate limiting).
- *
- * @class TooManyRequestsError
- * @extends TrackPlayError
+ * ### When to Use
+ * - Thrown when a user exceeds rate limits or throttling thresholds.
+ * - Typically used in APIs enforcing request quotas.
  */
 export class TooManyRequestsError extends TrackPlayError {
   constructor(message: string | TranslationParams = 'Too many requests', details?: unknown) {

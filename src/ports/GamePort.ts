@@ -1,28 +1,35 @@
 import { Game, GameList, GameFilters, Id } from '@schemas/index'
 
 /**
- * Port defining the contract for retrieving and searching games
- * from any external game provider.
+ * **GamePort**
  *
- * Implementations must transform provider-specific data into
- * domain-neutral {@link Game} entities and respect the filtering
- * options defined in {@link GameFilters}.
+ * Defines the **infrastructure-level contract** for retrieving and searching
+ * games from external game data providers (e.g., IGDB, RAWG).
+ *
+ * ### Responsibilities
+ * - Fetch raw game data from the provider.
+ * - Normalize provider-specific responses into domain-safe {@link Game} entities.
+ * - Respect the filtering and sorting criteria defined in {@link GameFilters}.
+ *
+ * ### Layer
+ * - **Port (Infrastructure Contract)** — implemented by provider adapters.
+ * - Consumed by the {@link GameService} in the application layer.
  */
 export interface GamePort {
   /**
-   * Searches for games based on domain-neutral filters.
+   * Searches for games based on the given domain-neutral filters.
    *
-   * @param filters - Filtering and sorting criteria in provider-agnostic format.
-   * @returns {Promise<GameList>} A list of games normalized into domain entities.
+   * @param filters - Filtering and sorting criteria expressed in provider-agnostic format.
+   * @returns A promise resolving to a {@link GameList} of normalized game entities.
    */
   searchGames(filters: GameFilters): Promise<GameList>
 
   /**
    * Retrieves a single game by its domain-level identifier.
    *
-   * @param id - Unique identifier of the game in the domain.
-   * @returns {Promise<Game | null>} The normalized {@link Game} entity,
-   * or `null` if the game is not found.
+   * @param id - The unique identifier of the game within the domain.
+   * @returns A promise resolving to the normalized {@link Game} entity,
+   * or `null` if the game does not exist.
    */
   getGameById(id: Id): Promise<Game | null>
 }
