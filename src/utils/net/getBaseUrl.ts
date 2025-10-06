@@ -1,22 +1,4 @@
-export interface BaseURLOptions {
-  /**
-   * Network protocol used by the service.
-   * Usually `"http"` in development and `"https"` in production.
-   */
-  protocol: 'http' | 'https'
-
-  /**
-   * Hostname or IP address where the service runs.
-   * Example: `"localhost"` or `"0.0.0.0"`.
-   */
-  host: string
-
-  /**
-   * Port number on which the service listens.
-   * Example: `4000`.
-   */
-  port: number
-}
+import { type BaseURLOptions } from '#types/BaseURLOptions'
 
 /**
  * Builds a fully qualified base URL from protocol, host, and port values.

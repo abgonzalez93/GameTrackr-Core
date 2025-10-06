@@ -1,6 +1,6 @@
-import { getTranslationPath } from '@utils/index'
-import { UserEmailSchema } from './UserEmail'
-import { UserNameSchema } from './UserName'
+import { getTranslationPath } from '#utils/translate/getTranslationPath'
+import { UserEmailSchema } from './UserEmail.js'
+import { UserNameSchema } from './UserName.js'
 import { z } from 'zod'
 
 const passwordRequirementsRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/

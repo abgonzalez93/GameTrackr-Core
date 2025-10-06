@@ -2,50 +2,65 @@
   "type": "module",
   "name": "@trackplay/core",
   "author": "Antonio Bueno Gonzalez",
-  "version": "1.1.28",
+  "version": "0.1.0",
   "private": false,
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "imports": {
+    "#clients/*": "./src/clients/*.ts",
+    "#constants/*": "./src/constants/*.ts",
+    "#errors/*": "./src/errors/*.ts",
+    "#i18n/*": "./src/i18n/*.ts",
+    "#logger/*": "./src/logger/*.ts",
+    "#middlewares/*": "./src/middlewares/*.ts",
+    "#ports/*": "./src/ports/*.ts",
+    "#schemas/*": "./src/schemas/*.ts",
+    "#server/*": "./src/server/*.ts",
+    "#types/*": "./src/types/*.ts",
+    "#utils/*": "./src/utils/*.ts"
+  },
   "exports": {
-    "./clients": {
-      "import": "./dist/clients/index.js",
-      "types": "./dist/clients/index.d.ts"
+    "./clients/*": {
+      "import": "./dist/clients/*.js",
+      "types": "./dist/clients/*.d.ts"
     },
-    "./constants": {
-      "import": "./dist/constants/index.js",
-      "types": "./dist/constants/index.d.ts"
+    "./constants/*": {
+      "import": "./dist/constants/*.js",
+      "types": "./dist/constants/*.d.ts"
     },
-    "./errors": {
-      "import": "./dist/errors/index.js",
-      "types": "./dist/errors/index.d.ts"
+    "./errors/*": {
+      "import": "./dist/errors/*.js",
+      "types": "./dist/errors/*.d.ts"
     },
-    "./i18n": {
-      "import": "./dist/i18n/index.js",
-      "types": "./dist/i18n/index.d.ts"
+    "./i18n/*": {
+      "import": "./dist/i18n/*.js",
+      "types": "./dist/i18n/*.d.ts"
     },
-    "./logger": {
-      "import": "./dist/logger/index.js",
-      "types": "./dist/logger/index.d.ts"
+    "./logger/*": {
+      "import": "./dist/logger/*.js",
+      "types": "./dist/logger/*.d.ts"
     },
-    "./middlewares": {
-      "import": "./dist/middlewares/index.js",
-      "types": "./dist/middlewares/index.d.ts"
+    "./middlewares/*": {
+      "import": "./dist/middlewares/*.js",
+      "types": "./dist/middlewares/*.d.ts"
     },
-    "./ports": {
-      "import": "./dist/ports/index.js",
-      "types": "./dist/ports/index.d.ts"
+    "./ports/*": {
+      "import": "./dist/ports/*.js",
+      "types": "./dist/ports/*.d.ts"
     },
-    "./schemas": {
-      "import": "./dist/schemas/index.js",
-      "types": "./dist/schemas/index.d.ts"
+    "./schemas/*": {
+      "import": "./dist/schemas/*.js",
+      "types": "./dist/schemas/*.d.ts"
     },
-    "./server": {
-      "import": "./dist/server/index.js",
-      "types": "./dist/server/index.d.ts"
+    "./server/*": {
+      "import": "./dist/server/*.js",
+      "types": "./dist/server/*.d.ts"
     },
-    "./utils": {
-      "import": "./dist/utils/index.js",
-      "types": "./dist/utils/index.d.ts"
+    "./types/*": {
+      "import": "./dist/types/*.js",
+      "types": "./dist/types/*.d.ts"
+    },
+    "./utils/*": {
+      "import": "./dist/utils/*.js",
+      "types": "./dist/utils/*.d.ts"
     }
   },
   "publishConfig": {
@@ -57,13 +72,12 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rimraf dist && tsc && tsc-alias",
+    "build": "rimraf dist && tsc",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
-    "barrelsby:generate": "barrelsby --config .barrelsby.json",
-    "madge": "madge --circular src/",
+    "madge": "madge --circular dist/",
     "update": "ncu -u -e 2 && pnpm install",
-    "release": "pnpm barrelsby:generate && pnpm build && pnpm pack && pnpm publish --no-git-checks"
+    "release": "pnpm build && pnpm pack && pnpm publish --tag alpha --no-git-checks"
   },
   "dependencies": {
     "compression": "^1.8.1",
@@ -78,21 +92,18 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
-    "@eslint/js": "^9.36.0",
+    "@eslint/js": "^9.37.0",
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
-    "@types/node": "^24.6.2",
-    "barrelsby": "^2.8.1",
-    "eslint": "^9.36.0",
+    "@types/node": "^24.7.0",
+    "eslint": "^9.37.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "globals": "^16.4.0",
     "madge": "^8.0.0",
     "prettier": "^3.6.2",
     "rimraf": "^6.0.1",
-    "tsc-alias": "^1.8.16",
-    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.45.0"
   },

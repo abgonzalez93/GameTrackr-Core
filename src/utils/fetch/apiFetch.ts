@@ -1,4 +1,4 @@
-import { HTTP_STATUS } from '@constants/index'
+import { HTTP_STATUS } from '#constants/httpStatus'
 
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 

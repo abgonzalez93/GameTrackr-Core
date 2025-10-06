@@ -1,4 +1,6 @@
-import { Game, GameList, GameFilters, Id } from '@schemas/index'
+import { GameFilters } from '#schemas/game/GameFilters'
+import { Game, GameList } from '#schemas/game/Game'
+import { Id } from '#schemas/shared/id'
 
 /**
  * **GamePort**

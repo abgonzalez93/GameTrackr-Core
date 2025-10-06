@@ -1,4 +1,4 @@
-import { PublicUserSchema } from './PublicUser'
+import { PublicUserSchema } from './PublicUser.js'
 import { z } from 'zod'
 
 /**

@@ -1,4 +1,4 @@
-import { PositiveNumberSchema } from './shared'
+import { PositiveNumberSchema } from './shared.js'
 import z from 'zod'
 
 /**

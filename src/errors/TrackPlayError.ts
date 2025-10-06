@@ -1,5 +1,6 @@
-import { formatErrorMessage, TranslationParams } from '@utils/index'
-import { HTTP_STATUS } from '@constants/index'
+import { formatErrorMessage } from '#utils/translate/formatErrorMessage'
+import { type TranslationOptions } from '#types/TranslationOptions'
+import { HTTP_STATUS } from '#constants/httpStatus'
 
 /**
  * **TrackPlayError (Base Class)**
@@ -10,7 +11,7 @@ import { HTTP_STATUS } from '@constants/index'
  * - Serves as the foundation for all domain and HTTP-specific error classes.
  * - Extends the native {@link Error} object by including structured metadata
  *   such as status code, status name, and optional details.
- * - Supports message internationalization via {@link TranslationParams}.
+ * - Supports message internationalization via {@link TranslationOptions}.
  *
  * ### Features
  * - **HTTP-aware**: includes `statusCode` and `statusName` fields for response handling.
@@ -24,7 +25,7 @@ import { HTTP_STATUS } from '@constants/index'
  * - Stack trace is captured automatically for better debugging.
  *
  * @see {@link HTTP_STATUS}
- * @see {@link TranslationParams}
+ * @see {@link TranslationOptions}
  */
 export class TrackPlayError extends Error {
   /**
@@ -46,13 +47,13 @@ export class TrackPlayError extends Error {
    * Constructs a new {@link TrackPlayError}.
    *
    * @param message - Translatable error message, either a plain string
-   * or a {@link TranslationParams} object for i18n support.
+   * or a {@link TranslationOptions} object for i18n support.
    * @param statusCode - HTTP status code (defaults to 500).
    * @param statusName - Short descriptive name of the HTTP status (defaults to `"Internal Server"`).
    * @param details - Optional structured metadata for debugging or response context.
    */
   constructor(
-    message: string | TranslationParams,
+    message: string | TranslationOptions,
     statusCode: number = HTTP_STATUS.INTERNAL_SERVER_ERROR,
     statusName: string = 'Internal Server',
     details?: unknown,

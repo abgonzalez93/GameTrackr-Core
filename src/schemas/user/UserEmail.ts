@@ -1,4 +1,4 @@
-import { getTranslationPath } from '@utils/index'
+import { getTranslationPath } from '#utils/translate/getTranslationPath'
 import { z } from 'zod'
 
 const path = getTranslationPath(import.meta.url)

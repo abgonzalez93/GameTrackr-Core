@@ -1,4 +1,4 @@
-import { IdSchema, IdListSchema } from '@schemas/shared'
+import { IdSchema, IdListSchema } from '../shared/id.js'
 import { z } from 'zod'
 
 /**

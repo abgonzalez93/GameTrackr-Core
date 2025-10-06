@@ -1,4 +1,5 @@
-import { BaseURLOptions, getBaseUrl } from '@utils/index'
+import { type BaseURLOptions } from '#types/BaseURLOptions'
+import { getBaseUrl } from '#utils/net/getBaseUrl'
 import { Express } from 'express'
 import { Logger } from 'winston'
 

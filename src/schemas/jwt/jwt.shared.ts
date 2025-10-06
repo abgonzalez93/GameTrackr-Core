@@ -1,4 +1,4 @@
-import { PositiveNumberSchema, NonEmptyStringSchema } from '@schemas/shared'
+import { PositiveNumberSchema, NonEmptyStringSchema } from '../shared/shared.js'
 import { z } from 'zod'
 
 /**

@@ -1,5 +1,5 @@
-import { JWTSubSchema, JWTExpSchema, JWTJtiSchema, JWTTypSchema } from './index'
-import { OptionalStringArraySchema } from '@schemas/shared'
+import { JWTSubSchema, JWTExpSchema, JWTJtiSchema, JWTTypSchema } from './jwt.shared.js'
+import { OptionalStringArraySchema } from '../shared/shared.js'
 import { z } from 'zod'
 
 /**

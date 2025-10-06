@@ -1,6 +1,6 @@
-import { TrackPlayError } from './TrackPlayError'
-import { TranslationParams } from '@utils/index'
-import { HTTP_STATUS } from '@constants/index'
+import { type TranslationOptions } from '#types/TranslationOptions'
+import { TrackPlayError } from './TrackPlayError.js'
+import { HTTP_STATUS } from '#constants/httpStatus'
 
 /**
  * **HTTP Error Classes**
@@ -16,7 +16,7 @@ import { HTTP_STATUS } from '@constants/index'
  * - All classes extend {@link TrackPlayError}, inheriting translation support
  *   and structured metadata (`statusCode`, `statusName`, `details`).
  * - Each subclass sets its corresponding {@link HTTP_STATUS} code and label.
- * - The `message` parameter can be either a plain string or a {@link TranslationParams}
+ * - The `message` parameter can be either a plain string or a {@link TranslationOptions}
  *   object for localized error responses.
  *
  * @see {@link TrackPlayError}
@@ -32,7 +32,7 @@ import { HTTP_STATUS } from '@constants/index'
  *
  */
 export class BadRequestError extends TrackPlayError {
-  constructor(message: string | TranslationParams = 'Bad request', details?: unknown) {
+  constructor(message: string | TranslationOptions = 'Bad request', details?: unknown) {
     super(message, HTTP_STATUS.BAD_REQUEST, 'Bad Request', details)
   }
 }
@@ -45,7 +45,7 @@ export class BadRequestError extends TrackPlayError {
  * - Indicates that re-authentication may resolve the issue.
  */
 export class UnauthorizedError extends TrackPlayError {
-  constructor(message: string | TranslationParams = 'Unauthorized', details?: unknown) {
+  constructor(message: string | TranslationOptions = 'Unauthorized', details?: unknown) {
     super(message, HTTP_STATUS.UNAUTHORIZED, 'Unauthorized', details)
   }
 }
@@ -58,7 +58,7 @@ export class UnauthorizedError extends TrackPlayError {
  *   to perform the requested operation.
  */
 export class ForbiddenError extends TrackPlayError {
-  constructor(message: string | TranslationParams = 'Forbidden', details?: unknown) {
+  constructor(message: string | TranslationOptions = 'Forbidden', details?: unknown) {
     super(message, HTTP_STATUS.FORBIDDEN, 'Forbidden', details)
   }
 }
@@ -71,7 +71,7 @@ export class ForbiddenError extends TrackPlayError {
  * - Commonly used for missing database records or invalid IDs.
  */
 export class NotFoundError extends TrackPlayError {
-  constructor(message: string | TranslationParams = 'Not found', details?: unknown) {
+  constructor(message: string | TranslationOptions = 'Not found', details?: unknown) {
     super(message, HTTP_STATUS.NOT_FOUND, 'Not Found', details)
   }
 }
@@ -85,7 +85,7 @@ export class NotFoundError extends TrackPlayError {
  * - Example: attempting to register an already existing email.
  */
 export class ConflictError extends TrackPlayError {
-  constructor(message: string | TranslationParams = 'Conflict', details?: unknown) {
+  constructor(message: string | TranslationOptions = 'Conflict', details?: unknown) {
     super(message, HTTP_STATUS.CONFLICT, 'Conflict', details)
   }
 }
@@ -98,7 +98,7 @@ export class ConflictError extends TrackPlayError {
  * - Example: failed validation after parsing JSON body.
  */
 export class UnprocessableEntityError extends TrackPlayError {
-  constructor(message: string | TranslationParams = 'Unprocessable entity', details?: unknown) {
+  constructor(message: string | TranslationOptions = 'Unprocessable entity', details?: unknown) {
     super(message, HTTP_STATUS.UNPROCESSABLE_ENTITY, 'Unprocessable Entity', details)
   }
 }
@@ -111,7 +111,7 @@ export class UnprocessableEntityError extends TrackPlayError {
  * - Typically used in APIs enforcing request quotas.
  */
 export class TooManyRequestsError extends TrackPlayError {
-  constructor(message: string | TranslationParams = 'Too many requests', details?: unknown) {
+  constructor(message: string | TranslationOptions = 'Too many requests', details?: unknown) {
     super(message, HTTP_STATUS.TOO_MANY_REQUESTS, 'Too Many Requests', details)
   }
 }

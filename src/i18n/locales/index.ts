@@ -1,2 +1,2 @@
-export * from './en/index'
-export * from './es/index'
+export { en } from './en/en.js'
+export { es } from './es/es.js'

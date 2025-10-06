@@ -1,5 +1,5 @@
 import i18next, { i18n as I18nInstance } from 'i18next'
-import { en, es } from './locales'
+import { en, es } from './locales/index.js'
 
 /**
  * **Creates a new i18n instance**

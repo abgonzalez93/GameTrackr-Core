@@ -1,40 +1,8 @@
-import { ErrorHandlerOptions } from '@middlewares/index'
+import { type MiddlewareOptions } from '#types/MiddlewareOptions'
 import { Express, json, RequestHandler } from 'express'
-import helmet, { HelmetOptions } from 'helmet'
-import cors, { CorsOptions } from 'cors'
 import compression from 'compression'
-
-/**
- * **MiddlewareOptions**
- *
- * Configuration options for the global Express middleware stack.
- *
- * Each option allows enabling, disabling, or customizing
- * a specific middleware used across the application.
- *
- * ### Available Options
- * - `helmet` — Enables or disables HTTP header protection.
- * - `cors` — Enables or disables Cross-Origin Resource Sharing.
- * - `enableCompression` — Enables response compression via gzip/deflate.
- * - `enableJson` — Enables automatic JSON body parsing.
- * - `errorHandler` — Custom global error handler configuration.
- */
-export interface MiddlewareOptions {
-  /** Helmet configuration or `false` to disable it */
-  helmet?: HelmetOptions | false
-
-  /** CORS configuration or `false` to disable it */
-  cors?: CorsOptions | false
-
-  /** Whether to enable gzip compression (default: `true`) */
-  enableCompression?: boolean
-
-  /** Whether to enable JSON body parsing (default: `true`) */
-  enableJson?: boolean
-
-  /** Options for global error handling middleware */
-  errorHandler?: ErrorHandlerOptions
-}
+import helmet from 'helmet'
+import cors from 'cors'
 
 /**
  * **useIfEnabled**

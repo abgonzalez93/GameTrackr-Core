@@ -1,20 +1,13 @@
-import { getTranslationPath, translate } from '@utils/index'
+import { getTranslationPath } from '#utils/translate/getTranslationPath'
+import { type ErrorHandlerOptions } from '#types/ErrorHandlerOptions'
 import { Request, Response, NextFunction } from 'express'
-import { TrackPlayError } from '@errors/index'
-import { HTTP_STATUS } from '@constants/index'
+import { TrackPlayError } from '#errors/TrackPlayError'
+import { translate } from '#utils/translate/translate'
+import { HTTP_STATUS } from '#constants/httpStatus'
 import { Logger } from 'winston'
 import { i18n } from 'i18next'
 
 const path = getTranslationPath(import.meta.url)
-
-/**
- * Options for configuring the global error handler middleware.
- *
- * @property isDevelopment - Enables verbose stack traces and logging if `true`.
- */
-export interface ErrorHandlerOptions {
-  isDevelopment?: boolean
-}
 
 /**
  * **buildErrorResponse**

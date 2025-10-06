@@ -1,7 +1,8 @@
-import { UserEmailSchema, UserNameSchema } from '@schemas/user'
-import { getTranslationPath } from '@utils/index'
-import { TokenPairSchema } from '@schemas/jwt'
-import { IdSchema } from '@schemas/shared'
+import { getTranslationPath } from '#utils/translate/getTranslationPath'
+import { UserEmailSchema } from '../user/UserEmail.js'
+import { TokenPairSchema } from '../jwt/jwt.auth.js'
+import { UserNameSchema } from '../user/UserName.js'
+import { IdSchema } from '../shared/id.js'
 import z from 'zod'
 
 const path = getTranslationPath(import.meta.url)

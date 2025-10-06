@@ -1,5 +1,6 @@
-import { getTranslationPath, TranslationParams } from '@utils/index'
-import { BadRequestError } from '@errors/index'
+import { getTranslationPath } from '../translate/getTranslationPath.js'
+import { type TranslationOptions } from '#types/TranslationOptions'
+import { BadRequestError } from '#errors/HttpErrors'
 import z, { ZodType } from 'zod'
 
 const path = getTranslationPath(import.meta.url)
@@ -33,8 +34,8 @@ const path = getTranslationPath(import.meta.url)
 export const validateSchema = <TSchema extends ZodType>(
   schema: TSchema,
   data: unknown,
-  message: string | TranslationParams = `${path}.invalid_input`,
-  ErrorClass: new (message: string | TranslationParams, details?: unknown) => Error = BadRequestError,
+  message: string | TranslationOptions = `${path}.invalid_input`,
+  ErrorClass: new (message: string | TranslationOptions, details?: unknown) => Error = BadRequestError,
 ): z.infer<TSchema> => {
   const parsed = schema.safeParse(data)
   if (!parsed.success) throw new ErrorClass(message, z.treeifyError(parsed.error))

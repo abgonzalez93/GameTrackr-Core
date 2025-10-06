@@ -1,27 +1,5 @@
+import { type LoggerOptions } from '#types/LoggerOptions'
 import winston from 'winston'
-
-export interface LoggerOptions {
-  /**
-   * Whether the service is running in development mode.
-   * Enables colored and human-readable console output when `true`.
-   */
-  isDevelopment?: boolean
-
-  /**
-   * Optional label applied to each log entry (e.g., service name).
-   */
-  label?: string
-
-  /**
-   * Minimum log level to output.
-   *
-   * - `"debug"` → verbose development info
-   * - `"info"` → general operational messages
-   * - `"warn"` → recoverable issues
-   * - `"error"` → critical failures
-   */
-  level?: 'info' | 'debug' | 'warn' | 'error'
-}
 
 const { combine, timestamp, label, printf, colorize } = winston.format
 

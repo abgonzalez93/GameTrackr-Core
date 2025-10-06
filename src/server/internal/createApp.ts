@@ -1,9 +1,12 @@
-import { MiddlewareOptions, applyMiddlewares, createErrorHandler, createNotFoundHandler } from '@middlewares/index'
+import { createNotFoundHandler } from '#middlewares/createNotFoundHandler'
+import { createErrorHandler } from '#middlewares/createErrorHandler'
+import { type MiddlewareOptions } from '#types/MiddlewareOptions'
+import { applyMiddlewares } from '#middlewares/applyMiddlewares'
 import express, { Express } from 'express'
 import { Logger } from 'winston'
 import { i18n } from 'i18next'
 
-export interface CreateAppOptions {
+interface CreateAppOptions {
   /** Function that registers service-specific routes onto the Express instance. */
   routes: (app: Express) => void
 

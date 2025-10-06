@@ -1,4 +1,4 @@
-import { ProviderToken } from '@schemas/index'
+import { ProviderToken } from '#schemas/providers/ProviderToken'
 
 /**
  * **ProviderTokenPort**

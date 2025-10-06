@@ -1,5 +1,5 @@
-import { UserEmailSchema } from './UserEmail'
-import { IdSchema } from '@schemas/shared'
+import { UserEmailSchema } from './UserEmail.js'
+import { IdSchema } from '../shared/id.js'
 import { z } from 'zod'
 
 /**
