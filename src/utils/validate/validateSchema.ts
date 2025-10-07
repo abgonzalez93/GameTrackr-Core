@@ -31,7 +31,7 @@ const path = getTranslationPath(import.meta.url)
  * @throws {ErrorClass} When validation fails, including detailed validation context.
  *
  */
-export const validateSchema = <Schema extends ZodType<unknown>>(
+export const validateSchema = <Schema extends ZodType>(
   schema: Schema,
   data: unknown,
   message: string | TranslationOptions = `${path}.invalid_input`,
