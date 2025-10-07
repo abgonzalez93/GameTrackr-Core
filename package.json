@@ -2,7 +2,7 @@
   "type": "module",
   "name": "@trackplay/core",
   "author": "Antonio Bueno Gonzalez",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": false,
   "imports": {
     "#clients/*": "./src/clients/*.ts",
@@ -77,7 +77,7 @@
     "lint:fix": "eslint src --fix",
     "madge": "madge --circular dist/",
     "update": "ncu -u -e 2 && pnpm install",
-    "release": "pnpm build && pnpm pack && pnpm publish --tag alpha --no-git-checks"
+    "release": "pnpm build && pnpm pack && pnpm publish --tag latest --no-git-checks"
   },
   "dependencies": {
     "compression": "^1.8.1",
