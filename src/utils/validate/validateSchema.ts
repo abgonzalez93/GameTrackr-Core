@@ -1,7 +1,7 @@
 import { type TranslationOptions } from '#types/translate/TranslationOptions'
 import { getTranslationPath } from '../translate/getTranslationPath.js'
 import { BadRequestError } from '#errors/BadRequestError'
-import { z, ZodType } from 'zod'
+import { z, type ZodType } from 'zod'
 
 const path = getTranslationPath(import.meta.url)
 
@@ -19,7 +19,7 @@ const path = getTranslationPath(import.meta.url)
  * - The default error class (`BadRequestError`) maps to HTTP 400 responses.
  * - Custom error classes can be provided to fit specific domain contexts.
  *
- * @typeParam TSchema - The Zod schema type being used for validation.
+ * @typeParam Schema - The Zod schema type being used for validation.
  *
  * @param schema - Zod schema that defines the expected data structure.
  * @param data - Raw or unknown data to be validated.
@@ -31,12 +31,12 @@ const path = getTranslationPath(import.meta.url)
  * @throws {ErrorClass} When validation fails, including detailed validation context.
  *
  */
-export const validateSchema = <TSchema extends ZodType>(
-  schema: TSchema,
+export const validateSchema = <Schema extends ZodType<unknown>>(
+  schema: Schema,
   data: unknown,
   message: string | TranslationOptions = `${path}.invalid_input`,
   ErrorClass: new (message: string | TranslationOptions, details?: unknown) => Error = BadRequestError,
-): z.infer<TSchema> => {
+): z.infer<Schema> => {
   const parsed = schema.safeParse(data)
   if (!parsed.success) throw new ErrorClass(message, z.treeifyError(parsed.error))
   return parsed.data

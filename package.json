@@ -2,10 +2,11 @@
   "type": "module",
   "name": "@trackplay/core",
   "author": "Antonio Bueno Gonzalez",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": false,
   "imports": {
     "#clients/*": "./src/clients/*.ts",
+    "#config/*": "./src/config/*.ts",
     "#constants/*": "./src/constants/*.ts",
     "#errors/*": "./src/errors/*.ts",
     "#i18n/*": "./src/i18n/*.ts",
@@ -21,6 +22,10 @@
     "./clients/*": {
       "import": "./dist/clients/*.js",
       "types": "./dist/clients/*.d.ts"
+    },
+    "./config/*": {
+      "import": "./dist/config/*.js",
+      "types": "./dist/config/*.d.ts"
     },
     "./constants/*": {
       "import": "./dist/constants/*.js",
@@ -80,6 +85,7 @@
     "release": "pnpm build && pnpm pack && pnpm publish --tag latest --no-git-checks"
   },
   "dependencies": {
+    "@t3-oss/env-core": "^0.13.8",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
     "express": "^5.1.0",
