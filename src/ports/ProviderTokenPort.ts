@@ -1,4 +1,4 @@
-import { ProviderToken } from '#schemas/providers/ProviderToken'
+import { ProviderToken } from '#types/providers/ProviderToken'
 
 /**
  * **ProviderTokenPort**

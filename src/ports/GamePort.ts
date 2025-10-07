@@ -1,6 +1,7 @@
-import { GameFilters } from '#schemas/game/GameFilters'
-import { Game, GameList } from '#schemas/game/Game'
-import { Id } from '#schemas/shared/id'
+import { GameFilters } from '#types/game/GameFilters'
+import { GameList } from '#types/game/GameList'
+import { Game } from '#types/game/Game'
+import { Id } from '#types/base/Id'
 
 /**
  * **GamePort**

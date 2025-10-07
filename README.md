@@ -1,8 +1,9 @@
 # 🧩 @trackplay/core
 
-Este paquete contiene la lógica y recursos compartidos entre los distintos servicios de la plataforma **TrackPlay** (backend, frontend y microservicios como Auth, IGDB, Notifications...).
+**TrackPlay Core** es el paquete base que centraliza **toda la lógica, tipos y recursos compartidos** entre los distintos servicios y aplicaciones de la plataforma TrackPlay
+(ej. `trackplay-auth`, `trackplay-catalog`, `trackplay-notifications`, `trackplay-frontend`, etc.).
 
-Su propósito es **centralizar, estandarizar y mantener DRY** todo aquello que se usa de forma común en la aplicación.
+Su objetivo es mantener el código **DRY**, **tipado**, **modular** y **consistente** en todos los entornos.
 
 ---
 
@@ -12,66 +13,71 @@ El paquete incluye:
 
 ### ✅ Clientes Externos
 
-- Conjunto de clientes reutilizables para integraciones externas como por ejemplo: cliente Redis (/clients/redis).
-- Diseñado para ampliarse fácilmente con nuevos conectores (e.g., Kafka, HTTP, S3...).
+- Clientes reutilizables para servicios externos (ej. `createRedis`).
+- Proveen una capa de abstracción sobre dependencias de terceros.
+- Pensados para inyección de dependencias y testabilidad.
 
 ### ✅ Constantes
 
-- Enumeraciones y constantes reutilizables:
-- httpStatus, jwt, game, etc.
-- Mantiene la coherencia de nombres y valores a lo largo de la aplicación.
+- Conjunto de valores fijos y enumeraciones: `HTTP_STATUS`, `JWT_CONFIG`, `GAME_CONSTANTS`, etc.
+- Garantizan coherencia y evitan “magic numbers” o strings duplicados.
 
 ### ✅ Errores
 
-- Clases de error tipadas y jerarquizadas (TrackPlayError, HttpErrors, etc.).
-- Códigos y mensajes de error estandarizados por servicio.
-- Integración con i18n para mensajes traducibles.
+- Sistema unificado de errores basado en clases tipadas.
+- Soporte para i18n y traducciones dinámicas (`TrackPlayError`, `BadRequestError`, etc.).
+- Compatible con middleware global de manejo de errores.
 
-### ✅ Sistema de Traducciones
+### ✅ Sistema de traducciones
 
 - Basado en i18next con soporte multilenguaje.
-- Carga dinámica de locales desde /locales.
-- Interpolación ({{variable}}) y fallbacks configurables.
-- Permite respuestas localizadas según idioma del cliente.
+- Carga modular de traducciones desde cada módulo.
+- Funciones auxiliares (`getTranslationPath`, `initI18n`, etc.) para integración automática.
 
 ### ✅ Logger
 
-- Logger preconfigurado con colores y niveles.
-- Basado en consola y fácilmente extensible.
-- Ideal para unificar logs en todos los servicios.
+- Wrapper de Winston con configuración estándar y coloreado por entorno.
+- Integración con etiquetas de servicio (`label`) y niveles (`info`, `error`, `debug`).
+- Utilizado globalmente en el arranque de cada microservicio.
 
 ### ✅ Middlewares
 
 - Middlewares genéricos para Express:
-  - applyMiddlewares: aplicación masiva de middlewares.
-  - createErrorHandler: gestión centralizada de errores.
-  - createNotFoundHandler: control de rutas inexistentes.
-- Preparados para usarse en cualquier microservicio backend.
+  - `applyMiddlewares`: aplicación masiva de middlewares.
+  - `createErrorHandler`: gestión centralizada de errores.
+  - `createNotFoundHandler`: control de rutas inexistentes.
+- Configurables mediante opciones (`MiddlewareOptions`).
 
 ### ✅ Puertos
 
-- Interfaces contractuales (Ports) que definen la comunicación entre capas del dominio como: ProviderTokenPort, GamePort, CategoryPort, etc.
-- Garantizan independencia entre dominio e infraestructura.
+- Interfaces contractuales que definen los límites entre dominio e infraestructura.
+- Permiten sustituir adaptadores sin romper la lógica de negocio.
 
-### ✅ Schemas y Tipados
+### ✅ Schemas Zod
 
-- Validaciones Zod centralizadas para todas las entidades del dominio (User, Game, Category, Auth, TrackGame, etc.).
-- Tipos inferidos reutilizables entre frontend, backend y microservicios.
-- Estructura modular por dominio (/auth, /game, /user, /jwt, /login, /providers, /shared…).
+- Esquemas de validación centralizados por dominio (`/auth`, `/game`, `/user`, `/jwt`, `/provider`, etc.).
+- Generan tipos inferidos (`z.infer`) para un tipado compartido entre backend y frontend.
+- Garantizan validaciones consistentes y seguras.
 
 ### ✅ Servidor
 
-- Configuración base para bootstrap de servicios.
-- Mecanismos comunes de inicialización y carga interna (/internal, bootstrap.ts).
+- Sistema de bootstrap común para inicializar servicios TrackPlay.
+- Incluye configuración de middlewares, logger, i18n y contexto base (`InfrastructureContext`).
+- Permite extender el arranque con hooks (`onBeforeApp`) o configuraciones específicas.
+
+### ✅ Tipos
+
+- Interfaces y tipos globales compartidos:
+- `LoggerOptions`, `MiddlewareOptions`, `TranslationVariables`, etc.
+- Mantiene consistencia tipada entre microservicios y librerías.
 
 ### ✅ Utilidades
 
 - Helpers reutilizables para tareas comunes:
-  - /fetch: peticiones HTTP tipadas.
-  - /net: utilidades de red.
-  - /parse: validaciones y transformaciones genéricas.
-  - /translate: helpers para traducciones y generación de paths (getTranslationPath, etc.).
-- Funciones globales como validateSchema, toPublicUser, etc.
+  - `/fetch`: peticiones HTTP tipadas.
+  - `/http`: utilidades de red.
+  - `/validate`: validaciones y transformaciones genéricas.
+  - `/translate`: helpers para traducciones y generación de paths (`getTranslationPath`, etc.).
 
 ---
 

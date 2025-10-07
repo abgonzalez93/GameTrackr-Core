@@ -1,6 +1,6 @@
 import { getTranslationPath } from '#utils/translate/getTranslationPath'
-import { Request, Response, NextFunction } from 'express'
-import { NotFoundError } from '#errors/HttpErrors'
+import type { Request, Response, NextFunction } from 'express'
+import { NotFoundError } from '#errors/NotFoundError'
 
 const path = getTranslationPath(import.meta.url)
 

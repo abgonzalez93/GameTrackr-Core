@@ -1,5 +1,5 @@
-import { type MiddlewareOptions } from '#types/MiddlewareOptions'
-import { Express, json, RequestHandler } from 'express'
+import { type MiddlewareOptions } from '#types/middlewares/MiddlewareOptions'
+import { type Express, json, type RequestHandler } from 'express'
 import compression from 'compression'
 import helmet from 'helmet'
 import cors from 'cors'
@@ -7,24 +7,28 @@ import cors from 'cors'
 /**
  * **useIfEnabled**
  *
- * Utility helper that conditionally registers a middleware
- * only when its configuration is not explicitly set to `false`.
+ * Conditionally registers a middleware factory when its configuration
+ * is not explicitly set to `false`.
  *
  * This prevents unnecessary registration of disabled features,
- * while still allowing custom configuration when provided.
+ * while keeping the flexibility to pass custom configuration objects.
  *
- * @template Options - Type of the middleware configuration.
+ * @template TOptions - Type of the middleware configuration.
  * @param app - Express application instance.
- * @param middleware - The middleware factory function (e.g., `helmet`, `cors`).
- * @param opts - Configuration options or `false` to disable.
+ * @param factory - Middleware factory (e.g., `helmet`, `cors`).
+ * @param options - Configuration options or `false` to disable.
  *
  */
 const useIfEnabled = <Options>(
   app: Express,
-  middleware: (options?: Options) => RequestHandler,
-  opts?: Options | false,
+  middleware: (options?: Options) => RequestHandler | RequestHandler[],
+  options?: Options | false,
 ): void => {
-  if (opts !== false) app.use(middleware(opts))
+  if (options === false) return
+
+  const handler = middleware(options)
+  const handlers = Array.isArray(handler) ? handler : [handler]
+  handlers.forEach((h) => app.use(h))
 }
 
 /**

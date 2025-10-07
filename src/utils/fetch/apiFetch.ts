@@ -2,7 +2,7 @@ import { HTTP_STATUS } from '#constants/httpStatus'
 
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
-interface FetchParams {
+interface FetchOptions {
   headers?: Record<string, string>
   body?: BodyInit | null
   cache?: RequestCache
@@ -53,8 +53,8 @@ const buildQueryParams = (filters: Record<string, unknown>): string => {
  */
 const prepareRequestInput = (
   endpoint: string,
-  options?: FetchParams,
-): { endpoint: string; options: Omit<FetchParams, 'filters'> } => {
+  options?: FetchOptions,
+): { endpoint: string; options: Omit<FetchOptions, 'filters'> } => {
   const { filters, ...restOptions } = options ?? {}
   const queryString = filters ? buildQueryParams(filters) : ''
   return {
@@ -79,7 +79,7 @@ const prepareRequestInput = (
 const performRequest = async (
   method: Method,
   endpoint: string,
-  options: Omit<FetchParams, 'filters'>,
+  options: Omit<FetchOptions, 'filters'>,
 ): Promise<Response> => {
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), options.timeoutMs ?? 8000)
@@ -127,7 +127,7 @@ const parseResponseBody = async (res: Response): Promise<unknown> => {
  * @param options - Optional configuration (headers, body, etc.).
  * @returns Parsed response body as type `T`.
  */
-const request = async <T>(method: Method, endpoint: string, options: FetchParams = {}): Promise<T> => {
+const request = async <T>(method: Method, endpoint: string, options: FetchOptions = {}): Promise<T> => {
   const res = await performRequest(method, endpoint, options)
   const parsed = await parseResponseBody(res)
   return parsed as T
@@ -143,7 +143,7 @@ const request = async <T>(method: Method, endpoint: string, options: FetchParams
  * @param options - Optional fetch configuration.
  * @returns Typed response data.
  */
-const method = <T>(method: Method, endpoint: string, options?: FetchParams): Promise<T> => {
+const method = <T>(method: Method, endpoint: string, options?: FetchOptions): Promise<T> => {
   const { endpoint: finalEndpoint, options: finalOptions } = prepareRequestInput(endpoint, options)
   return request<T>(method, finalEndpoint, finalOptions)
 }
@@ -161,9 +161,9 @@ const method = <T>(method: Method, endpoint: string, options?: FetchParams): Pro
  *
  */
 export const apiFetch = {
-  get: <T>(endpoint: string, options?: FetchParams) => method<T>('GET', endpoint, options),
-  post: <T>(endpoint: string, options?: FetchParams) => method<T>('POST', endpoint, options),
-  put: <T>(endpoint: string, options?: FetchParams) => method<T>('PUT', endpoint, options),
-  patch: <T>(endpoint: string, options?: FetchParams) => method<T>('PATCH', endpoint, options),
-  delete: <T = void>(endpoint: string, options?: FetchParams) => method<T>('DELETE', endpoint, options),
+  get: <T>(endpoint: string, options?: FetchOptions) => method<T>('GET', endpoint, options),
+  post: <T>(endpoint: string, options?: FetchOptions) => method<T>('POST', endpoint, options),
+  put: <T>(endpoint: string, options?: FetchOptions) => method<T>('PUT', endpoint, options),
+  patch: <T>(endpoint: string, options?: FetchOptions) => method<T>('PATCH', endpoint, options),
+  delete: <T = void>(endpoint: string, options?: FetchOptions) => method<T>('DELETE', endpoint, options),
 }

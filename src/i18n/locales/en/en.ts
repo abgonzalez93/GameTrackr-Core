@@ -125,46 +125,62 @@ export const en = {
       },
     },
     schemas: {
+      base: {
+        IpAddressSchema: {
+          ip_invalid: 'Please enter a valid IP address',
+        },
+        NonEmptyStringSchema: {
+          string_empty: 'This field cannot be empty',
+        },
+        PortSchema: {
+          port_range: 'Port must be between 1 and 9999',
+        },
+        PositiveNumberSchema: {
+          number_invalid: 'This field must be a number',
+          number_integer: 'This field must be an integer number',
+          number_positive: 'This field must be a positive number',
+        },
+        UrlSchema: {
+          url_invalid: 'Please enter a valid URL',
+        },
+      },
       login: {
-        identifier_required: 'Email or username is required',
-        password_required: 'Password is required',
-        identifier_invalid: 'Please enter a valid email address or username',
+        LoginInputSchema: {
+          identifier_required: 'Email or username is required',
+          password_required: 'Password is required',
+          identifier_invalid: 'Please enter a valid email address or username',
+        },
       },
-      shared: {
-        ip_invalid: 'Please enter a valid IP address',
-        string_empty: 'This field cannot be empty',
-        url_invalid: 'Please enter a valid URL',
-        number_invalid: 'This field must be a number',
-        number_integer: 'This field must be an integer number',
-        number_positive: 'This field must be a positive number',
-        port_range: 'Port must be between 1 and 9999',
-      },
-      CreateUser: {
-        password_invalid: 'Password must include uppercase, lowercase, number and special character',
-        password_confirm_required: 'Password confirmation is required',
-        password_mismatch: 'Passwords must match',
-      },
-      UserEmail: {
-        email_required: 'Email is required',
-        email_invalid: 'Invalid email address format',
-        email_disposable: 'Disposable email addresses are not allowed',
-      },
-      UserName: {
-        username_required: 'Username is required',
-        username_min: 'Username must be at least 3 characters',
-        username_max: 'Username must be at most 30 characters',
-        username_invalid: 'Only letters, numbers and underscores are allowed',
+      user: {
+        CreateUserSchema: {
+          password_invalid: 'Password must include uppercase, lowercase, number and special character',
+          password_confirm_required: 'Password confirmation is required',
+          password_mismatch: 'Passwords must match',
+        },
+        UserEmailSchema: {
+          email_required: 'Email is required',
+          email_invalid: 'Invalid email address format',
+          email_disposable: 'Disposable email addresses are not allowed',
+        },
+        UserNameSchema: {
+          username_required: 'Username is required',
+          username_min: 'Username must be at least 3 characters',
+          username_max: 'Username must be at most 30 characters',
+          username_invalid: 'Only letters, numbers and underscores are allowed',
+        },
       },
     },
     utils: {
-      parse: {
+      validate: {
         validateSchema: {
           invalid_input: 'Invalid input',
         },
       },
       translate: {
-        invalid_key: 'Invalid translation key',
-        invalid_key_type: 'Translation key must be a string',
+        formatErrorMessage: {
+          invalid_key: 'Invalid translation key',
+          invalid_key_type: 'Translation key must be a string',
+        },
       },
     },
   },

@@ -1,38 +1,69 @@
-import { type MiddlewareOptions } from '#types/MiddlewareOptions'
-import { type LoggerOptions } from '#types/LoggerOptions'
-import { startServer } from './internal/startServer.js'
-import { createApp } from './internal/createApp.js'
-import { createI18n, initI18n } from '#i18n/i18n'
-import { createLogger } from '#logger/logger'
-import { Express } from 'express'
-import { Logger } from 'winston'
-import { i18n } from 'i18next'
+import { type MiddlewareOptions } from '#types/middlewares/MiddlewareOptions'
+import { createNotFoundHandler } from '#middlewares/createNotFoundHandler'
+import { createErrorHandler } from '#middlewares/createErrorHandler'
+import { type LoggerOptions } from '#types/logger/LoggerOptions'
+import { applyMiddlewares } from '#middlewares/applyMiddlewares'
+import { type ServiceRuntime } from './ServiceRuntime.js'
+import { createLogger } from '#logger/createLogger'
+import { getBaseUrl } from '#utils/http/getBaseUrl'
+import express, { type Express } from 'express'
+import { createI18n } from '#i18n/createI18n'
+import { initI18n } from '#i18n/initI18n'
+import { type Logger } from 'winston'
+import { type i18n } from 'i18next'
 
 /**
- * Context object containing shared infrastructure instances.
+ * **InfrastructureInstance**
  *
- * These instances are initialized once per service and passed downstream
- * into the application layer (e.g., logger, i18n).
+ * Represents the set of shared infrastructure-level instances
+ * initialized during service startup — typically logger and i18n.
+ *
+ * ### Purpose
+ * Acts as the foundation of the service runtime, providing
+ * cross-cutting dependencies that are injected downstream.
+ *
+ * ### Notes
+ * - Created once per service during bootstrap.
+ * - Passed to middleware, routes, and use cases as shared context.
+ *
+ * @see {@link createInfrastructure}
  */
-interface InfrastructureContext {
-  /** Configured Winston logger instance. */
+interface InfrastructureInstance {
   logger: Logger
-
-  /** Initialized i18n instance for translations. */
   i18n: i18n
 }
 
 /**
- * Configuration options for initializing the infrastructure layer.
+ * **EnvConfig**
  *
- * @property serviceName - Human-readable label for the service (used in logs).
- * @property env - Environment object containing runtime metadata (e.g., NODE_ENV).
- * @property loggerOptions - Optional configuration for the {@link createLogger} function.
- * @property onBeforeApp - Optional hook for pre-initialization tasks (e.g., DB, cache).
+ * Represents the normalized runtime environment configuration
+ * required for service initialization and networking.
+ *
+ * @property NODE_ENV - Runtime environment (`development`, `production`, or `test`).
+ * @property HOST - Hostname or IP address for the service.
+ * @property PORT - TCP port where the service listens.
+ * @property CORS_ORIGINS - Comma-separated list of allowed CORS origins.
+ */
+interface EnvConfig {
+  NODE_ENV: string
+  HOST: string
+  PORT: number
+  CORS_ORIGINS: string
+}
+
+/**
+ * **InfrastructureOptions**
+ *
+ * Configuration object for initializing the infrastructure layer.
+ *
+ * ### Responsibilities
+ * - Configure and create a {@link Logger}.
+ * - Initialize the i18n translation system.
+ * - Execute optional async hooks before app creation (e.g., DB/Redis connections).
  */
 interface InfrastructureOptions {
   serviceName: string
-  env: { NODE_ENV: string }
+  env: EnvConfig
   loggerOptions?: LoggerOptions
   onBeforeApp?: (logger: Logger) => Promise<void>
 }
@@ -40,29 +71,23 @@ interface InfrastructureOptions {
 /**
  * **createInfrastructure**
  *
- * Initializes the **core infrastructure layer** required by a TrackPlay service.
+ * Initializes cross-cutting dependencies required by every TrackPlay service.
  *
- * ### Responsibilities
- * - Configure and instantiate the shared {@link Logger}.
- * - Execute optional pre-app initialization logic (`onBeforeApp`).
- * - Create and initialize the internationalization layer ({@link i18n}).
+ * ### Flow
+ * 1. Creates and configures the {@link Logger}.
+ * 2. Initializes and loads i18n translations.
+ * 3. Executes optional pre-initialization hooks.
  *
- * ### Notes
- * - This function focuses exclusively on *low-level cross-cutting concerns*.
- * - It is called internally by {@link bootstrap} before the Express app is created.
- *
- * @param options - Infrastructure setup options (service name, env, logger, hooks).
- * @returns A promise resolving with the initialized {@link InfrastructureContext}.
- *
+ * @param options - Infrastructure initialization parameters.
+ * @returns Promise resolving to a configured {@link InfrastructureInstance}.
  */
 const createInfrastructure = async ({
   serviceName,
   env,
   loggerOptions,
   onBeforeApp,
-}: InfrastructureOptions): Promise<InfrastructureContext> => {
-  const { NODE_ENV } = env
-  const isDevelopment = NODE_ENV === 'development'
+}: InfrastructureOptions): Promise<InfrastructureInstance> => {
+  const isDevelopment = env.NODE_ENV === 'development'
 
   const logger = createLogger({
     label: serviceName,
@@ -71,32 +96,106 @@ const createInfrastructure = async ({
     ...loggerOptions,
   })
 
-  if (onBeforeApp) await onBeforeApp(logger)
-
   const i18n = createI18n()
   await initI18n(i18n)
+
+  if (onBeforeApp) await onBeforeApp(logger)
 
   return { logger, i18n }
 }
 
 /**
- * Options used to bootstrap and start a TrackPlay service.
+ * **CreateAppOptions**
  *
- * @property serviceName - Name of the service (used in logs).
- * @property env - Environment variables for runtime configuration.
- * @property routes - Function that registers all service-specific routes.
- * @property loggerOptions - Optional logger customization.
- * @property middlewareOptions - Optional global middleware configuration.
- * @property onBeforeApp - Optional pre-start hook (e.g., DB connection, cache warm-up).
+ * Defines configuration options for constructing an Express application.
+ *
+ * ### Responsibilities
+ * - Apply global middlewares (CORS, security, compression, JSON, etc.).
+ * - Register route definitions.
+ * - Attach fallback and global error handlers.
+ */
+interface CreateAppOptions {
+  routes: (app: Express) => void
+  middlewareOptions?: MiddlewareOptions
+  i18n: i18n
+  logger: Logger
+}
+
+/**
+ * **createApp**
+ *
+ * Creates and configures a production-ready Express application instance.
+ *
+ * ### Flow
+ * 1. Applies global middlewares via {@link applyMiddlewares}.
+ * 2. Registers service-specific routes.
+ * 3. Adds not-found and error-handling middlewares.
+ *
+ * @param options - Configuration object for app setup.
+ * @returns Configured {@link Express} application instance.
+ */
+const createApp = ({ routes, middlewareOptions, i18n, logger }: CreateAppOptions): Express => {
+  const app = express()
+
+  // Apply security, compression, and JSON middlewares
+  applyMiddlewares(app, middlewareOptions ?? {})
+
+  // Register service routes
+  routes(app)
+
+  // Global 404 and error handling
+  app.use(createNotFoundHandler())
+  app.use(createErrorHandler(i18n, logger, middlewareOptions?.errorHandler))
+
+  return app
+}
+
+/**
+ * **ServerOptions**
+ *
+ * Configuration for launching the HTTP/HTTPS server.
+ *
+ * @property protocol - Network protocol (`http` by default, or `https`).
+ * @property host - Hostname or IP address.
+ * @property port - Port number where the server listens.
+ */
+interface ServerOptions {
+  protocol?: 'http' | 'https'
+  host: string
+  port: number
+}
+
+/**
+ * **startServer**
+ *
+ * Starts the HTTP server using the provided configuration.
+ *
+ * ### Responsibilities
+ * - Launches the Express app on the configured host/port.
+ * - Logs the running base URL via {@link getBaseUrl}.
+ *
+ * @param app - Express application instance.
+ * @param logger - Winston logger used to log startup information.
+ * @param options - Server configuration options.
+ */
+const startServer = (app: Express, logger: Logger, options: ServerOptions): void => {
+  const { protocol = 'http' } = options
+  app.listen(options.port, options.host, () => logger.info(`✅ Server running at ${getBaseUrl({ ...options, protocol })}`))
+}
+
+/**
+ * **BootstrapOptions**
+ *
+ * Parameters required to initialize and launch a TrackPlay service.
+ *
+ * ### Responsibilities
+ * - Configure infrastructure dependencies (logger, i18n).
+ * - Build an Express app with routes and middlewares.
+ * - Start the HTTP/HTTPS server and log runtime URL.
  */
 interface BootstrapOptions {
   serviceName: string
-  env: {
-    NODE_ENV: string
-    HOST: string
-    PORT: number
-    CORS_ORIGINS: string
-  }
+  env: EnvConfig
   routes: (app: Express) => void
   loggerOptions?: LoggerOptions
   middlewareOptions?: MiddlewareOptions
@@ -106,31 +205,21 @@ interface BootstrapOptions {
 /**
  * **bootstrap**
  *
- * Entry point for initializing and starting a TrackPlay microservice.
+ * Unified entry point for initializing and starting a TrackPlay microservice.
  *
- * This helper function orchestrates the entire setup sequence:
+ * ### Flow
+ * 1. **Infrastructure Setup** — Initializes logger, i18n, and pre-app hooks.
+ * 2. **App Creation** — Applies middlewares and registers routes.
+ * 3. **Server Launch** — Starts the Express server and logs the service URL.
  *
- * 1. **Initialize Infrastructure** — Logging, i18n, and pre-app hooks.
- * 2. **Create Express App** — Apply global middlewares and register routes.
- * 3. **Start Server** — Launch the HTTP/HTTPS server with configured host/port.
- *
- * ### Responsibilities
- * - Set up a shared {@link Logger} instance for structured service logs.
- * - Execute an optional `onBeforeApp` hook (e.g., connect to Redis or Prisma).
- * - Initialize i18n and register route handlers.
- * - Configure and apply CORS, compression, and error-handling middlewares.
- * - Start the server using {@link startServer}.
- *
- * ### Notes
- * - This function is intended to be called once from each service’s entrypoint.
- * - It provides a consistent bootstrapping pattern across all TrackPlay services.
- *
- * @param options - Configuration object for the current service.
- * @returns A promise that resolves once the server is successfully running.
- *
+ * @param options - Full configuration object for service initialization.
+ * @returns {Promise<ServiceRuntime>} The live {@link ServiceRuntime} context of the running service.
  */
-export const bootstrap = async (options: BootstrapOptions) => {
+export const bootstrap = async (options: BootstrapOptions): Promise<ServiceRuntime> => {
   const { env, serviceName, routes, loggerOptions, middlewareOptions, onBeforeApp } = options
+  const { NODE_ENV, HOST, PORT, CORS_ORIGINS } = env
+
+  const isDevelopment = NODE_ENV === 'development'
 
   const { logger, i18n } = await createInfrastructure({
     serviceName,
@@ -139,9 +228,11 @@ export const bootstrap = async (options: BootstrapOptions) => {
     onBeforeApp,
   })
 
-  const { NODE_ENV, HOST, PORT, CORS_ORIGINS } = env
-  const isDevelopment = NODE_ENV === 'development'
-  const corsOrigins = CORS_ORIGINS.split(',')
+  const corsOrigins = CORS_ORIGINS
+    ? CORS_ORIGINS.split(',')
+        .map((o) => o.trim())
+        .filter(Boolean)
+    : []
 
   const app = createApp({
     routes,
@@ -159,4 +250,6 @@ export const bootstrap = async (options: BootstrapOptions) => {
     host: HOST,
     port: PORT,
   })
+
+  return { app, logger, i18n }
 }

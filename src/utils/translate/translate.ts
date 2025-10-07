@@ -1,4 +1,4 @@
-import { type TranslationOptions } from '#types/TranslationOptions'
+import { type TranslationOptions } from '#types/translate/TranslationOptions'
 import { i18n } from 'i18next'
 
 /**

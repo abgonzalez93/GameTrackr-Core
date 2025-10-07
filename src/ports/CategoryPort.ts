@@ -1,4 +1,4 @@
-import { CategoryList } from '#schemas/category/Category'
+import { CategoryList } from '#types/category/CategoryList'
 
 /**
  * **CategoryPort**

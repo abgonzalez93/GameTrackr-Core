@@ -1,7 +1,7 @@
-import { type TranslationVariables } from '#types/TranslationVariables'
-import { type TranslationOptions } from '#types/TranslationOptions'
+import { type TranslationVariables } from '#types/translate/TranslationVariables'
+import { type TranslationOptions } from '#types/translate/TranslationOptions'
 import { getTranslationPath } from './getTranslationPath.js'
-import { BadRequestError } from '#errors/HttpErrors'
+import { BadRequestError } from '#errors/BadRequestError'
 import { en } from '#i18n/locales/index'
 
 const path = getTranslationPath(import.meta.url)

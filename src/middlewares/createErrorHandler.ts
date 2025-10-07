@@ -1,11 +1,11 @@
+import { type ErrorHandlerOptions } from '#types/middlewares/ErrorHandlerOptions'
 import { getTranslationPath } from '#utils/translate/getTranslationPath'
-import { type ErrorHandlerOptions } from '#types/ErrorHandlerOptions'
-import { Request, Response, NextFunction } from 'express'
+import type { Request, Response, NextFunction } from 'express'
 import { TrackPlayError } from '#errors/TrackPlayError'
 import { translate } from '#utils/translate/translate'
 import { HTTP_STATUS } from '#constants/httpStatus'
-import { Logger } from 'winston'
-import { i18n } from 'i18next'
+import { type Logger } from 'winston'
+import { type i18n } from 'i18next'
 
 const path = getTranslationPath(import.meta.url)
 
