@@ -1,7 +1,19 @@
-import { createEnv } from '@t3-oss/env-core'
-import z, { type ZodType } from 'zod'
+import { z, type ZodType } from 'zod'
 
+/**
+ * **EnvSchema**
+ *
+ * Represents a record of Zod environment variable validators.
+ * Each key corresponds to an environment variable name.
+ */
 type EnvSchema = Record<string, ZodType>
+
+/**
+ * **EnvValues**
+ *
+ * Represents the raw key-value pairs extracted from `process.env`.
+ */
+type EnvValues = Record<string, string | undefined>
 
 /**
  * **EnvConfigOptions**
@@ -22,20 +34,15 @@ type EnvSchema = Record<string, ZodType>
  *
  * @template Server - Zod schema defining server-side variables.
  * @template Client - Zod schema defining client-side variables.
- *
- * @see {@link createEnvConfig}
  */
-interface EnvConfigOptions<Server extends EnvSchema | undefined, Client extends EnvSchema | undefined> {
-  /**
-   * Zod schema defining the **server-side environment variables**.
-   * These remain private and are not exposed to the frontend.
-   */
+interface EnvConfigOptions<
+  Server extends EnvSchema | undefined = undefined,
+  Client extends EnvSchema | undefined = undefined,
+> {
+  /** Zod schema defining the **server-side environment variables**. */
   server?: Server
 
-  /**
-   * Zod schema defining the **client-side environment variables**.
-   * Only include values safe for public exposure.
-   */
+  /** Zod schema defining the **client-side environment variables**. */
   client?: Client
 
   /**
@@ -46,10 +53,7 @@ interface EnvConfigOptions<Server extends EnvSchema | undefined, Client extends 
    */
   clientPrefix?: string
 
-  /**
-   * Custom runtime environment source.
-   * Defaults to the global `process.env`.
-   */
+  /** Custom runtime environment source. Defaults to `process.env`. */
   runtimeEnv?: NodeJS.ProcessEnv
 
   /**
@@ -64,21 +68,82 @@ interface EnvConfigOptions<Server extends EnvSchema | undefined, Client extends 
  * **InferEnv**
  *
  * Infers the TypeScript type from a given Zod environment schema.
- *
  * Used internally to derive precise typing for both `server` and `client`
  * environment variables without manual duplication.
+ *
+ * @internal
  */
-type InferEnv<S extends EnvSchema | undefined> = S extends EnvSchema ? z.infer<z.ZodObject<S>> : Record<string, never>
+type InferEnv<T extends EnvSchema | undefined> = T extends EnvSchema ? z.infer<z.ZodObject<T>> : Record<string, never>
 
 /**
  * **EnvConfigReturn**
  *
  * Merges inferred types for both server and client environment schemas.
- * This ensures that `createEnvConfig` returns a unified, type-safe object
- * representing all validated environment variables.
+ * Ensures that {@link createEnvConfig} returns a unified, type-safe object.
+ *
+ * @internal
  */
-type EnvConfigReturn<Server extends EnvSchema | undefined, Client extends EnvSchema | undefined> = InferEnv<Server> &
-  InferEnv<Client>
+type EnvConfigReturn<
+  Server extends EnvSchema | undefined = undefined,
+  Client extends EnvSchema | undefined = undefined,
+> = InferEnv<Server> & InferEnv<Client>
+
+/**
+ * Parses and validates a single environment schema section.
+ *
+ * @param schema - Zod schema defining expected variables
+ * @param values - Raw key-value pairs from the environment
+ * @param label - Optional label to improve error readability
+ * @returns A parsed and validated environment object
+ * @throws Terminates process with detailed logs on failure
+ *
+ * @internal
+ */
+const parseEnvSection = <S extends EnvSchema | undefined>(
+  schema: S,
+  values: EnvValues,
+  label: string = 'environment',
+): InferEnv<S> => {
+  if (!schema) return {} as InferEnv<S>
+
+  const result = z.object(schema).safeParse(values)
+  if (result.success) return result.data as InferEnv<S>
+
+  console.error(`\n❌ Invalid ${label} configuration:\n`)
+
+  for (const issue of result.error.issues) {
+    const path = issue.path.join('.') || '(root)'
+    console.error(`- ${path}: ${issue.message}`)
+  }
+
+  console.error('\nEnvironment validation failed.\n')
+  process.exit(1)
+}
+
+/**
+ * Validates and merges environment configurations for server and client.
+ *
+ * @internal
+ */
+const validateEnvConfig = <
+  Server extends EnvSchema | undefined = undefined,
+  Client extends EnvSchema | undefined = undefined,
+>(
+  options: EnvConfigOptions<Server, Client>,
+): EnvConfigReturn<Server, Client> => {
+  const { server, client, clientPrefix = 'NEXT_PUBLIC_', runtimeEnv = process.env, emptyStringAsUndefined = true } = options
+
+  const env: EnvValues = Object.fromEntries(
+    Object.entries(runtimeEnv).map(([key, value]) => [key, emptyStringAsUndefined && value === '' ? undefined : value]),
+  )
+
+  const serverData = parseEnvSection(server, env, 'Server')
+
+  const clientEnv = client ? Object.fromEntries(Object.entries(env).filter(([k]) => k.startsWith(clientPrefix))) : {}
+  const clientData = parseEnvSection(client, clientEnv, 'Client')
+
+  return { ...serverData, ...clientData } as EnvConfigReturn<Server, Client>
+}
 
 /**
  * **createEnvConfig**
@@ -94,9 +159,6 @@ type EnvConfigReturn<Server extends EnvSchema | undefined, Client extends EnvSch
  *
  * @param options - Configuration object defining Zod schemas and runtime options.
  * @returns A validated and type-safe environment configuration object.
- *
- * @see {@link EnvConfigOptions}
- * @see {@link https://env.t3.gg/docs/core | T3 Env Documentation}
  */
 export const createEnvConfig = <
   Server extends EnvSchema | undefined = undefined,
@@ -104,13 +166,5 @@ export const createEnvConfig = <
 >(
   options: EnvConfigOptions<Server, Client>,
 ): EnvConfigReturn<Server, Client> => {
-  const { server, client, clientPrefix = 'NEXT_PUBLIC_', runtimeEnv = process.env, emptyStringAsUndefined = true } = options
-
-  const base = {
-    server: server ?? {},
-    runtimeEnv,
-    emptyStringAsUndefined,
-  }
-
-  return createEnv(client ? { ...base, client, clientPrefix } : base) as EnvConfigReturn<Server, Client>
+  return validateEnvConfig(options)
 }
