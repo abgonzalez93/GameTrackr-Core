@@ -11,11 +11,19 @@ Su objetivo es mantener el código **DRY**, **tipado**, **modular** y **consiste
 
 El paquete incluye:
 
-### ✅ Clientes Externos
+### ✅ Clientes externos
 
 - Clientes reutilizables para servicios externos (ej. `createRedis`).
 - Proveen una capa de abstracción sobre dependencias de terceros.
 - Pensados para inyección de dependencias y testabilidad.
+
+### ✅ Configuración de entorno
+
+- Validación automática con `Zod`
+- Soporte dual para entornos de servidor y cliente.
+- Prevención de errores silenciosos: las cadenas vacías se tratan como `undefined`.
+- Tipado inferido en tiempo de compilación `z.infer`.
+- Control de exposición en entorno cliente mediante prefijo configurable `NEXT_PUBLIC_`.
 
 ### ✅ Constantes
 
@@ -56,7 +64,6 @@ El paquete incluye:
 ### ✅ Schemas Zod
 
 - Esquemas de validación centralizados por dominio (`/auth`, `/game`, `/user`, `/jwt`, `/provider`, etc.).
-- Generan tipos inferidos (`z.infer`) para un tipado compartido entre backend y frontend.
 - Garantizan validaciones consistentes y seguras.
 
 ### ✅ Servidor
@@ -69,6 +76,7 @@ El paquete incluye:
 
 - Interfaces y tipos globales compartidos:
 - `LoggerOptions`, `MiddlewareOptions`, `TranslationVariables`, etc.
+- Generan tipos inferidos (`z.infer`) para un tipado compartido entre backend y frontend.
 - Mantiene consistencia tipada entre microservicios y librerías.
 
 ### ✅ Utilidades
@@ -124,7 +132,7 @@ Para publicar en el registro de NPM (por ejemplo, GitHub Packages), necesitas te
 ✅ .npmrc mínimo para GitHub Packages:
 
 ```ini
-@trackplay:registry=https://npm.pkg.github.com
+@YOUR_DIRECTORY:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
 ```
 

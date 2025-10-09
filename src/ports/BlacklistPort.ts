@@ -1,3 +1,5 @@
+import { type JWTJti } from '#types/jwt/JWTJti'
+
 /**
  * **BlacklistPort**
  *
@@ -22,7 +24,7 @@ export interface BlacklistPort {
    * @param ttlSeconds - Time-to-live in seconds (remaining lifetime of the token).
    * @returns A promise that resolves once the token has been added to the blacklist.
    */
-  revokeToken(jti: string, ttlSeconds: number): Promise<void>
+  revokeToken(jti: JWTJti, ttlSeconds: number): Promise<void>
 
   /**
    * Checks whether the given token identifier (`jti`) is present in the blacklist.
@@ -30,5 +32,5 @@ export interface BlacklistPort {
    * @param jti - The unique identifier of the JWT.
    * @returns A promise that resolves to `true` if the token has been revoked; otherwise `false`.
    */
-  isTokenRevoked(jti: string): Promise<boolean>
+  isTokenRevoked(jti: JWTJti): Promise<boolean>
 }

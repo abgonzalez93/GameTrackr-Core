@@ -73,7 +73,9 @@ interface EnvConfigOptions<
  *
  * @internal
  */
-type InferEnv<T extends EnvSchema | undefined> = T extends EnvSchema ? z.infer<z.ZodObject<T>> : Record<string, never>
+type InferEnv<Schema extends EnvSchema | undefined> = Schema extends EnvSchema
+  ? z.infer<z.ZodObject<Schema>>
+  : Record<string, never>
 
 /**
  * **EnvConfigReturn**
@@ -99,15 +101,15 @@ type EnvConfigReturn<
  *
  * @internal
  */
-const parseEnvSection = <S extends EnvSchema | undefined>(
-  schema: S,
+const parseEnvSection = <Schema extends EnvSchema | undefined>(
+  schema: Schema,
   values: EnvValues,
   label: string = 'environment',
-): InferEnv<S> => {
-  if (!schema) return {} as InferEnv<S>
+): InferEnv<Schema> => {
+  if (!schema) return {} as InferEnv<Schema>
 
   const result = z.object(schema).safeParse(values)
-  if (result.success) return result.data as InferEnv<S>
+  if (result.success) return result.data as InferEnv<Schema>
 
   console.error(`\n❌ Invalid ${label} configuration:\n`)
 
@@ -121,11 +123,20 @@ const parseEnvSection = <S extends EnvSchema | undefined>(
 }
 
 /**
+ * **createEnvConfig**
+ *
  * Validates and merges environment configurations for server and client.
  *
- * @internal
+ * ### Responsibilities
+ * - Validate environment variables using Zod schemas.
+ * - Support both server and client validation flows.
+ * - Expose safe client variables with a configurable prefix.
+ * - Normalize empty strings to `undefined` to prevent silent failures.
+ *
+ * @param options - Configuration object defining Zod schemas and runtime options.
+ * @returns A validated and type-safe environment configuration object.
  */
-const validateEnvConfig = <
+export const createEnvConfig = <
   Server extends EnvSchema | undefined = undefined,
   Client extends EnvSchema | undefined = undefined,
 >(
@@ -143,28 +154,4 @@ const validateEnvConfig = <
   const clientData = parseEnvSection(client, clientEnv, 'Client')
 
   return { ...serverData, ...clientData } as EnvConfigReturn<Server, Client>
-}
-
-/**
- * **createEnvConfig**
- *
- * Factory utility for defining a **type-safe environment configuration**
- * across both backend and frontend contexts.
- *
- * ### Responsibilities
- * - Validate environment variables using Zod schemas.
- * - Support both server and client validation flows.
- * - Expose safe client variables with a configurable prefix.
- * - Normalize empty strings to `undefined` to prevent silent failures.
- *
- * @param options - Configuration object defining Zod schemas and runtime options.
- * @returns A validated and type-safe environment configuration object.
- */
-export const createEnvConfig = <
-  Server extends EnvSchema | undefined = undefined,
-  Client extends EnvSchema | undefined = undefined,
->(
-  options: EnvConfigOptions<Server, Client>,
-): EnvConfigReturn<Server, Client> => {
-  return validateEnvConfig(options)
 }

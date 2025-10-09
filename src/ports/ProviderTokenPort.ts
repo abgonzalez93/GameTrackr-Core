@@ -1,4 +1,4 @@
-import { ProviderToken } from '#types/providers/ProviderToken'
+import { type ProviderToken } from '#types/providers/ProviderToken'
 
 /**
  * **ProviderTokenPort**

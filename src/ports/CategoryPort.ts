@@ -1,4 +1,4 @@
-import { CategoryList } from '#types/category/CategoryList'
+import { type CategoryList } from '#types/category/CategoryList'
 
 /**
  * **CategoryPort**

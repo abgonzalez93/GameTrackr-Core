@@ -1,7 +1,7 @@
-import { GameFilters } from '#types/game/GameFilters'
-import { GameList } from '#types/game/GameList'
-import { Game } from '#types/game/Game'
-import { Id } from '#types/base/Id'
+import { type GameFilters } from '#types/game/GameFilters'
+import { type GameList } from '#types/game/GameList'
+import { type Game } from '#types/game/Game'
+import { type Id } from '#types/base/Id'
 
 /**
  * **GamePort**

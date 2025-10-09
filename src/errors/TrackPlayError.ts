@@ -65,8 +65,6 @@ export class TrackPlayError extends Error {
     this.statusName = statusName
     this.details = details
 
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, new.target)
-    }
+    if (Error.captureStackTrace) Error.captureStackTrace(this, new.target)
   }
 }

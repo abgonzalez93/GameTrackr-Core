@@ -1,7 +1,7 @@
+import { format, transports, type Logger, createLogger as WinstonCreateLogger } from 'winston'
 import { type LoggerOptions } from '#types/logger/LoggerOptions'
-import winston from 'winston'
 
-const { combine, timestamp, label, printf, colorize } = winston.format
+const { combine, timestamp, label, printf, colorize } = format
 
 /**
  * **Custom console format**
@@ -29,7 +29,7 @@ const getTimestamp = (): string =>
 /**
  * **Creates a configured Winston logger instance**
  *
- * Factory function for constructing an isolated {@link winston.Logger}.
+ * Factory function for constructing an isolated {@link Logger}.
  *
  * ### Responsibilities
  * - Configure per-service loggers with consistent formatting.
@@ -47,30 +47,30 @@ const getTimestamp = (): string =>
  *   - `logs/rejections.log` — unhandled rejections
  *
  * @param options - Optional {@link LoggerOptions} to customize behavior.
- * @returns A fully configured {@link winston.Logger} instance.
+ * @returns A fully configured {@link Logger} instance.
  *
  */
-export const createLogger = (options: LoggerOptions = {}): winston.Logger => {
+export const createLogger = (options: LoggerOptions = {}): Logger => {
   const { isDevelopment = false, label: serviceLabel = 'TrackPlay', level = 'info' } = options
 
-  return winston.createLogger({
+  return WinstonCreateLogger({
     level,
     format: combine(
       label({ label: serviceLabel }),
       timestamp({ format: getTimestamp }),
-      isDevelopment ? combine(colorize(), consoleFormat) : winston.format.json(),
+      isDevelopment ? combine(colorize(), consoleFormat) : format.json(),
     ),
     transports: [
-      new winston.transports.Console(),
+      new transports.Console(),
       ...(!isDevelopment
         ? [
-            new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
-            new winston.transports.File({ filename: 'logs/combined.log' }),
+            new transports.File({ filename: 'logs/error.log', level: 'error' }),
+            new transports.File({ filename: 'logs/combined.log' }),
           ]
         : []),
     ],
-    exceptionHandlers: [new winston.transports.File({ filename: 'logs/exceptions.log' })],
-    rejectionHandlers: [new winston.transports.File({ filename: 'logs/rejections.log' })],
+    exceptionHandlers: [new transports.File({ filename: 'logs/exceptions.log' })],
+    rejectionHandlers: [new transports.File({ filename: 'logs/rejections.log' })],
     exitOnError: false,
   })
 }
