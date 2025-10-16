@@ -1,5 +1,5 @@
-import { CategorySchema } from './CategorySchema.js'
 import { z } from 'zod'
+import { CategorySchema } from './CategorySchema.ts'
 
 /**
  * **CategoryListSchema**

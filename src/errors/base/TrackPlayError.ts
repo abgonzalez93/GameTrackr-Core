@@ -1,6 +1,5 @@
-import { type TranslationOptions } from '#types/translate/TranslationOptions'
-import { formatErrorMessage } from '#utils/translate/formatErrorMessage'
 import { HTTP_STATUS } from '#constants/httpStatus'
+import { type Translatable } from '#types/translate/Translatable'
 
 /**
  * **TrackPlayError (Base Class)**
@@ -11,7 +10,7 @@ import { HTTP_STATUS } from '#constants/httpStatus'
  * - Serves as the foundation for all domain and HTTP-specific error classes.
  * - Extends the native {@link Error} object by including structured metadata
  *   such as status code, status name, and optional details.
- * - Supports message internationalization via {@link TranslationOptions}.
+ * - Supports message internationalization via {@link Translatable}.
  *
  * ### Features
  * - **HTTP-aware**: includes `statusCode` and `statusName` fields for response handling.
@@ -25,7 +24,7 @@ import { HTTP_STATUS } from '#constants/httpStatus'
  * - Stack trace is captured automatically for better debugging.
  *
  * @see {@link HTTP_STATUS}
- * @see {@link TranslationOptions}
+ * @see {@link Translatable}
  */
 export class TrackPlayError extends Error {
   /**
@@ -43,28 +42,32 @@ export class TrackPlayError extends Error {
    */
   public readonly details?: unknown
 
+  public readonly i18n?: Translatable
+
   /**
    * Constructs a new {@link TrackPlayError}.
    *
    * @param message - Translatable error message, either a plain string
-   * or a {@link TranslationOptions} object for i18n support.
+   * or a {@link Translatable} object for i18n support.
    * @param statusCode - HTTP status code (defaults to 500).
    * @param statusName - Short descriptive name of the HTTP status (defaults to `"Internal Server"`).
    * @param details - Optional structured metadata for debugging or response context.
    */
   constructor(
-    message: string | TranslationOptions,
+    message: string | Translatable,
     statusCode: number = HTTP_STATUS.INTERNAL_SERVER_ERROR,
     statusName: string = 'Internal Server',
     details?: unknown,
   ) {
-    super(formatErrorMessage(message))
+    super(typeof message === 'string' ? message : message.key)
 
     this.name = `${statusCode} ${statusName}`
     this.statusCode = statusCode
     this.statusName = statusName
     this.details = details
+    this.i18n = typeof message === 'string' ? undefined : message
 
     if (Error.captureStackTrace) Error.captureStackTrace(this, new.target)
+    Object.freeze(this)
   }
 }

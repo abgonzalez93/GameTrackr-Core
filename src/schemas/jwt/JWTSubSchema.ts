@@ -1,4 +1,4 @@
-import { NonEmptyStringSchema } from '../base/NonEmptyStringSchema.js'
+import { NonEmptyStringSchema } from '../base/NonEmptyStringSchema.ts'
 
 /**
  * **JWTSubSchema**

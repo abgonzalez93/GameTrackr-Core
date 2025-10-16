@@ -1,7 +1,4 @@
-import { getTranslationPath } from '#utils/translate/getTranslationPath'
 import { z } from 'zod'
-
-const path = getTranslationPath(import.meta.url)
 
 /**
  * **NonEmptyStringSchema**
@@ -16,6 +13,5 @@ const path = getTranslationPath(import.meta.url)
  * - Must be of type **string**.
  * - Must contain **at least one character** (no empty strings).
  *
- * @translationKey `${path}.string_empty`
  */
-export const NonEmptyStringSchema = z.string().min(1, { error: () => `${path}.string_empty` })
+export const NonEmptyStringSchema = z.string().min(1)

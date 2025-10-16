@@ -1,5 +1,5 @@
-import { CategoryListSchema } from '#schemas/category/CategoryListSchema'
 import { z } from 'zod'
+import { CategoryListSchema } from '#schemas/category/CategoryListSchema'
 
 /**
  * **CategoryList**

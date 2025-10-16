@@ -1,5 +1,5 @@
-import { TokenPairSchema } from '#schemas/token/TokenPairSchema'
 import { z } from 'zod'
+import { TokenPairSchema } from '#schemas/token/TokenPairSchema'
 
 /**
  * **TokenPair**

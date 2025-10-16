@@ -1,5 +1,5 @@
-import { TokenGenerateInputSchema } from '#schemas/token/TokenGenerateInputSchema'
 import { z } from 'zod'
+import { TokenGenerateInputSchema } from '#schemas/token/TokenGenerateInputSchema'
 
 /**
  * **TokenGenerateInput**

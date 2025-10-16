@@ -1,5 +1,5 @@
-import { LoginInputSchema } from '#schemas/login/LoginInputSchema'
 import { z } from 'zod'
+import { LoginInputSchema } from '#schemas/login/LoginInputSchema'
 
 /**
  * **LoginInput**

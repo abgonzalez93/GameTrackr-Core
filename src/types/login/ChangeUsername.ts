@@ -1,5 +1,5 @@
-import { ChangeUsernameSchema } from '#schemas/login/ChangeUsernameSchema'
 import { z } from 'zod'
+import { ChangeUsernameSchema } from '#schemas/login/ChangeUsernameSchema'
 
 /**
  * **ChangeUsername**

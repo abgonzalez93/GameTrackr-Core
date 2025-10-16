@@ -1,5 +1,5 @@
-import { GameListSchema } from '#schemas/game/GameListSchema'
 import { z } from 'zod'
+import { GameListSchema } from '#schemas/game/GameListSchema'
 
 /**
  * **GameList**

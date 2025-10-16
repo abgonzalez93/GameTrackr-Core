@@ -1,5 +1,5 @@
-import { CreateUserSchema } from '#schemas/user/CreateUserSchema'
 import { z } from 'zod'
+import { CreateUserSchema } from '#schemas/user/CreateUserSchema'
 
 /**
  * **CreateUser**

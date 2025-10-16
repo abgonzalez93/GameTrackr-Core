@@ -1,5 +1,5 @@
-import { JWTSubSchema } from '../jwt/JWTSubSchema.js'
 import { z } from 'zod'
+import { JWTSubSchema } from '../jwt/JWTSubSchema.ts'
 
 /**
  * **TokenGenerateInputSchema**

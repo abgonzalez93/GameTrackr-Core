@@ -1,46 +1,44 @@
-import { type TranslationOptions } from '#types/translate/TranslationOptions'
-import { i18n } from 'i18next'
+import { type i18n } from 'i18next'
+import { type Logger } from 'winston'
+import { type Translatable } from '#types/translate/Translatable'
 
 /**
- * Attempts to parse a serialized translation payload into a {@link TranslationOptions} object.
+ * **translate**
  *
- * ### Behavior
- * - Returns `null` if the string is not valid JSON or lacks a `key` property.
- * - Safely handles malformed input.
- *
- * @param serialized - JSON string previously created via {@link serializeTranslation}.
- * @returns Parsed {@link TranslationOptions} object, or `null` on failure.
- */
-const parseTranslation = (serialized: string): TranslationOptions | null => {
-  if (typeof serialized !== 'string') return null
-
-  try {
-    const parsed = JSON.parse(serialized)
-    if (!parsed || typeof parsed.key !== 'string') return null
-    if (parsed.variables && (typeof parsed.variables !== 'object' || Array.isArray(parsed.variables))) return null
-    return parsed
-  } catch {
-    return null
-  }
-}
-
-/**
- * Resolves and translates a message using the provided {@link i18n} instance.
+ * Resolves a localized string from either a plain key or a {@link Translatable} object.
  *
  * ### Responsibilities
- * - Detects whether the input is a plain string, serialized payload, or translation object.
- * - Uses `i18n.t()` internally for variable interpolation.
- * - Falls back to the raw message when translation is unavailable.
+ * - Lookup translations within the provided {@link i18n} instance.
+ * - Interpolate variables when provided.
+ * - Log missing keys with the current language.
+ * - Return a safe fallback when no translation is found.
  *
- * @param i18n - Active i18n instance.
- * @param message - Message to translate (string, serialized payload, or {@link TranslationOptions}).
- * @returns The translated string, or original message on failure.
+ * ### Behavior
+ * - If `input` is a string, it is treated as a translation key.
+ * - If `input` is a {@link Translatable}, its `variables` are interpolated.
+ * - If the key is missing, a warning is logged and `fallbackKey` (if valid) is used.
+ *
+ * @param i18n - Initialized i18next instance.
+ * @param logger - Winston logger for missing translation warnings.
+ * @param input - Translation key or {@link Translatable} object.
+ * @param fallbackKey - Optional fallback translation key.
+ * @returns Localized string, or the fallback key / raw input if missing.
+ *
+ * @see {@link Translatable}
  */
-export const translate = (i18n: i18n, message: string | TranslationOptions): string => {
-  if (typeof message === 'string') {
-    const parsed = parseTranslation(message)
-    return parsed ? i18n.t(parsed.key, parsed.variables) : message
+export const translate = (i18n: i18n, logger: Logger, input: string | Translatable, fallbackKey?: string): string => {
+  const language = i18n.language ?? i18n.resolvedLanguage ?? 'unknown'
+
+  const resolveFallback = (defaultValue: string): string => {
+    if (fallbackKey && i18n.exists(fallbackKey)) return i18n.t(fallbackKey)
+    return defaultValue
   }
 
-  return i18n.t(message.key, message.variables)
+  const key = typeof input === 'string' ? input : input.key
+  const vars = typeof input === 'string' ? undefined : input.variables
+
+  if (i18n.exists(key)) return i18n.t(key, vars)
+
+  logger.warn(`⚠️ Missing translation: "${key}" [lang=${language}]`)
+  return resolveFallback(key)
 }

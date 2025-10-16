@@ -1,6 +1,6 @@
-import { type TranslationOptions } from '#types/translate/TranslationOptions'
-import { TrackPlayError } from './TrackPlayError.js'
+import { TrackPlayError } from '../base/TrackPlayError.ts'
 import { HTTP_STATUS } from '#constants/httpStatus'
+import { type Translatable } from '#types/translate/Translatable'
 
 /**
  * **ForbiddenError (403)**
@@ -10,7 +10,7 @@ import { HTTP_STATUS } from '#constants/httpStatus'
  *   to perform the requested operation.
  */
 export class ForbiddenError extends TrackPlayError {
-  constructor(message: string | TranslationOptions = 'Forbidden', details?: unknown) {
+  constructor(message: string | Translatable = 'Forbidden', details?: unknown) {
     super(message, HTTP_STATUS.FORBIDDEN, 'Forbidden', details)
   }
 }

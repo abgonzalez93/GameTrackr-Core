@@ -1,5 +1,5 @@
-import { JWTJtiSchema } from '#schemas/jwt/JWTJtiSchema'
 import { z } from 'zod'
+import { JWTJtiSchema } from '#schemas/jwt/JWTJtiSchema'
 
 /**
  * **JWTJti**

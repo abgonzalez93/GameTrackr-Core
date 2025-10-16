@@ -1,5 +1,5 @@
-import { NonEmptyStringSchema } from '../base/NonEmptyStringSchema.js'
 import { z } from 'zod'
+import { NonEmptyStringSchema } from '../base/NonEmptyStringSchema.ts'
 
 /**
  * **TokenPairSchema**

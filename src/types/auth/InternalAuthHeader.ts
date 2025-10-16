@@ -1,5 +1,5 @@
-import { InternalAuthHeaderSchema } from '#schemas/auth/InternalAuthHeaderSchema'
 import { z } from 'zod'
+import { InternalAuthHeaderSchema } from '#schemas/auth/InternalAuthHeaderSchema'
 
 /**
  * **InternalAuthHeader**

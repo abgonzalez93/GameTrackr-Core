@@ -13,4 +13,4 @@
  * - Maintain a consistent structure for all TrackPlay translation utilities.
  *
  */
-export type TranslationVariables = Record<string, string | number>
+export type TranslationVariables = Record<string, string | number | boolean>

@@ -1,5 +1,5 @@
-import { GameSchema } from './GameSchema.js'
 import { z } from 'zod'
+import { GameSchema } from './GameSchema.ts'
 
 /**
  * **GameListSchema**

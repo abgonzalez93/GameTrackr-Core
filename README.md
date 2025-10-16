@@ -19,11 +19,14 @@ El paquete incluye:
 
 ### ✅ Configuración de entorno
 
-- Validación automática con `Zod`
-- Soporte dual para entornos de servidor y cliente.
-- Prevención de errores silenciosos: las cadenas vacías se tratan como `undefined`.
-- Tipado inferido en tiempo de compilación `z.infer`.
-- Control de exposición en entorno cliente mediante prefijo configurable `NEXT_PUBLIC_`.
+- `createEnvConfig`: valida y tipa las variables de entorno mediante Zod.
+  - Soporte dual para entornos servidor/cliente.
+  - Normaliza cadenas vacías a `undefined` para evitar errores silenciosos.
+  - Expone tipos inferidos en tiempo de compilación (`z.infer`).
+  - Controla exposición pública mediante prefijo (`NEXT_PUBLIC_`).
+  - Lanza errores tipados en caso de archivos ausentes o vacíos.
+- `getSecrets`: gestiona la lectura segura de secretos desde `/run/secrets` o variables de entorno.
+  - Lanza errores tipados en caso de archivos ausentes o vacíos.
 
 ### ✅ Constantes
 
@@ -32,21 +35,24 @@ El paquete incluye:
 
 ### ✅ Errores
 
-- Sistema unificado de errores basado en clases tipadas.
-- Soporte para i18n y traducciones dinámicas (`TrackPlayError`, `BadRequestError`, etc.).
-- Compatible con middleware global de manejo de errores.
+- Sistema unificado de errores basado en clases tipadas y jerárquicas.
+- Agrupados por dominio funcional:
+  - `/base` → `TrackPlayError`.
+  - `/config` → `EnvValidationError`, `SecretValidationError`.
+  - `/http` → `BadRequestError`, `UnauthorizedError`, `ConflictError`, etc.
+- Totalmente integrados con el sistema de traducciones (`i18next`).
+- Compatibles con el middleware global de manejo de errores.
 
 ### ✅ Sistema de traducciones
 
-- Basado en i18next con soporte multilenguaje.
+- Basado en `i18next` con soporte multilenguaje.
 - Carga modular de traducciones desde cada módulo.
-- Funciones auxiliares (`getTranslationPath`, `initI18n`, etc.) para integración automática.
 
 ### ✅ Logger
 
 - Wrapper de Winston con configuración estándar y coloreado por entorno.
-- Integración con etiquetas de servicio (`label`) y niveles (`info`, `error`, `debug`).
-- Utilizado globalmente en el arranque de cada microservicio.
+- Soporta etiquetas de servicio (`label`), niveles (`info`, `error`, `debug`) y salida formateada.
+- Usado en la inicialización y en el flujo de errores global.
 
 ### ✅ Middlewares
 
@@ -68,9 +74,14 @@ El paquete incluye:
 
 ### ✅ Servidor
 
-- Sistema de bootstrap común para inicializar servicios TrackPlay.
-- Incluye configuración de middlewares, logger, i18n y contexto base (`InfrastructureContext`).
-- Permite extender el arranque con hooks (`onBeforeApp`) o configuraciones específicas.
+- `bootstrap.ts` es el punto de entrada unificado para inicializar cualquier microservicio de TrackPlay.
+- Su función es preparar el entorno, cargar secretos, construir dependencias, configurar middlewares y levantar el servidor HTTP de forma tipada, consistente y extensible.
+- Su propósito es proveer un flujo de arranque estándar para todos los servicios del ecosistema TrackPlay, garantizando que:
+  - Las variables de entorno y secretos sean validados antes del inicio.
+  - El logger e i18n estén listos para su uso global.
+  - Las dependencias sigan una jerarquía hexagonal (`adapters → services → useCases → controllers`).
+  - El servidor Express se configure con middlewares, rutas y manejadores comunes.
+  - El arranque sea totalmente tipado y reutilizable entre servicios.
 
 ### ✅ Tipos
 

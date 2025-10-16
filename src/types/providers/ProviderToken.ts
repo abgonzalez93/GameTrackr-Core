@@ -1,5 +1,5 @@
-import { ProviderTokenSchema } from '#schemas/providers/ProviderTokenSchema'
 import { z } from 'zod'
+import { ProviderTokenSchema } from '#schemas/providers/ProviderTokenSchema'
 
 /**
  * **ProviderToken**

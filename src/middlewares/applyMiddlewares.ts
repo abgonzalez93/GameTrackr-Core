@@ -1,8 +1,8 @@
-import { type MiddlewareOptions } from '#types/middlewares/MiddlewareOptions'
-import { type Express, json, type RequestHandler } from 'express'
 import compression from 'compression'
-import helmet from 'helmet'
 import cors from 'cors'
+import { type Express, json, type RequestHandler } from 'express'
+import helmet from 'helmet'
+import { type MiddlewareOptions } from '#types/middlewares/MiddlewareOptions'
 
 /**
  * **useIfEnabled**

@@ -1,5 +1,5 @@
-import { ChangePasswordSchema } from '#schemas/login/ChangePasswordSchema'
 import { z } from 'zod'
+import { ChangePasswordSchema } from '#schemas/login/ChangePasswordSchema'
 
 /**
  * **ChangePassword**

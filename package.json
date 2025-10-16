@@ -2,7 +2,7 @@
   "type": "module",
   "name": "@trackplay/core",
   "author": "Antonio Bueno Gonzalez",
-  "version": "0.2.13",
+  "version": "0.3.0",
   "private": false,
   "imports": {
     "#clients/*": "./dist/clients/*.js",
@@ -79,18 +79,17 @@
   "scripts": {
     "build": "rimraf dist && tsc",
     "lint": "eslint src",
-    "lint:fix": "eslint src --fix",
-    "madge": "madge --circular dist/",
     "update": "ncu -u -e 2 && pnpm install",
     "release": "pnpm build && pnpm pack && pnpm publish --tag latest --no-git-checks"
   },
   "dependencies": {
+    "@t3-oss/env-core": "^0.13.8",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "express-rate-limit": "^8.1.0",
     "helmet": "^8.1.0",
-    "i18next": "^25.5.3",
+    "i18next": "^25.6.0",
     "jose": "^6.1.0",
     "redis": "^5.8.3",
     "winston": "^3.18.3",
@@ -101,16 +100,16 @@
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
-    "@types/node": "^24.7.1",
+    "@types/node": "^24.7.2",
     "eslint": "^9.37.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.5.4",
     "globals": "^16.4.0",
-    "madge": "^8.0.0",
     "prettier": "^3.6.2",
     "rimraf": "^6.0.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.46.0"
+    "typescript-eslint": "^8.46.1"
   },
-  "packageManager": "pnpm@10.18.2"
+  "packageManager": "pnpm@10.18.3"
 }

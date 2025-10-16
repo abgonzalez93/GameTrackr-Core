@@ -1,5 +1,5 @@
-import { PublicUserSchema } from '#schemas/user/PublicUserSchema'
 import { z } from 'zod'
+import { PublicUserSchema } from '#schemas/user/PublicUserSchema'
 
 /**
  * **PublicUser**

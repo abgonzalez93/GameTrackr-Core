@@ -1,5 +1,5 @@
-import { GameFiltersSchema } from '#schemas/game/GameFiltersSchema'
 import { z } from 'zod'
+import { GameFiltersSchema } from '#schemas/game/GameFiltersSchema'
 
 /**
  * **GameFilters**

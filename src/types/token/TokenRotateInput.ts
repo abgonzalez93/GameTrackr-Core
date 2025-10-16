@@ -1,5 +1,5 @@
-import { TokenRotateInputSchema } from '#schemas/token/TokenRotateInputSchema'
 import { z } from 'zod'
+import { TokenRotateInputSchema } from '#schemas/token/TokenRotateInputSchema'
 
 /**
  * **TokenRotateInput**

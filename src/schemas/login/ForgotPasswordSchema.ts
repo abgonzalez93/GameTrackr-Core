@@ -1,5 +1,5 @@
-import { UserEmailSchema } from '../user/UserEmailSchema.js'
 import { z } from 'zod'
+import { UserEmailSchema } from '../user/UserEmailSchema.ts'
 
 /**
  * **ForgotPasswordSchema**

@@ -1,5 +1,5 @@
-import { JWTJtiSchema } from '../jwt/JWTJtiSchema.js'
 import { z } from 'zod'
+import { JWTJtiSchema } from '../jwt/JWTJtiSchema.ts'
 
 /**
  * **TokenRevocationStatusInputSchema**

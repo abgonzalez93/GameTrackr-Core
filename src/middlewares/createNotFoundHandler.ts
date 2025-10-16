@@ -1,6 +1,7 @@
-import { getTranslationPath } from '#utils/translate/getTranslationPath'
 import type { Request, Response, NextFunction } from 'express'
-import { NotFoundError } from '#errors/NotFoundError'
+import { NotFoundError } from '#errors/http/NotFoundError'
+import { getTranslationPath } from '#utils/translate/getTranslationPath'
+import { t } from '#utils/translate/t'
 
 const path = getTranslationPath(import.meta.url)
 
@@ -27,10 +28,5 @@ const path = getTranslationPath(import.meta.url)
 export const createNotFoundHandler =
   () =>
   (req: Request, _res: Response, next: NextFunction): void => {
-    next(
-      new NotFoundError({
-        key: `${path}.route_not_found`,
-        variables: { url: req.originalUrl },
-      }),
-    )
+    next(new NotFoundError(t(`${path}.route_not_found`, { url: req.originalUrl })))
   }

@@ -1,5 +1,53 @@
 import { format, transports, type Logger, createLogger as WinstonCreateLogger } from 'winston'
-import { type LoggerOptions } from '#types/logger/LoggerOptions'
+
+/**
+ * **LoggerOptions**
+ *
+ * Configuration parameters for the **Winston-based logger** used across TrackPlay services.
+ * Primarily consumed by {@link createLogger} and {@link bootstrap} to define
+ * logging verbosity, output format, and contextual labeling.
+ *
+ * ### Responsibilities
+ * - Control log verbosity (`level`) and output format (JSON or colorized).
+ * - Reflect runtime mode (`isDevelopment`) for dynamic formatting behavior.
+ * - Attach a contextual label to each log entry (e.g., `"TrackPlay-Auth"`).
+ *
+ * ### Notes
+ * - In **development**, logs are colorized and human-readable.
+ * - In **production**, logs are serialized as JSON for aggregation tools (e.g., Loki, ELK).
+ * - Passed during infrastructure setup to unify logging behavior across all microservices.
+ *
+ */
+interface LoggerOptions {
+  /**
+   * Whether the service is running in development mode.
+   *
+   * When `true`, enables colorized and human-readable console output.
+   *
+   * @default false
+   */
+  isDevelopment?: boolean
+
+  /**
+   * Optional label applied to every log entry.
+   *
+   * Commonly set to the service name (e.g., `"TrackPlay-Catalog"`),
+   * allowing easy identification in multi-service logs.
+   */
+  label?: string
+
+  /**
+   * Minimum log level to include in the output stream.
+   *
+   * - `"debug"` — Detailed development traces.
+   * - `"info"` — General operational events.
+   * - `"warn"` — Recoverable or non-critical warnings.
+   * - `"error"` — Critical failures or unexpected crashes.
+   *
+   * @default "info"
+   */
+  level?: 'info' | 'debug' | 'warn' | 'error'
+}
 
 const { combine, timestamp, label, printf, colorize } = format
 
@@ -27,50 +75,37 @@ const getTimestamp = (): string =>
   })
 
 /**
- * **Creates a configured Winston logger instance**
+ * **createLogger**
  *
- * Factory function for constructing an isolated {@link Logger}.
+ * Factory function for creating a configured Winston logger.
  *
  * ### Responsibilities
- * - Configure per-service loggers with consistent formatting.
- * - Provide colorized console output in development.
- * - Write structured JSON logs to file in production.
- * - Capture uncaught exceptions and promise rejections automatically.
+ * - Provide consistent, labeled, and timestamped logging across services.
+ * - Adapt output format depending on the environment:
+ *   - **Development:** Human-readable, colorized console output.
+ *   - **Production:** Structured JSON for log aggregation.
+ * - Handle unhandled rejections and uncaught exceptions gracefully.
  *
- * ### Notes
- * - This logger is **not global**; each service or module should instantiate
- *   its own labeled logger.
- * - Log files are written to:
- *   - `logs/error.log` — errors only
- *   - `logs/combined.log` — all logs
- *   - `logs/exceptions.log` — uncaught exceptions
- *   - `logs/rejections.log` — unhandled rejections
- *
- * @param options - Optional {@link LoggerOptions} to customize behavior.
- * @returns A fully configured {@link Logger} instance.
- *
+ * @param options - Configuration options controlling log format, verbosity, and labeling.
+ * @returns A fully configured Winston {@link Logger} instance.
  */
 export const createLogger = (options: LoggerOptions = {}): Logger => {
-  const { isDevelopment = false, label: serviceLabel = 'TrackPlay', level = 'info' } = options
+  const { label: serviceLabel = 'TrackPlay', isDevelopment = false, level } = options
 
   return WinstonCreateLogger({
-    level,
+    level: level ?? (isDevelopment ? 'debug' : 'info'),
     format: combine(
       label({ label: serviceLabel }),
       timestamp({ format: getTimestamp }),
       isDevelopment ? combine(colorize(), consoleFormat) : format.json(),
     ),
     transports: [
-      new transports.Console(),
-      ...(!isDevelopment
-        ? [
-            new transports.File({ filename: 'logs/error.log', level: 'error' }),
-            new transports.File({ filename: 'logs/combined.log' }),
-          ]
-        : []),
+      new transports.Console({
+        stderrLevels: ['error'],
+      }),
     ],
-    exceptionHandlers: [new transports.File({ filename: 'logs/exceptions.log' })],
-    rejectionHandlers: [new transports.File({ filename: 'logs/rejections.log' })],
+    exceptionHandlers: [new transports.Console()],
+    rejectionHandlers: [new transports.Console()],
     exitOnError: false,
   })
 }

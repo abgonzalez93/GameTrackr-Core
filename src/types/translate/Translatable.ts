@@ -1,7 +1,7 @@
-import { type TranslationVariables } from './TranslationVariables.js'
+import { type TranslationVariables } from './TranslationVariables.ts'
 
 /**
- * **TranslationOptions**
+ * **Translatable **
  *
  * Represents a structured and serializable definition of a translatable message.
  *
@@ -26,7 +26,7 @@ import { type TranslationVariables } from './TranslationVariables.js'
  * @see {@link formatErrorMessage}
  * @see {@link translate}
  */
-export interface TranslationOptions {
+export interface Translatable {
   key: string
   variables?: TranslationVariables
 }

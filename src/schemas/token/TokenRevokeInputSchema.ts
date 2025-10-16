@@ -1,6 +1,6 @@
-import { JWTExpSchema } from '../jwt/JWTExpSchema.js'
-import { JWTJtiSchema } from '../jwt/JWTJtiSchema.js'
 import { z } from 'zod'
+import { JWTExpSchema } from '../jwt/JWTExpSchema.ts'
+import { JWTJtiSchema } from '../jwt/JWTJtiSchema.ts'
 
 /**
  * **TokenRevokeInputSchema**

@@ -1,5 +1,5 @@
-import { LoginResponseSchema } from '#schemas/login/LoginResponseSchema'
 import { z } from 'zod'
+import { LoginResponseSchema } from '#schemas/login/LoginResponseSchema'
 
 /**
  * **LoginResponse**

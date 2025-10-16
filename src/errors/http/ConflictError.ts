@@ -1,6 +1,6 @@
-import { type TranslationOptions } from '#types/translate/TranslationOptions'
-import { TrackPlayError } from './TrackPlayError.js'
+import { TrackPlayError } from '../base/TrackPlayError.ts'
 import { HTTP_STATUS } from '#constants/httpStatus'
+import { type Translatable } from '#types/translate/Translatable'
 
 /**
  * **ConflictError (409)**
@@ -11,7 +11,7 @@ import { HTTP_STATUS } from '#constants/httpStatus'
  * - Example: attempting to register an already existing email.
  */
 export class ConflictError extends TrackPlayError {
-  constructor(message: string | TranslationOptions = 'Conflict', details?: unknown) {
+  constructor(message: string | Translatable = 'Conflict', details?: unknown) {
     super(message, HTTP_STATUS.CONFLICT, 'Conflict', details)
   }
 }

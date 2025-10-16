@@ -1,255 +1,273 @@
-import { type MiddlewareOptions } from '#types/middlewares/MiddlewareOptions'
-import { createNotFoundHandler } from '#middlewares/createNotFoundHandler'
-import { createErrorHandler } from '#middlewares/createErrorHandler'
-import { type LoggerOptions } from '#types/logger/LoggerOptions'
-import { applyMiddlewares } from '#middlewares/applyMiddlewares'
-import { type ServiceRuntime } from './ServiceRuntime.js'
-import { createLogger } from '#logger/createLogger'
-import { getBaseUrl } from '#utils/http/getBaseUrl'
 import express, { type Express } from 'express'
+import { type i18n } from 'i18next'
+import { type Logger } from 'winston'
+import { createEnvConfig } from '#config/createEnvConfig'
+import { getSecrets } from '#config/getSecrets'
 import { createI18n } from '#i18n/createI18n'
 import { initI18n } from '#i18n/initI18n'
-import { type Logger } from 'winston'
-import { type i18n } from 'i18next'
+import { createLogger } from '#logger/createLogger'
+import { applyMiddlewares } from '#middlewares/applyMiddlewares'
+import { createErrorHandler } from '#middlewares/createErrorHandler'
+import { createNotFoundHandler } from '#middlewares/createNotFoundHandler'
+import { BaseServerEnvSchema } from '#schemas/base/BaseServerEnvSchema'
+import { type EnvSchema } from '#types/env/EnvSchema'
+import { type InferEnv } from '#types/env/InferEnv'
+import { type BaseURLOptions } from '#types/http/BaseURLOptions'
+import { type MiddlewareOptions } from '#types/middlewares/MiddlewareOptions'
+import { getBaseUrl } from '#utils/http/getBaseUrl'
 
 /**
- * **InfrastructureInstance**
+ * **MergedEnv**
  *
- * Represents the set of shared infrastructure-level instances
- * initialized during service startup — typically logger and i18n.
- *
- * ### Purpose
- * Acts as the foundation of the service runtime, providing
- * cross-cutting dependencies that are injected downstream.
- *
- * ### Notes
- * - Created once per service during bootstrap.
- * - Passed to middleware, routes, and use cases as shared context.
- *
- * @see {@link createInfrastructure}
+ * Combines the base TrackPlay environment schema (`BaseServerEnvSchema`)
+ * with a service-specific schema.
  */
-interface InfrastructureInstance {
+type MergedEnv<TEnvSchema extends EnvSchema | undefined = undefined> = InferEnv<typeof BaseServerEnvSchema> &
+  (TEnvSchema extends EnvSchema ? InferEnv<TEnvSchema> : Record<string, never>)
+
+/**
+ * **EnvSecretsBundle**
+ *
+ * Represents a resolved combination of environment variables and secrets.
+ */
+interface EnvSecretsBundle<TEnvSchema> {
+  env: TEnvSchema
+  secrets: Record<string, string>
+}
+
+/**
+ * Merges the base TrackPlay schema with a service-specific one.
+ */
+const mergeEnvSchemas = <Extra extends EnvSchema>(extra?: Extra) =>
+  ({
+    ...BaseServerEnvSchema,
+    ...(extra ?? {}),
+  }) satisfies EnvSchema
+
+/**
+ * Loads and validates environment variables and Docker secrets.
+ *
+ * @param envSchema - Zod schema defining environment structure.
+ * @param secrets - Optional list of secret file names to load.
+ */
+const loadEnvAndSecrets = <TEnvSchema extends EnvSchema>(
+  envSchema: TEnvSchema,
+  secrets?: string[],
+): EnvSecretsBundle<MergedEnv<TEnvSchema>> => {
+  const env = createEnvConfig({ server: mergeEnvSchemas(envSchema) }) as MergedEnv<TEnvSchema>
+  const resolvedSecrets = secrets?.length ? getSecrets(...secrets) : {}
+  return { env, secrets: resolvedSecrets }
+}
+
+/**
+ * **RuntimeConfig**
+ *
+ * Internal representation of the prepared runtime context
+ * (environment, secrets, logger, i18n, etc.).
+ */
+interface RuntimeConfig<TEnvSchema extends Record<string, unknown>> extends EnvSecretsBundle<TEnvSchema> {
+  isDevelopment: boolean
+  corsOrigins: string[]
+  serverOptions: BaseURLOptions
   logger: Logger
   i18n: i18n
 }
 
-/**
- * **EnvConfig**
- *
- * Represents the normalized runtime environment configuration
- * required for service initialization and networking.
- *
- * @property NODE_ENV - Runtime environment (`development`, `production`, or `test`).
- * @property HOST - Hostname or IP address for the service.
- * @property PORT - TCP port where the service listens.
- * @property CORS_ORIGINS - Comma-separated list of allowed CORS origins.
- */
-interface EnvConfig {
-  NODE_ENV: string
-  HOST: string
-  PORT: number
-  CORS_ORIGINS: string
-}
+const parseCorsOrigins = (raw: string): string[] =>
+  raw
+    .split(',')
+    .map((o) => o.trim())
+    .filter(Boolean)
 
 /**
- * **InfrastructureOptions**
+ * Prepares runtime dependencies and configuration.
  *
- * Configuration object for initializing the infrastructure layer.
- *
- * ### Responsibilities
- * - Configure and create a {@link Logger}.
- * - Initialize the i18n translation system.
- * - Execute optional async hooks before app creation (e.g., DB/Redis connections).
+ * - Loads env and secrets.
+ * - Initializes logger and i18n.
+ * - Computes server options and CORS origins.
  */
-interface InfrastructureOptions {
-  serviceName: string
-  env: EnvConfig
-  loggerOptions?: LoggerOptions
-  onBeforeApp?: (logger: Logger) => Promise<void>
-}
-
-/**
- * **createInfrastructure**
- *
- * Initializes cross-cutting dependencies required by every TrackPlay service.
- *
- * ### Flow
- * 1. Creates and configures the {@link Logger}.
- * 2. Initializes and loads i18n translations.
- * 3. Executes optional pre-initialization hooks.
- *
- * @param options - Infrastructure initialization parameters.
- * @returns Promise resolving to a configured {@link InfrastructureInstance}.
- */
-const createInfrastructure = async ({
-  serviceName,
-  env,
-  loggerOptions,
-  onBeforeApp,
-}: InfrastructureOptions): Promise<InfrastructureInstance> => {
+const prepareRuntime = async <TEnvSchema extends EnvSchema>(
+  envSchema: TEnvSchema,
+  secrets: string[] | undefined,
+  serviceName: string,
+): Promise<RuntimeConfig<MergedEnv<TEnvSchema>>> => {
+  const { env, secrets: resolvedSecrets } = loadEnvAndSecrets(envSchema, secrets)
   const isDevelopment = env.NODE_ENV === 'development'
+  const corsOrigins = parseCorsOrigins(env.CORS_ORIGINS)
+
+  const serverOptions: BaseURLOptions = {
+    protocol: isDevelopment ? 'http' : 'https',
+    host: env.HOST,
+    port: env.PORT,
+  }
 
   const logger = createLogger({
-    label: serviceName,
     isDevelopment,
-    level: 'info',
-    ...loggerOptions,
+    label: serviceName,
   })
 
   const i18n = createI18n()
   await initI18n(i18n)
 
-  if (onBeforeApp) await onBeforeApp(logger)
-
-  return { logger, i18n }
+  return { env, secrets: resolvedSecrets, isDevelopment, corsOrigins, serverOptions, logger, i18n }
 }
 
 /**
- * **CreateAppOptions**
+ * **DependencyLayers**
  *
- * Defines configuration options for constructing an Express application.
- *
- * ### Responsibilities
- * - Apply global middlewares (CORS, security, compression, JSON, etc.).
- * - Register route definitions.
- * - Attach fallback and global error handlers.
+ * Defines the shape of dependency layers in the hexagonal architecture.
  */
-interface CreateAppOptions {
-  routes: (app: Express) => void
-  middlewareOptions?: MiddlewareOptions
+interface DependencyLayers {
+  adapters: Record<string, unknown>
+  services: Record<string, unknown>
+  useCases: Record<string, unknown>
+  controllers: Record<string, unknown>
+}
+
+/**
+ * **DependencyFactories**
+ *
+ * Factory functions for constructing each dependency layer in order.
+ */
+interface DependencyFactories<TEnvSchema, TLayers extends DependencyLayers> {
+  adapters: (ctx: EnvSecretsBundle<TEnvSchema>) => TLayers['adapters']
+  services: (ctx: { adapters: TLayers['adapters'] }) => TLayers['services']
+  useCases: (ctx: { services: TLayers['services'] }) => TLayers['useCases']
+  controllers: (ctx: { useCases: TLayers['useCases'] }) => TLayers['controllers']
+}
+
+/**
+ * Builds dependency layers in sequence using provided factories.
+ */
+const buildDependencies = <TEnvSchema, TLayers extends DependencyLayers>(
+  factories: DependencyFactories<TEnvSchema, TLayers>,
+  ctx: EnvSecretsBundle<TEnvSchema>,
+): TLayers => {
+  const adapters = factories.adapters(ctx)
+  const services = factories.services({ adapters })
+  const useCases = factories.useCases({ services })
+  const controllers = factories.controllers({ useCases })
+  return { adapters, services, useCases, controllers } as TLayers
+}
+
+/**
+ * **HttpServerOptions**
+ *
+ * Configuration for initializing an HTTP server instance.
+ */
+interface HttpServerOptions<Controllers> {
+  routes: (app: Express, deps: { controllers: Controllers }) => void
+  controllers: Controllers
   i18n: i18n
   logger: Logger
+  middlewares?: MiddlewareOptions
 }
 
 /**
- * **createApp**
- *
- * Creates and configures a production-ready Express application instance.
- *
- * ### Flow
- * 1. Applies global middlewares via {@link applyMiddlewares}.
- * 2. Registers service-specific routes.
- * 3. Adds not-found and error-handling middlewares.
- *
- * @param options - Configuration object for app setup.
- * @returns Configured {@link Express} application instance.
+ * Creates an Express app and attaches routes, middlewares, and handlers.
  */
-const createApp = ({ routes, middlewareOptions, i18n, logger }: CreateAppOptions): Express => {
+const createHttpServer = <Controllers extends Record<string, unknown>>(options: HttpServerOptions<Controllers>) => {
+  const { routes, controllers, i18n, logger, middlewares = {} } = options
   const app = express()
 
-  // Apply security, compression, and JSON middlewares
-  applyMiddlewares(app, middlewareOptions ?? {})
+  applyMiddlewares(app, middlewares)
+  routes(app, { controllers })
 
-  // Register service routes
-  routes(app)
-
-  // Global 404 and error handling
   app.use(createNotFoundHandler())
-  app.use(createErrorHandler(i18n, logger, middlewareOptions?.errorHandler))
+  app.use(createErrorHandler(i18n, logger, middlewares.errorHandler))
 
-  return app
+  const start = (serverOptions: BaseURLOptions): void => {
+    app.listen(serverOptions.port, serverOptions.host, () =>
+      logger.info(`✅ Server running at ${getBaseUrl(serverOptions)}`),
+    )
+  }
+
+  return { app, start }
 }
 
 /**
- * **ServerOptions**
+ * **BootstrapConfig**
  *
- * Configuration for launching the HTTP/HTTPS server.
- *
- * @property protocol - Network protocol (`http` by default, or `https`).
- * @property host - Hostname or IP address.
- * @property port - Port number where the server listens.
+ * Defines configuration parameters for bootstrapping a TrackPlay service.
  */
-interface ServerOptions {
-  protocol?: 'http' | 'https'
-  host: string
-  port: number
-}
-
-/**
- * **startServer**
- *
- * Starts the HTTP server using the provided configuration.
- *
- * ### Responsibilities
- * - Launches the Express app on the configured host/port.
- * - Logs the running base URL via {@link getBaseUrl}.
- *
- * @param app - Express application instance.
- * @param logger - Winston logger used to log startup information.
- * @param options - Server configuration options.
- */
-const startServer = (app: Express, logger: Logger, options: ServerOptions): void => {
-  const { protocol = 'http' } = options
-  app.listen(options.port, options.host, () => logger.info(`✅ Server running at ${getBaseUrl({ ...options, protocol })}`))
-}
-
-/**
- * **BootstrapOptions**
- *
- * Parameters required to initialize and launch a TrackPlay service.
- *
- * ### Responsibilities
- * - Configure infrastructure dependencies (logger, i18n).
- * - Build an Express app with routes and middlewares.
- * - Start the HTTP/HTTPS server and log runtime URL.
- */
-interface BootstrapOptions {
+interface BootstrapConfig<TEnvSchema extends EnvSchema, TLayers extends DependencyLayers> {
   serviceName: string
-  env: EnvConfig
-  routes: (app: Express) => void
-  loggerOptions?: LoggerOptions
+  envSchema: TEnvSchema
+  secrets?: string[]
+  dependencyFactories: DependencyFactories<MergedEnv<TEnvSchema>, TLayers>
+  routes: (app: Express, container: { controllers: TLayers['controllers'] }) => void
   middlewareOptions?: MiddlewareOptions
-  onBeforeApp?: (logger: Logger) => Promise<void>
+}
+
+/**
+ * **ServiceRuntime**
+ *
+ * Represents the fully initialized runtime state of a TrackPlay service.
+ */
+interface ServiceRuntime<
+  TLayers extends DependencyLayers,
+  TEnvSchema extends Record<string, unknown> = Record<string, unknown>,
+> extends EnvSecretsBundle<TEnvSchema> {
+  app: Express
+  start: () => void
+  logger: Logger
+  i18n: i18n
+  container: TLayers
+  isDevelopment: boolean
 }
 
 /**
  * **bootstrap**
  *
- * Unified entry point for initializing and starting a TrackPlay microservice.
+ * Unified entrypoint for initializing and launching a TrackPlay service.
  *
  * ### Flow
- * 1. **Infrastructure Setup** — Initializes logger, i18n, and pre-app hooks.
- * 2. **App Creation** — Applies middlewares and registers routes.
- * 3. **Server Launch** — Starts the Express server and logs the service URL.
+ * 1. Load and validate env + secrets.
+ * 2. Initialize logger, i18n, and runtime context.
+ * 3. Build dependency layers (adapters → services → useCases → controllers).
+ * 4. Create and configure the Express app.
+ * 5. Return runtime context with `start()` ready.
  *
- * @param options - Full configuration object for service initialization.
- * @returns {Promise<ServiceRuntime>} The live {@link ServiceRuntime} context of the running service.
+ * @throws Logs and terminates process on unrecoverable setup errors.
  */
-export const bootstrap = async (options: BootstrapOptions): Promise<ServiceRuntime> => {
-  const { env, serviceName, routes, loggerOptions, middlewareOptions, onBeforeApp } = options
-  const { NODE_ENV, HOST, PORT, CORS_ORIGINS } = env
+export const bootstrap = async <TEnvSchema extends EnvSchema, TLayers extends DependencyLayers>(
+  options: BootstrapConfig<TEnvSchema, TLayers>,
+): Promise<ServiceRuntime<TLayers, MergedEnv<TEnvSchema>>> => {
+  const { serviceName, envSchema, secrets, dependencyFactories, routes, middlewareOptions } = options
 
-  const isDevelopment = NODE_ENV === 'development'
+  try {
+    const runtime = await prepareRuntime(envSchema, secrets, serviceName)
 
-  const { logger, i18n } = await createInfrastructure({
-    serviceName,
-    env,
-    loggerOptions,
-    onBeforeApp,
-  })
+    const container = buildDependencies(dependencyFactories, {
+      env: runtime.env,
+      secrets: runtime.secrets,
+    })
 
-  const corsOrigins = CORS_ORIGINS
-    ? CORS_ORIGINS.split(',')
-        .map((o) => o.trim())
-        .filter(Boolean)
-    : []
+    const { app, start } = createHttpServer({
+      routes,
+      controllers: container.controllers,
+      i18n: runtime.i18n,
+      logger: runtime.logger,
+      middlewares: {
+        cors: { origin: runtime.corsOrigins, credentials: true },
+        errorHandler: { isDevelopment: runtime.isDevelopment },
+        ...middlewareOptions,
+      },
+    })
 
-  const app = createApp({
-    routes,
-    middlewareOptions: {
-      cors: { origin: corsOrigins, credentials: true },
-      errorHandler: { isDevelopment },
-      ...middlewareOptions,
-    },
-    i18n,
-    logger,
-  })
-
-  startServer(app, logger, {
-    protocol: isDevelopment ? 'http' : 'https',
-    host: HOST,
-    port: PORT,
-  })
-
-  return { app, logger, i18n }
+    return {
+      app,
+      start: () => start(runtime.serverOptions),
+      logger: runtime.logger,
+      i18n: runtime.i18n,
+      env: runtime.env,
+      secrets: runtime.secrets,
+      container,
+      isDevelopment: runtime.isDevelopment,
+    }
+  } catch (error: unknown) {
+    const message = error instanceof Error ? `${error.message}\n${error.stack ?? ''}`.trim() : String(error)
+    console.error(`💥 Bootstrap failed for service "${serviceName}":\n${message}`)
+    process.exit(1)
+  }
 }

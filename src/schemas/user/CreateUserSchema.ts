@@ -1,7 +1,7 @@
-import { getTranslationPath } from '#utils/translate/getTranslationPath'
-import { UserEmailSchema } from './UserEmailSchema.js'
-import { UserNameSchema } from './UserNameSchema.js'
 import { z } from 'zod'
+import { UserEmailSchema } from './UserEmailSchema.ts'
+import { UserNameSchema } from './UserNameSchema.ts'
+import { getTranslationPath } from '#utils/translate/getTranslationPath'
 
 const passwordRequirementsRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/
 const path = getTranslationPath(import.meta.url)

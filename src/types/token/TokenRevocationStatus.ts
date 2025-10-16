@@ -1,5 +1,5 @@
-import { TokenRevocationStatusSchema } from '#schemas/token/TokenRevocationStatusSchema'
 import { z } from 'zod'
+import { TokenRevocationStatusSchema } from '#schemas/token/TokenRevocationStatusSchema'
 
 /**
  * **TokenRevocationStatus**

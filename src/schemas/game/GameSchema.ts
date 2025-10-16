@@ -1,6 +1,6 @@
-import { IdListSchema } from '../base/IdListSchema.js'
-import { IdSchema } from '../base/IdSchema.js'
 import { z } from 'zod'
+import { IdListSchema } from '../base/IdListSchema.ts'
+import { IdSchema } from '../base/IdSchema.ts'
 
 /**
  * **GameSchema**

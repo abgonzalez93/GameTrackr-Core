@@ -1,7 +1,7 @@
-import { getTranslationPath } from '#utils/translate/getTranslationPath'
-import { UserEmailSchema } from '../user/UserEmailSchema.js'
-import { UserNameSchema } from '../user/UserNameSchema.js'
 import { z } from 'zod'
+import { UserEmailSchema } from '../user/UserEmailSchema.ts'
+import { UserNameSchema } from '../user/UserNameSchema.ts'
+import { getTranslationPath } from '#utils/translate/getTranslationPath'
 
 const path = getTranslationPath(import.meta.url)
 

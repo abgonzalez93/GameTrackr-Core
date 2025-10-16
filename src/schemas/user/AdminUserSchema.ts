@@ -1,5 +1,5 @@
-import { PublicUserSchema } from './PublicUserSchema.js'
 import { z } from 'zod'
+import { PublicUserSchema } from './PublicUserSchema.ts'
 
 /**
  * **AdminUserSchema**

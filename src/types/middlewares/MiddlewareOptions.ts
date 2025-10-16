@@ -1,6 +1,6 @@
-import { type ErrorHandlerOptions } from './ErrorHandlerOptions.js'
-import { type HelmetOptions } from 'helmet'
 import { type CorsOptions } from 'cors'
+import { type HelmetOptions } from 'helmet'
+import { type ErrorHandlerOptions } from './ErrorHandlerOptions.js'
 
 /**
  * **MiddlewareOptions**

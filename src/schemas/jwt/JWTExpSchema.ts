@@ -1,4 +1,4 @@
-import { PositiveNumberSchema } from '../base/PositiveNumberSchema.js'
+import { PositiveNumberSchema } from '../base/PositiveNumberSchema.ts'
 
 /**
  * **JWTExpSchema**

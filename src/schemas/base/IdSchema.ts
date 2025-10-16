@@ -1,4 +1,4 @@
-import { PositiveNumberSchema } from './PositiveNumberSchema.js'
+import { PositiveNumberSchema } from './PositiveNumberSchema.ts'
 
 /**
  * **IdSchema**

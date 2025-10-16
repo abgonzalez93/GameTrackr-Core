@@ -1,5 +1,5 @@
-import { UserEmailSchema } from '#schemas/user/UserEmailSchema'
 import { z } from 'zod'
+import { UserEmailSchema } from '#schemas/user/UserEmailSchema'
 
 /**
  * **UserEmail**

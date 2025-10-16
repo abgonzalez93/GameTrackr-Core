@@ -1,5 +1,5 @@
-import { JWTSubSchema } from '#schemas/jwt/JWTSubSchema'
 import { z } from 'zod'
+import { JWTSubSchema } from '#schemas/jwt/JWTSubSchema'
 
 /**
  * **JWTSub**

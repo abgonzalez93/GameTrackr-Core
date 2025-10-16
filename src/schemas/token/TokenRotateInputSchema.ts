@@ -1,7 +1,7 @@
-import { JWTSubSchema } from '../jwt/JWTSubSchema.js'
-import { JWTExpSchema } from '../jwt/JWTExpSchema.js'
-import { JWTJtiSchema } from '../jwt/JWTJtiSchema.js'
 import { z } from 'zod'
+import { JWTExpSchema } from '../jwt/JWTExpSchema.ts'
+import { JWTJtiSchema } from '../jwt/JWTJtiSchema.ts'
+import { JWTSubSchema } from '../jwt/JWTSubSchema.ts'
 
 /**
  * **TokenRotateInputSchema**

@@ -1,17 +1,17 @@
-import { z, type ZodType } from 'zod'
+import { z } from 'zod'
+import { EnvValidationError } from '#errors/config/EnvValidationError'
+import { type EnvSchema } from '#types/env/EnvSchema'
+import { type InferEnv } from '#types/env/InferEnv'
+import { getTranslationPath } from '#utils/translate/getTranslationPath'
+import { t } from '#utils/translate/t'
 
-/**
- * **EnvSchema**
- *
- * Represents a record of Zod environment variable validators.
- * Each key corresponds to an environment variable name.
- */
-type EnvSchema = Record<string, ZodType>
+const path = getTranslationPath(import.meta.url)
 
 /**
  * **EnvValues**
  *
- * Represents the raw key-value pairs extracted from `process.env`.
+ * Represents the raw key–value pairs extracted from `process.env`.
+ * Used as the base source for validation and normalization.
  */
 type EnvValues = Record<string, string | undefined>
 
@@ -53,8 +53,11 @@ interface EnvConfigOptions<
    */
   clientPrefix?: string
 
-  /** Custom runtime environment source. Defaults to `process.env`. */
-  runtimeEnv?: NodeJS.ProcessEnv
+  /**
+   * Custom runtime environment source.
+   * Defaults to `process.env`.
+   */
+  runtimeEnv?: EnvValues
 
   /**
    * Whether empty strings should be interpreted as `undefined`.
@@ -63,19 +66,6 @@ interface EnvConfigOptions<
    */
   emptyStringAsUndefined?: boolean
 }
-
-/**
- * **InferEnv**
- *
- * Infers the TypeScript type from a given Zod environment schema.
- * Used internally to derive precise typing for both `server` and `client`
- * environment variables without manual duplication.
- *
- * @internal
- */
-type InferEnv<Schema extends EnvSchema | undefined> = Schema extends EnvSchema
-  ? z.infer<z.ZodObject<Schema>>
-  : Record<string, never>
 
 /**
  * **EnvConfigReturn**
@@ -88,38 +78,38 @@ type InferEnv<Schema extends EnvSchema | undefined> = Schema extends EnvSchema
 type EnvConfigReturn<
   Server extends EnvSchema | undefined = undefined,
   Client extends EnvSchema | undefined = undefined,
-> = InferEnv<Server> & InferEnv<Client>
+> = (Server extends EnvSchema ? InferEnv<Server> : Record<string, never>) &
+  (Client extends EnvSchema ? InferEnv<Client> : Record<string, never>)
 
 /**
+ * **parseEnvSection**
+ *
  * Parses and validates a single environment schema section.
  *
- * @param schema - Zod schema defining expected variables
- * @param values - Raw key-value pairs from the environment
- * @param label - Optional label to improve error readability
- * @returns A parsed and validated environment object
- * @throws Terminates process with detailed logs on failure
+ * @param schema - Zod schema defining expected variables.
+ * @param values - Raw key-value pairs from the environment.
+ * @param label - Optional label to improve error readability.
+ * @returns A parsed and validated environment object.
+ * @throws {@link EnvValidationError} if validation fails.
  *
  * @internal
  */
 const parseEnvSection = <Schema extends EnvSchema | undefined>(
   schema: Schema,
   values: EnvValues,
-  label: string = 'environment',
+  label: string,
 ): InferEnv<Schema> => {
   if (!schema) return {} as InferEnv<Schema>
 
   const result = z.object(schema).safeParse(values)
   if (result.success) return result.data as InferEnv<Schema>
 
-  console.error(`\n❌ Invalid ${label} configuration:\n`)
+  const issues = result.error.issues.map((issue) => ({
+    path: issue.path.join('.') || '(root)',
+    message: issue.message,
+  }))
 
-  for (const issue of result.error.issues) {
-    const path = issue.path.join('.') || '(root)'
-    console.error(`- ${path}: ${issue.message}`)
-  }
-
-  console.error('\nEnvironment validation failed.\n')
-  process.exit(1)
+  throw new EnvValidationError(t(`${path}.invalid_configuration`, { section: label }), { issues })
 }
 
 /**
@@ -135,6 +125,8 @@ const parseEnvSection = <Schema extends EnvSchema | undefined>(
  *
  * @param options - Configuration object defining Zod schemas and runtime options.
  * @returns A validated and type-safe environment configuration object.
+ *
+ * @throws {@link EnvValidationError} if any section fails validation.
  */
 export const createEnvConfig = <
   Server extends EnvSchema | undefined = undefined,
@@ -148,10 +140,10 @@ export const createEnvConfig = <
     Object.entries(runtimeEnv).map(([key, value]) => [key, emptyStringAsUndefined && value === '' ? undefined : value]),
   )
 
-  const serverData = parseEnvSection(server, env, 'Server')
+  const serverData = parseEnvSection(server, env, 'server')
 
-  const clientEnv = client ? Object.fromEntries(Object.entries(env).filter(([k]) => k.startsWith(clientPrefix))) : {}
-  const clientData = parseEnvSection(client, clientEnv, 'Client')
+  const clientEnv = Object.fromEntries(Object.entries(env).filter(([k]) => k.startsWith(clientPrefix)))
+  const clientData = parseEnvSection(client, clientEnv, 'client')
 
   return { ...serverData, ...clientData } as EnvConfigReturn<Server, Client>
 }

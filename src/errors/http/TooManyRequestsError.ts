@@ -1,6 +1,6 @@
-import { type TranslationOptions } from '#types/translate/TranslationOptions'
-import { TrackPlayError } from './TrackPlayError.js'
+import { TrackPlayError } from '../base/TrackPlayError.ts'
 import { HTTP_STATUS } from '#constants/httpStatus'
+import { type Translatable } from '#types/translate/Translatable'
 
 /**
  * **TooManyRequestsError (429)**
@@ -10,7 +10,7 @@ import { HTTP_STATUS } from '#constants/httpStatus'
  * - Typically used in APIs enforcing request quotas.
  */
 export class TooManyRequestsError extends TrackPlayError {
-  constructor(message: string | TranslationOptions = 'Too many requests', details?: unknown) {
+  constructor(message: string | Translatable = 'Too many requests', details?: unknown) {
     super(message, HTTP_STATUS.TOO_MANY_REQUESTS, 'Too Many Requests', details)
   }
 }

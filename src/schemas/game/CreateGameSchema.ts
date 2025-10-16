@@ -1,5 +1,5 @@
-import { PositiveNumberSchema } from '../base/PositiveNumberSchema.js'
 import { z } from 'zod'
+import { PositiveNumberSchema } from '../base/PositiveNumberSchema.ts'
 
 /**
  * **CreateGameSchema**

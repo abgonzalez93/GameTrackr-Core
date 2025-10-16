@@ -116,6 +116,16 @@ export const en = {
     },
   },
   core: {
+    config: {
+      createEnvConfig: {
+        invalid_configuration: 'Invalid {{section}} configuration',
+      },
+      getSecrets: {
+        missing_secret: 'Missing Docker secret: {{secret}}',
+        empty_secret: 'Empty Docker secret: {{secret}}',
+        read_failed: 'Failed to read Docker secret: {{secret}}',
+      },
+    },
     middlewares: {
       createErrorHandler: {
         unexpected_error: 'Unexpected error',
@@ -125,25 +135,6 @@ export const en = {
       },
     },
     schemas: {
-      base: {
-        IpAddressSchema: {
-          ip_invalid: 'Please enter a valid IP address',
-        },
-        NonEmptyStringSchema: {
-          string_empty: 'This field cannot be empty',
-        },
-        PortSchema: {
-          port_range: 'Port must be between 1 and 9999',
-        },
-        PositiveNumberSchema: {
-          number_invalid: 'This field must be a number',
-          number_integer: 'This field must be an integer number',
-          number_positive: 'This field must be a positive number',
-        },
-        UrlSchema: {
-          url_invalid: 'Please enter a valid URL',
-        },
-      },
       login: {
         LoginInputSchema: {
           identifier_required: 'Email or username is required',

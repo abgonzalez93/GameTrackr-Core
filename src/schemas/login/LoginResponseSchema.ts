@@ -1,5 +1,5 @@
-import { TokenPairSchema } from '../token/TokenPairSchema.js'
 import { z } from 'zod'
+import { TokenPairSchema } from '../token/TokenPairSchema.ts'
 
 /**
  * **LoginResponseSchema**

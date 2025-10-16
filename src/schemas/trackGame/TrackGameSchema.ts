@@ -1,5 +1,5 @@
-import { IdSchema } from '../base/IdSchema.js'
 import { z } from 'zod'
+import { IdSchema } from '../base/IdSchema.ts'
 
 /**
  * **TrackGameSchema**

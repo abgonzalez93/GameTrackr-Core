@@ -1,7 +1,4 @@
-import { getTranslationPath } from '#utils/translate/getTranslationPath'
 import { z } from 'zod'
-
-const path = getTranslationPath(import.meta.url)
 
 /**
  * **PositiveNumberSchema**
@@ -17,12 +14,5 @@ const path = getTranslationPath(import.meta.url)
  * - Must be a valid integer (`.int()`).
  * - Must be strictly positive (`.positive()`).
  *
- * @translationKeys
- * - `${path}.number_invalid` — When the input is not a number
- * - `${path}.number_integer` — When the number is not an integer
- * - `${path}.number_positive` — When the number is not positive
  */
-export const PositiveNumberSchema = z.coerce
-  .number({ error: () => `${path}.number_invalid` })
-  .int({ error: () => `${path}.number_integer` })
-  .positive({ error: () => `${path}.number_positive` })
+export const PositiveNumberSchema = z.coerce.number().int().positive()

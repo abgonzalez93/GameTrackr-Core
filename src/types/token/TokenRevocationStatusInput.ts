@@ -1,5 +1,5 @@
-import { TokenRevocationStatusInputSchema } from '#schemas/token/TokenRevocationStatusInputSchema'
 import { z } from 'zod'
+import { TokenRevocationStatusInputSchema } from '#schemas/token/TokenRevocationStatusInputSchema'
 
 /**
  * **TokenRevocationStatusInput**

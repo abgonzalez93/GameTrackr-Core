@@ -1,5 +1,4 @@
 import { fileURLToPath } from 'url'
-import path from 'path'
 
 /**
  * Generates a repository-scoped, dot-separated **translation path** identifier
@@ -9,22 +8,6 @@ import path from 'path'
  * - Derives a stable and human-readable identifier for the current module.
  * - Converts a file’s absolute path into a normalized, dot-delimited key.
  * - Ensures consistency across logs, error messages, and i18n translation keys.
- *
- * ### Format
- * The returned string follows this convention:
- * ```
- * <repoName>.<relative.path.from.src>
- * ```
- *
- * ### Example
- * Given:
- * ```
- * /Users/dev/trackplay-catalog/src/adapters/igdb/auth.ts
- * ```
- * The output will be:
- * ```
- * catalog.adapters.igdb.auth
- * ```
  *
  * ### Notes
  * - This function relies on detecting the repository name from the `trackplay-*` segment.
@@ -37,11 +20,11 @@ import path from 'path'
 export const getTranslationPath = (url: string): string => {
   const filePath = fileURLToPath(url)
 
-  const repoSegment = filePath.split('trackplay-')[1]?.split('/')[0] ?? ''
-  const repoName = path.basename(repoSegment)
+  const repoMatch = filePath.match(/trackplay-([a-zA-Z0-9_-]+)/)
+  const repoName = repoMatch?.[1] ?? 'unknown'
 
-  const relativeToSrc = filePath.split('/src/')[1] ?? ''
-  const withoutExt = relativeToSrc.replace(/\.[cm]?[tj]s$/, '')
+  const relativeToSrcOrDist = filePath.split('/src/')[1] ?? filePath.split('/dist/')[1] ?? ''
+  const withoutExt = relativeToSrcOrDist.replace(/\.[cm]?[tj]s$/, '')
   const dotPath = withoutExt.replaceAll('/', '.')
 
   return `${repoName}.${dotPath}`

@@ -1,5 +1,5 @@
-import { TokenRevokeInputSchema } from '#schemas/token/TokenRevokeInputSchema'
 import { z } from 'zod'
+import { TokenRevokeInputSchema } from '#schemas/token/TokenRevokeInputSchema'
 
 /**
  * **TokenRevokeInput**

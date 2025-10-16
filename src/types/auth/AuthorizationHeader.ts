@@ -1,5 +1,5 @@
-import { AuthorizationHeaderSchema } from '#schemas/auth/AuthorizationHeaderSchema'
 import { z } from 'zod'
+import { AuthorizationHeaderSchema } from '#schemas/auth/AuthorizationHeaderSchema'
 
 /**
  * **AuthorizationHeader**

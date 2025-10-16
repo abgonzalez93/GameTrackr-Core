@@ -1,6 +1,6 @@
-import { UserEmailSchema } from './UserEmailSchema.js'
-import { IdSchema } from '../base/IdSchema.js'
 import { z } from 'zod'
+import { IdSchema } from '../base/IdSchema.ts'
+import { UserEmailSchema } from './UserEmailSchema.ts'
 
 /**
  * **PublicUserSchema**

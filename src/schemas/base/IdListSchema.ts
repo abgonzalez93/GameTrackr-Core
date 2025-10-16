@@ -1,5 +1,5 @@
-import { IdSchema } from './IdSchema.js'
 import { z } from 'zod'
+import { IdSchema } from './IdSchema.ts'
 
 /**
  * **IdListSchema**
