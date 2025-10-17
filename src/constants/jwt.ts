@@ -26,7 +26,7 @@ export const JWT = {
    * - `"access"` — short-lived token used for API authorization.
    * - `"refresh"` — long-lived token used for session renewal.
    */
-  TOKEN_TYPES: ['access', 'refresh'] as const,
+  TOKEN_TYPES: ['access', 'refresh'],
 
   /**
    * The canonical issuer (`iss`) claim used in all JWTs.
@@ -39,4 +39,4 @@ export const JWT = {
    * RS256 → RSA Signature with SHA-256.
    */
   ALGORITHM: 'RS256',
-}
+} as const

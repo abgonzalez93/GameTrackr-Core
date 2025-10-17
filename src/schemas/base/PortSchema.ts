@@ -1,4 +1,7 @@
 import { PositiveNumberSchema } from './PositiveNumberSchema.ts'
+import { getTranslationPath } from '#utils/translate/getTranslationPath'
+
+const path = getTranslationPath(import.meta.url)
 
 /**
  * **PortSchema**
@@ -15,4 +18,4 @@ import { PositiveNumberSchema } from './PositiveNumberSchema.ts'
  * - Throws a localized validation error if the number exceeds the allowed range.
  *
  */
-export const PortSchema = PositiveNumberSchema.max(9999)
+export const PortSchema = PositiveNumberSchema.max(9999, { error: () => `${path}.port_invalid` })

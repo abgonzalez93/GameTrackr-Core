@@ -2,110 +2,80 @@ import type { Request, Response } from 'express'
 import { type i18n } from 'i18next'
 import { type Logger } from 'winston'
 import { HTTP_STATUS } from '#constants/httpStatus'
+import { LOGGER } from '#constants/logger'
 import { TrackPlayError } from '#errors/base/TrackPlayError'
+import { type LogLevel } from '#types/logger/LogLevel'
 import { type ErrorHandlerOptions } from '#types/middlewares/ErrorHandlerOptions'
 import { getTranslationPath } from '#utils/translate/getTranslationPath'
 import { translate } from '#utils/translate/translate'
 
+const path = getTranslationPath(import.meta.url)
+
 /**
- * Internal structure describing key metadata derived from an error instance.
+ * Internal metadata extracted from an error instance.
  */
 interface ErrorMetadata {
-  /** Numeric HTTP status code associated with the error. */
   statusCode: number
-  /** Error class name (e.g., `BadRequestError`, `Error`). */
   name: string
-  /** Indicates whether the error inherits from {@link TrackPlayError}. */
   isTrackPlayError: boolean
 }
 
 /**
- * Shape of the structured error response returned to the client.
- */
-interface ErrorResponse {
-  /** HTTP status code returned in the response. */
-  statusCode: number
-  /** Body content of the error response. */
-  response: ErrorBody
-}
-
-/**
- * Shape of the JSON error payload sent to clients.
- */
-interface ErrorBody {
-  /** Short error identifier (usually the class name). */
-  error: string
-  /** Human-readable or translated error message. */
-  message: string
-  /** Optional stack trace (only in development). */
-  stack?: string
-  /** Optional structured metadata or validation context. */
-  details?: unknown
-}
-
-const path = getTranslationPath(import.meta.url)
-
-/**
- * Derives core metadata from an unknown error object.
- *
- * @param error - The error to inspect.
- * @returns Metadata including HTTP status, name, and type flags.
+ * Derives metadata such as status code and name from an error instance.
  */
 const resolveErrorMetadata = (error: unknown): ErrorMetadata => {
-  const isTrackPlayError = error instanceof TrackPlayError
-  const statusCode = isTrackPlayError ? error.statusCode : HTTP_STATUS.INTERNAL_SERVER_ERROR
-  const name = isTrackPlayError ? error.name : 'Error'
-  return { statusCode, name, isTrackPlayError }
+  if (error instanceof TrackPlayError) return { statusCode: error.statusCode, name: error.name, isTrackPlayError: true }
+  return {
+    statusCode: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+    name: 'Error',
+    isTrackPlayError: false,
+  }
 }
 
 /**
  * Resolves a translatable or fallback error message.
- *
- * @param i18n - i18next instance for translation.
- * @param logger - Winston logger for debugging or missing keys.
- * @param error - The original error object.
- * @returns A translated or fallback message string.
  */
 const resolveErrorMessage = (i18n: i18n, logger: Logger, error: unknown): string => {
   const fallbackKey = `${path}.unexpected_error`
-
-  if (error instanceof TrackPlayError) {
-    const translationInput = error.i18n ? error.i18n : error.message
-    return translate(i18n, logger, translationInput, fallbackKey)
-  }
-
+  if (error instanceof TrackPlayError) return translate(i18n, logger, error.i18n ?? error.message, fallbackKey)
   return translate(i18n, logger, fallbackKey)
 }
 
 /**
- * Builds a structured {@link ErrorBody} from an error object.
- *
- * @param i18n - i18next instance for message translation.
- * @param logger - Winston logger for error reporting.
- * @param error - The error object to process.
- * @param isDevelopment - Whether to include debug fields (stack, details).
- * @param name - Short name of the error (usually class name).
- * @returns A serialized and translated error payload.
+ * JSON structure returned as error body.
  */
-const buildErrorBody = (i18n: i18n, logger: Logger, error: unknown, isDevelopment: boolean, name: string): ErrorBody => {
-  const message = resolveErrorMessage(i18n, logger, error)
-  const response: ErrorBody = { error: name, message }
-
-  if (isDevelopment && error instanceof TrackPlayError) {
-    if (error.stack) response.stack = error.stack.replace(/\s+/g, ' ')
-    if (error.details) response.details = error.details
-  }
-
-  return response
+interface ErrorBody {
+  error: string
+  message: string
+  stack?: string
+  details?: unknown
 }
 
 /**
- * Constructs a full {@link ErrorResponse} object, combining status and body.
- *
- * @param i18n - i18next translation instance.
- * @param logger - Winston logger.
- * @param error - Raw error object.
- * @param isDevelopment - Whether to include extra debugging context.
+ * Builds a structured and translated error body.
+ */
+const buildErrorBody = (i18n: i18n, logger: Logger, error: unknown, isDevelopment: boolean, name: string): ErrorBody => {
+  const message = resolveErrorMessage(i18n, logger, error)
+  const body: ErrorBody = { error: name, message }
+
+  if (isDevelopment) {
+    if (error instanceof Error && error.stack) body.stack = error.stack.replace(/\s+/g, ' ')
+    if (error instanceof TrackPlayError && error.details) body.details = error.details
+  }
+
+  return body
+}
+
+/**
+ * Shape of the final error response.
+ */
+interface ErrorResponse {
+  statusCode: number
+  response: ErrorBody
+}
+
+/**
+ * Constructs the HTTP response body and status code from the error.
  */
 const buildErrorResponse = (i18n: i18n, logger: Logger, error: unknown, isDevelopment: boolean): ErrorResponse => {
   const { statusCode, name } = resolveErrorMetadata(error)
@@ -114,28 +84,70 @@ const buildErrorResponse = (i18n: i18n, logger: Logger, error: unknown, isDevelo
 }
 
 /**
+ * Structured logging options for HTTP errors.
+ */
+interface LogHttpErrorOptions extends Pick<ErrorResponse, 'statusCode' | 'response'> {
+  error?: unknown
+  isDevelopment?: boolean
+}
+
+/**
+ * Logs HTTP errors using appropriate severity levels.
+ *
+ * ### Logic
+ * - **5xx** → `error` (critical server errors)
+ * - **401–403** → `warn` (auth or permission issues)
+ * - **400 / 404** → `info` in development only
+ */
+const logHttpError = (
+  logger: Logger,
+  { statusCode, response, error, isDevelopment = false }: LogHttpErrorOptions,
+): void => {
+  let level: LogLevel | null = null
+
+  if (statusCode >= HTTP_STATUS.INTERNAL_SERVER_ERROR) {
+    level = 'error'
+  } else if (statusCode >= HTTP_STATUS.BAD_REQUEST) {
+    switch (statusCode) {
+      case HTTP_STATUS.UNAUTHORIZED:
+      case HTTP_STATUS.FORBIDDEN:
+        level = 'warn'
+        break
+      case HTTP_STATUS.BAD_REQUEST:
+      case HTTP_STATUS.NOT_FOUND:
+      default:
+        level = isDevelopment ? 'info' : null
+        break
+    }
+  }
+
+  if (!level) return
+
+  logger[level](`${LOGGER.EMOJIS[level]} [${response.error}] ${response.message}`, {
+    statusCode,
+    ...(level === 'error' ? { error } : undefined),
+  })
+}
+
+/**
  * **createErrorHandler**
  *
- * Factory function creating a centralized Express error-handling middleware.
+ * Factory for a centralized Express error-handling middleware.
  *
  * ### Responsibilities
- * - Catch and handle any thrown error within the request lifecycle.
- * - Translate messages using {@link i18n} (if applicable).
- * - Format errors consistently across all TrackPlay services.
- * - Hide internal stack traces in production for security.
- * - Log errors via Winston, including stack traces in development.
+ * - Catch and normalize thrown errors during the request lifecycle.
+ * - Translate messages via {@link i18n}.
+ * - Hide internal stack traces in production for safety.
+ * - Log structured error data via Winston.
  *
  * ### Behavior
- * - For {@link TrackPlayError} instances → Uses structured metadata, translation, and HTTP status.
- * - For unrecognized errors → Returns `500 Internal Server Error` with a generic fallback translation key.
+ * - Handles {@link TrackPlayError} instances gracefully with localized messages.
+ * - Falls back to a generic 500 error for unexpected exceptions.
  *
- * @param i18n - i18next instance used for translations.
- * @param logger - Winston logger for structured error logging.
- * @param options - Optional configuration flags (e.g. `isDevelopment`).
- * @returns Express-compatible error handling middleware.
- *
- * @see {@link TrackPlayError}
- * @see {@link ErrorHandlerOptions}
+ * @param i18n - Initialized i18n instance for translations.
+ * @param logger - Winston logger for structured logging.
+ * @param options - Optional configuration (e.g., `isDevelopment`).
+ * @returns Express error-handling middleware function.
  */
 export const createErrorHandler =
   (i18n: i18n, logger: Logger, options: ErrorHandlerOptions = {}) =>
@@ -145,9 +157,7 @@ export const createErrorHandler =
     const { isDevelopment = false } = options
     const { statusCode, response } = buildErrorResponse(i18n, logger, error, isDevelopment)
 
-    if (isDevelopment || statusCode >= HTTP_STATUS.INTERNAL_SERVER_ERROR) {
-      logger.error(`❌ [${response.error}] ${response.message}`, { error })
-    }
+    logHttpError(logger, { statusCode, response, error, isDevelopment })
 
     res.status(statusCode).json(response)
   }

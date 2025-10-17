@@ -1,4 +1,7 @@
 import { z } from 'zod'
+import { getTranslationPath } from '#utils/translate/getTranslationPath'
+
+const path = getTranslationPath(import.meta.url)
 
 /**
  * **UrlSchema**
@@ -15,4 +18,4 @@ import { z } from 'zod'
  * - Throws a localized validation error when invalid.
  *
  */
-export const UrlSchema = z.url()
+export const UrlSchema = z.url({ error: () => `${path}.url_invalid` })

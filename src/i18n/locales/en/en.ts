@@ -22,10 +22,10 @@ export const en = {
     interfaces: {
       controllers: {
         tokenController: {
-          invalid_generate_input: 'The data provided to generate tokens is invalid.',
-          invalid_revoke_input: 'The data provided to revoke the token is invalid.',
-          invalid_revocation_status_input: 'The query parameters to check the token status are invalid.',
-          invalid_rotate_input: 'The data provided to rotate tokens is invalid.',
+          invalid_generate_input: 'The data provided to generate tokens is invalid',
+          invalid_revoke_input: 'The data provided to revoke the token is invalid',
+          invalid_revocation_status_input: 'The query parameters to check the token status are invalid',
+          invalid_rotate_input: 'The data provided to rotate tokens is invalid',
         },
       },
     },
@@ -33,32 +33,32 @@ export const en = {
   backend: {
     services: {
       trackGameService: {
-        already_tracking: 'You are already tracking this game.',
+        already_tracking: 'You are already tracking this game',
       },
       userService: {
-        user_not_found_by_id: 'We couldn’t find a user with that ID.',
-        email_not_found: 'No account found with the email {{email}}.',
-        username_not_found: 'No account found with the username {{username}}.',
-        invalid_credentials: 'Invalid email, username or password. Please try again.',
-        email_taken: 'The email {{email}} is already in use.',
-        username_taken: 'The username {{username}} is already taken.',
+        user_not_found_by_id: 'We couldn’t find a user with that ID',
+        email_not_found: 'No account found with the email {{email}}',
+        username_not_found: 'No account found with the username {{username}}',
+        invalid_credentials: 'Invalid email, username or password. Please try again',
+        email_taken: 'The email {{email}} is already in use',
+        username_taken: 'The username {{username}} is already taken',
       },
     },
     utils: {
       auth: {
         requireToken: {
-          token_missing: '{{token}} is required but was not provided.',
-          token_header_invalid: '{{token}} is malformed or invalid.',
-          token_payload_invalid: '{{token}} contains invalid data.',
+          token_missing: '{{token}} is required but was not provided',
+          token_header_invalid: '{{token}} is malformed or invalid',
+          token_payload_invalid: '{{token}} contains invalid data',
         },
         verifyToken: {
-          token_type_invalid: 'Token type mismatch. Expected "{{expectedType}}".',
-          token_expired: 'Your session has expired or the token is invalid. Please log in again.',
+          token_type_invalid: 'Token type mismatch. Expected "{{expectedType}}"',
+          token_expired: 'Your session has expired or the token is invalid. Please log in again',
         },
       },
       password: {
         passwordUtils: {
-          invalid_credentials: 'Incorrect email or password.',
+          invalid_credentials: 'Incorrect email or password',
         },
       },
     },
@@ -78,7 +78,7 @@ export const en = {
         auth: {
           igdbAuthAdapter: {
             invalid_format: 'Token response is not in a valid format',
-            auth_failed: 'Unable to authenticate with provider. Please check your credentials.',
+            auth_failed: 'Unable to authenticate with provider. Please check your credentials',
           },
         },
         category: {
@@ -100,7 +100,7 @@ export const en = {
         },
         provider: {
           fetchFromProvider: {
-            unsupported_method: 'The selected provider is not supported or has no authentication implementation.',
+            unsupported_method: 'The selected provider is not supported or has no authentication implementation',
             fetch_failed: 'An error occurred while retrieving {{endpoint}} from provider',
           },
         },
@@ -109,8 +109,8 @@ export const en = {
     interfaces: {
       controllers: {
         gameController: {
-          invalid_filters: 'Invalid filters format in query parameters.',
-          invalid_id: 'Invalid game ID format in path parameter.',
+          invalid_filters: 'Invalid filters format in query parameters',
+          invalid_id: 'Invalid game ID format in path parameter',
         },
       },
     },
@@ -131,10 +131,28 @@ export const en = {
         unexpected_error: 'Unexpected error',
       },
       createNotFoundHandler: {
-        route_not_found: "The requested route '{{url}}' does not exist on this server.",
+        route_not_found: "The requested route '{{url}}' does not exist on this server",
       },
     },
     schemas: {
+      base: {
+        IpAddressSchema: {
+          ip_address_invalid: 'The provided IP address is not valid',
+        },
+        NodeEnvSchema: {
+          node_env_invalid: "NODE_ENV must be 'development', 'production', or 'test'",
+        },
+        NonEmptyStringSchema: {
+          string_invalid: 'The value must be a string',
+          string_empty: 'The string cannot be empty',
+        },
+        PortSchema: {
+          port_invalid: 'The port must be a number between 1 and 9999',
+        },
+        UrlSchema: {
+          url_invalid: 'The provided URL is invalid or malformed',
+        },
+      },
       login: {
         LoginInputSchema: {
           identifier_required: 'Email or username is required',
@@ -161,16 +179,15 @@ export const en = {
         },
       },
     },
+    server: {
+      bootstrap: {
+        bootstrap_failed: 'The service failed to start due to a fatal error',
+      },
+    },
     utils: {
       validate: {
         validateSchema: {
           invalid_input: 'Invalid input',
-        },
-      },
-      translate: {
-        formatErrorMessage: {
-          invalid_key: 'Invalid translation key',
-          invalid_key_type: 'Translation key must be a string',
         },
       },
     },

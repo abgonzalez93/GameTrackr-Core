@@ -1,4 +1,7 @@
 import { z } from 'zod'
+import { getTranslationPath } from '#utils/translate/getTranslationPath'
+
+const path = getTranslationPath(import.meta.url)
 
 /**
  * **NodeEnvSchema**
@@ -18,4 +21,6 @@ import { z } from 'zod'
  * Defaults to `"development"` if no value is provided.
  *
  */
-export const NodeEnvSchema = z.enum(['development', 'production', 'test']).default('development')
+export const NodeEnvSchema = z
+  .enum(['development', 'production', 'test'], { error: () => `${path}.node_env_invalid` })
+  .default('development')

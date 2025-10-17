@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { NonEmptyStringSchema } from './NonEmptyStringSchema.ts'
 
 /**
  * **OptionalStringArraySchema**
@@ -15,4 +16,4 @@ import { z } from 'zod'
  * - Empty arrays (`[]`) are allowed, but empty strings within are not.
  *
  */
-export const OptionalStringArraySchema = z.array(z.string().min(1)).optional()
+export const OptionalStringArraySchema = z.array(NonEmptyStringSchema).optional()

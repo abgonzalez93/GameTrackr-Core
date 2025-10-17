@@ -3,6 +3,7 @@ import { type i18n } from 'i18next'
 import { type Logger } from 'winston'
 import { createEnvConfig } from '#config/createEnvConfig'
 import { getSecrets } from '#config/getSecrets'
+import { TrackPlayError } from '#errors/base/TrackPlayError'
 import { createI18n } from '#i18n/createI18n'
 import { initI18n } from '#i18n/initI18n'
 import { createLogger } from '#logger/createLogger'
@@ -15,6 +16,10 @@ import { type InferEnv } from '#types/env/InferEnv'
 import { type BaseURLOptions } from '#types/http/BaseURLOptions'
 import { type MiddlewareOptions } from '#types/middlewares/MiddlewareOptions'
 import { getBaseUrl } from '#utils/http/getBaseUrl'
+import { getTranslationPath } from '#utils/translate/getTranslationPath'
+import { translate } from '#utils/translate/translate'
+
+const path = getTranslationPath(import.meta.url)
 
 /**
  * **MergedEnv**
@@ -38,26 +43,8 @@ interface EnvSecretsBundle<TEnvSchema> {
 /**
  * Merges the base TrackPlay schema with a service-specific one.
  */
-const mergeEnvSchemas = <Extra extends EnvSchema>(extra?: Extra) =>
-  ({
-    ...BaseServerEnvSchema,
-    ...(extra ?? {}),
-  }) satisfies EnvSchema
-
-/**
- * Loads and validates environment variables and Docker secrets.
- *
- * @param envSchema - Zod schema defining environment structure.
- * @param secrets - Optional list of secret file names to load.
- */
-const loadEnvAndSecrets = <TEnvSchema extends EnvSchema>(
-  envSchema: TEnvSchema,
-  secrets?: string[],
-): EnvSecretsBundle<MergedEnv<TEnvSchema>> => {
-  const env = createEnvConfig({ server: mergeEnvSchemas(envSchema) }) as MergedEnv<TEnvSchema>
-  const resolvedSecrets = secrets?.length ? getSecrets(...secrets) : {}
-  return { env, secrets: resolvedSecrets }
-}
+const mergeEnvSchemas = <Extra extends EnvSchema>(extra?: Extra): EnvSchema =>
+  Object.assign({}, BaseServerEnvSchema, extra ?? {})
 
 /**
  * **RuntimeConfig**
@@ -69,15 +56,7 @@ interface RuntimeConfig<TEnvSchema extends Record<string, unknown>> extends EnvS
   isDevelopment: boolean
   corsOrigins: string[]
   serverOptions: BaseURLOptions
-  logger: Logger
-  i18n: i18n
 }
-
-const parseCorsOrigins = (raw: string): string[] =>
-  raw
-    .split(',')
-    .map((o) => o.trim())
-    .filter(Boolean)
 
 /**
  * Prepares runtime dependencies and configuration.
@@ -89,11 +68,11 @@ const parseCorsOrigins = (raw: string): string[] =>
 const prepareRuntime = async <TEnvSchema extends EnvSchema>(
   envSchema: TEnvSchema,
   secrets: string[] | undefined,
-  serviceName: string,
 ): Promise<RuntimeConfig<MergedEnv<TEnvSchema>>> => {
-  const { env, secrets: resolvedSecrets } = loadEnvAndSecrets(envSchema, secrets)
+  const env = createEnvConfig({ server: mergeEnvSchemas(envSchema) }) as MergedEnv<TEnvSchema>
+  const resolvedSecrets = secrets?.length ? getSecrets(...secrets) : {}
+
   const isDevelopment = env.NODE_ENV === 'development'
-  const corsOrigins = parseCorsOrigins(env.CORS_ORIGINS)
 
   const serverOptions: BaseURLOptions = {
     protocol: isDevelopment ? 'http' : 'https',
@@ -101,15 +80,11 @@ const prepareRuntime = async <TEnvSchema extends EnvSchema>(
     port: env.PORT,
   }
 
-  const logger = createLogger({
-    isDevelopment,
-    label: serviceName,
-  })
+  const corsOrigins = env.CORS_ORIGINS.split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean)
 
-  const i18n = createI18n()
-  await initI18n(i18n)
-
-  return { env, secrets: resolvedSecrets, isDevelopment, corsOrigins, serverOptions, logger, i18n }
+  return { env, secrets: resolvedSecrets, isDevelopment, corsOrigins, serverOptions }
 }
 
 /**
@@ -156,7 +131,7 @@ const buildDependencies = <TEnvSchema, TLayers extends DependencyLayers>(
  * Configuration for initializing an HTTP server instance.
  */
 interface HttpServerOptions<Controllers> {
-  routes: (app: Express, deps: { controllers: Controllers }) => void
+  routes?: (app: Express, deps: { controllers: Controllers }) => void
   controllers: Controllers
   i18n: i18n
   logger: Logger
@@ -164,14 +139,27 @@ interface HttpServerOptions<Controllers> {
 }
 
 /**
+ * **HttpServerInstance**
+ *
+ * Represents the initialized HTTP server with its Express application
+ * and a start method to begin listening for incoming requests.
+ */
+interface HttpServerInstance {
+  app: Express
+  start: (serverOptions: BaseURLOptions) => void
+}
+
+/**
  * Creates an Express app and attaches routes, middlewares, and handlers.
  */
-const createHttpServer = <Controllers extends Record<string, unknown>>(options: HttpServerOptions<Controllers>) => {
+const createHttpServer = <Controllers extends Record<string, unknown>>(
+  options: HttpServerOptions<Controllers>,
+): HttpServerInstance => {
   const { routes, controllers, i18n, logger, middlewares = {} } = options
   const app = express()
 
   applyMiddlewares(app, middlewares)
-  routes(app, { controllers })
+  if (routes) routes(app, { controllers })
 
   app.use(createNotFoundHandler())
   app.use(createErrorHandler(i18n, logger, middlewares.errorHandler))
@@ -194,7 +182,7 @@ interface BootstrapConfig<TEnvSchema extends EnvSchema, TLayers extends Dependen
   serviceName: string
   envSchema: TEnvSchema
   secrets?: string[]
-  dependencyFactories: DependencyFactories<MergedEnv<TEnvSchema>, TLayers>
+  container: DependencyFactories<MergedEnv<TEnvSchema>, TLayers>
   routes: (app: Express, container: { controllers: TLayers['controllers'] }) => void
   middlewareOptions?: MiddlewareOptions
 }
@@ -233,21 +221,25 @@ interface ServiceRuntime<
 export const bootstrap = async <TEnvSchema extends EnvSchema, TLayers extends DependencyLayers>(
   options: BootstrapConfig<TEnvSchema, TLayers>,
 ): Promise<ServiceRuntime<TLayers, MergedEnv<TEnvSchema>>> => {
-  const { serviceName, envSchema, secrets, dependencyFactories, routes, middlewareOptions } = options
+  const { serviceName, envSchema, secrets, container, routes, middlewareOptions } = options
+
+  const logger = createLogger({ label: serviceName })
+  const i18n = createI18n()
+  await initI18n(i18n)
 
   try {
-    const runtime = await prepareRuntime(envSchema, secrets, serviceName)
+    const runtime = await prepareRuntime(envSchema, secrets)
 
-    const container = buildDependencies(dependencyFactories, {
+    const builtContainer = buildDependencies(container, {
       env: runtime.env,
       secrets: runtime.secrets,
     })
 
     const { app, start } = createHttpServer({
       routes,
-      controllers: container.controllers,
-      i18n: runtime.i18n,
-      logger: runtime.logger,
+      controllers: builtContainer.controllers,
+      i18n,
+      logger,
       middlewares: {
         cors: { origin: runtime.corsOrigins, credentials: true },
         errorHandler: { isDevelopment: runtime.isDevelopment },
@@ -258,16 +250,17 @@ export const bootstrap = async <TEnvSchema extends EnvSchema, TLayers extends De
     return {
       app,
       start: () => start(runtime.serverOptions),
-      logger: runtime.logger,
-      i18n: runtime.i18n,
+      logger,
+      i18n,
       env: runtime.env,
       secrets: runtime.secrets,
-      container,
+      container: builtContainer,
       isDevelopment: runtime.isDevelopment,
     }
   } catch (error: unknown) {
-    const message = error instanceof Error ? `${error.message}\n${error.stack ?? ''}`.trim() : String(error)
-    console.error(`💥 Bootstrap failed for service "${serviceName}":\n${message}`)
+    const messageKey = error instanceof TrackPlayError ? (error.i18n ?? error.message) : `${path}.bootstrap_failed`
+    const message = translate(i18n, logger, messageKey)
+    logger.error(`💥 [${serviceName}] ${message}`, { error })
     process.exit(1)
   }
 }

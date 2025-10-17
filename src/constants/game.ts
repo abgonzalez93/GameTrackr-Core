@@ -30,7 +30,7 @@ export const GAME = {
     sortBy: 'releaseDate',
     sortOrder: 'desc',
     limit: 50,
-  } as const,
+  },
 
   /**
    * Canonical list of all recognized domain-level fields for {@link Game}.
@@ -55,10 +55,10 @@ export const GAME = {
     'url',
     'updatedAt',
     'createdAt',
-  ] as const,
+  ],
 
   /**
    * List of domain-level sort fields available for game queries.
    */
-  GAME_SORT_FIELDS: ['title', 'releaseDate', 'rating'] as const,
-}
+  GAME_SORT_FIELDS: ['title', 'releaseDate', 'rating'],
+} as const

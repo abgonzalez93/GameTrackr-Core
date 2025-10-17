@@ -1,4 +1,6 @@
 import { format, transports, type Logger, createLogger as WinstonCreateLogger } from 'winston'
+import { LOGGER } from '#constants/logger'
+import type { LogLevel } from '#types/logger/LogLevel'
 
 /**
  * **LoggerOptions**
@@ -20,15 +22,6 @@ import { format, transports, type Logger, createLogger as WinstonCreateLogger } 
  */
 interface LoggerOptions {
   /**
-   * Whether the service is running in development mode.
-   *
-   * When `true`, enables colorized and human-readable console output.
-   *
-   * @default false
-   */
-  isDevelopment?: boolean
-
-  /**
    * Optional label applied to every log entry.
    *
    * Commonly set to the service name (e.g., `"TrackPlay-Catalog"`),
@@ -46,7 +39,7 @@ interface LoggerOptions {
    *
    * @default "info"
    */
-  level?: 'info' | 'debug' | 'warn' | 'error'
+  level?: LogLevel
 }
 
 const { combine, timestamp, label, printf, colorize } = format
@@ -69,8 +62,8 @@ const consoleFormat = printf(({ level, message, label, timestamp }) => `[${times
  * @returns A timestamp string (e.g. `"03/10/2025, 12:41:23"`).
  */
 const getTimestamp = (): string =>
-  new Date().toLocaleString('es-ES', {
-    timeZone: 'Europe/Madrid',
+  new Date().toLocaleString(LOGGER.TIMESTAMP.LOCALE, {
+    timeZone: LOGGER.TIMESTAMP.TIMEZONE,
     hour12: false,
   })
 
@@ -90,10 +83,13 @@ const getTimestamp = (): string =>
  * @returns A fully configured Winston {@link Logger} instance.
  */
 export const createLogger = (options: LoggerOptions = {}): Logger => {
-  const { label: serviceLabel = 'TrackPlay', isDevelopment = false, level } = options
+  const { label: serviceLabel = LOGGER.DEFAULT_LABEL } = options
+
+  const isProduction = process.env.NODE_ENV === 'production'
+  const isDevelopment = !isProduction
 
   return WinstonCreateLogger({
-    level: level ?? (isDevelopment ? 'debug' : 'info'),
+    level: isDevelopment ? 'debug' : 'info',
     format: combine(
       label({ label: serviceLabel }),
       timestamp({ format: getTimestamp }),
@@ -101,7 +97,7 @@ export const createLogger = (options: LoggerOptions = {}): Logger => {
     ),
     transports: [
       new transports.Console({
-        stderrLevels: ['error'],
+        stderrLevels: ['error', 'warn'],
       }),
     ],
     exceptionHandlers: [new transports.Console()],

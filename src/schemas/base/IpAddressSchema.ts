@@ -1,4 +1,7 @@
 import { z } from 'zod'
+import { getTranslationPath } from '#utils/translate/getTranslationPath'
+
+const path = getTranslationPath(import.meta.url)
 
 /**
  * **IpAddressSchema**
@@ -15,4 +18,4 @@ import { z } from 'zod'
  * - Returns a localized error key when invalid.
  *
  */
-export const IpAddressSchema = z.ipv4()
+export const IpAddressSchema = z.ipv4({ error: () => `${path}.ip_address_invalid` })
