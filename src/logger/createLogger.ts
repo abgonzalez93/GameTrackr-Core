@@ -1,6 +1,7 @@
 import { format, transports, type Logger, createLogger as WinstonCreateLogger } from 'winston'
 import { LOGGER } from '#constants/logger'
-import type { LogLevel } from '#types/logger/LogLevel'
+import { NODE_ENV } from '#constants/nodeEnv'
+import { type LogLevel } from '#types/logger/LogLevel'
 
 /**
  * **LoggerOptions**
@@ -84,9 +85,7 @@ const getTimestamp = (): string =>
  */
 export const createLogger = (options: LoggerOptions = {}): Logger => {
   const { label: serviceLabel = LOGGER.DEFAULT_LABEL } = options
-
-  const isProduction = process.env.NODE_ENV === 'production'
-  const isDevelopment = !isProduction
+  const isDevelopment = process.env.NODE_ENV !== NODE_ENV.PRODUCTION
 
   return WinstonCreateLogger({
     level: isDevelopment ? 'debug' : 'info',
