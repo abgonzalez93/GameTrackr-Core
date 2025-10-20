@@ -2,7 +2,7 @@
   "type": "module",
   "name": "@trackplay/core",
   "author": "Antonio Bueno Gonzalez",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "private": false,
   "imports": {
     "#clients/*": "./dist/clients/*.js",
@@ -79,7 +79,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "lint": "eslint src",
-    "release": "pnpm build && pnpm pack && pnpm publish --tag latest --no-git-checks"
+    "release": "pnpm build && rm -f trackplay-core-*.tgz && pnpm pack && pnpm publish --tag latest --no-git-checks"
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.13.8",
