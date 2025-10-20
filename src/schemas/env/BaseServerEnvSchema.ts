@@ -1,7 +1,7 @@
-import { IpAddressSchema } from './IpAddressSchema.ts'
-import { NodeEnvSchema } from './NodeEnvSchema.ts'
-import { NonEmptyStringSchema } from './NonEmptyStringSchema.ts'
-import { PortSchema } from './PortSchema.ts'
+import { IpAddressSchema } from '../base/IpAddressSchema.ts'
+import { NodeEnvSchema } from '../base/NodeEnvSchema.ts'
+import { NonEmptyStringSchema } from '../base/NonEmptyStringSchema.ts'
+import { PortSchema } from '../base/PortSchema.ts'
 
 /**
  * **BaseServerEnvSchema**
