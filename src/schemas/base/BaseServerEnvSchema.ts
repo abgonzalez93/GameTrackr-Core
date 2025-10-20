@@ -25,4 +25,4 @@ export const BaseServerEnvSchema = {
   HOST: IpAddressSchema,
   PORT: PortSchema,
   CORS_ORIGINS: NonEmptyStringSchema,
-} as const
+}
