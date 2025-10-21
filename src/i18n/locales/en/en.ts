@@ -185,6 +185,11 @@ export const en = {
       },
     },
     utils: {
+      translate: {
+        translate: {
+          missing_key: "Missing translation for '{{key}}' [language: {{language}}]",
+        },
+      },
       validate: {
         validateSchema: {
           invalid_input: 'Invalid input',

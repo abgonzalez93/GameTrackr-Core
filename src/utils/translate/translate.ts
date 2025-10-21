@@ -1,6 +1,9 @@
 import { type i18n } from 'i18next'
 import { type Logger } from 'winston'
 import { type Translatable } from '#types/translate/Translatable'
+import { getTranslationPath } from './getTranslationPath.ts'
+
+const path = getTranslationPath(import.meta.url)
 
 /**
  * **translate**
@@ -39,6 +42,6 @@ export const translate = (i18n: i18n, logger: Logger, input: string | Translatab
 
   if (i18n.exists(key)) return i18n.t(key, vars)
 
-  logger.warn(`⚠️ Missing translation: "${key}" [lang=${language}]`)
+  logger.warn(`⚠️ ${i18n.t(`${path}.missing_key`, { key, language })}`)
   return resolveFallback(key)
 }

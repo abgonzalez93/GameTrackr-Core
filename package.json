@@ -2,7 +2,7 @@
   "type": "module",
   "name": "@trackplay/core",
   "author": "Antonio Bueno Gonzalez",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "private": false,
   "imports": {
     "#clients/*": "./dist/clients/*.js",
@@ -13,6 +13,7 @@
     "#logger/*": "./dist/logger/*.js",
     "#middlewares/*": "./dist/middlewares/*.js",
     "#ports/*": "./dist/ports/*.js",
+    "#routes/*": "./dist/routes/*.js",
     "#schemas/*": "./dist/schemas/*.js",
     "#server/*": "./dist/server/*.js",
     "#types/*": "./dist/types/*.js",
@@ -50,6 +51,10 @@
     "./ports/*": {
       "import": "./dist/ports/*.js",
       "types": "./dist/ports/*.d.ts"
+    },
+    "./routes/*": {
+      "import": "./dist/routes/*.js",
+      "types": "./dist/routes/*.d.ts"
     },
     "./schemas/*": {
       "import": "./dist/schemas/*.js",
@@ -99,7 +104,7 @@
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
-    "@types/node": "^24.8.1",
+    "@types/node": "^24.9.1",
     "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
@@ -107,7 +112,7 @@
     "globals": "^16.4.0",
     "prettier": "^3.6.2",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.46.1"
+    "typescript-eslint": "^8.46.2"
   },
   "packageManager": "pnpm@10.18.3"
 }

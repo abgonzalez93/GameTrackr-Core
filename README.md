@@ -11,13 +11,13 @@ Su objetivo es mantener el código **DRY**, **tipado**, **modular** y **consiste
 
 El paquete incluye:
 
-### ✅ Clientes externos
+### ✅ Clients
 
 - Clientes reutilizables para servicios externos (ej. `createRedis`).
 - Proveen una capa de abstracción sobre dependencias de terceros.
 - Pensados para inyección de dependencias y testabilidad.
 
-### ✅ Configuración de entorno
+### ✅ Config
 
 - `createEnvConfig`: valida y tipa las variables de entorno mediante Zod.
   - Soporte dual para entornos servidor/cliente.
@@ -28,12 +28,12 @@ El paquete incluye:
 - `getSecrets`: gestiona la lectura segura de secretos desde `/run/secrets` o variables de entorno.
   - Lanza errores tipados en caso de archivos ausentes o vacíos.
 
-### ✅ Constantes
+### ✅ Constants
 
 - Conjunto de valores fijos y enumeraciones: `HTTP_STATUS`, `JWT_CONFIG`, `GAME_CONSTANTS`, etc.
 - Garantizan coherencia y evitan “magic numbers” o strings duplicados.
 
-### ✅ Errores
+### ✅ Errors
 
 - Sistema unificado de errores basado en clases tipadas y jerárquicas.
 - Agrupados por dominio funcional:
@@ -43,7 +43,7 @@ El paquete incluye:
 - Totalmente integrados con el sistema de traducciones (`i18next`).
 - Compatibles con el middleware global de manejo de errores.
 
-### ✅ Sistema de traducciones
+### ✅ i18n
 
 - Basado en `i18next` con soporte multilenguaje.
 - Carga modular de traducciones desde cada módulo.
@@ -62,17 +62,23 @@ El paquete incluye:
   - `createNotFoundHandler`: control de rutas inexistentes.
 - Configurables mediante opciones (`MiddlewareOptions`).
 
-### ✅ Puertos
+### ✅ Ports
 
 - Interfaces contractuales que definen los límites entre dominio e infraestructura.
 - Permiten sustituir adaptadores sin romper la lógica de negocio.
 
-### ✅ Schemas Zod
+### ✅ Routes
+
+- Estandarizar cómo los módulos de la aplicación registran sus rutas dentro de Express.
+- Mantener el desacoplamiento total entre el framework web y la lógica de negocio.
+- Favorecer la composición y testabilidad de los módulos HTTP, sin dependencias directas del contenedor ni del servidor principal.
+
+### ✅ Schemas (Zod)
 
 - Esquemas de validación centralizados por dominio (`/auth`, `/game`, `/user`, `/jwt`, `/provider`, etc.).
 - Garantizan validaciones consistentes y seguras.
 
-### ✅ Servidor
+### ✅ Server
 
 - `bootstrap.ts` es el punto de entrada unificado para inicializar cualquier microservicio de TrackPlay.
 - Su función es preparar el entorno, cargar secretos, construir dependencias, configurar middlewares y levantar el servidor HTTP de forma tipada, consistente y extensible.
@@ -83,14 +89,14 @@ El paquete incluye:
   - El servidor Express se configure con middlewares, rutas y manejadores comunes.
   - El arranque sea totalmente tipado y reutilizable entre servicios.
 
-### ✅ Tipos
+### ✅ Types
 
 - Interfaces y tipos globales compartidos:
 - `LoggerOptions`, `MiddlewareOptions`, `TranslationVariables`, etc.
 - Generan tipos inferidos (`z.infer`) para un tipado compartido entre backend y frontend.
 - Mantiene consistencia tipada entre microservicios y librerías.
 
-### ✅ Utilidades
+### ✅ Utils
 
 - Helpers reutilizables para tareas comunes:
   - `/fetch`: peticiones HTTP tipadas.
