@@ -2,7 +2,7 @@
   "type": "module",
   "name": "@trackplay/core",
   "author": "Antonio Bueno Gonzalez",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "private": false,
   "imports": {
     "#clients/*": "./dist/clients/*.js",

@@ -1,7 +1,7 @@
 import { type i18n } from 'i18next'
 import { type Logger } from 'winston'
-import { type Translatable } from '#types/translate/Translatable'
 import { getTranslationPath } from './getTranslationPath.ts'
+import { type Translatable } from '#types/translate/Translatable'
 
 const path = getTranslationPath(import.meta.url)
 
