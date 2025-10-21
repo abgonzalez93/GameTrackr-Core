@@ -18,6 +18,9 @@ import { type MiddlewareOptions } from '#types/middlewares/MiddlewareOptions'
 import { getBaseUrl } from '#utils/http/getBaseUrl'
 import { getTranslationPath } from '#utils/translate/getTranslationPath'
 import { translate } from '#utils/translate/translate'
+import { type EnvSecretsBundle } from '#types/container/EnvSecretsBundle'
+import { type DependencyLayers } from '#types/container/DependencyLayers'
+import { type DependencyFactories } from '#types/container/DependencyFactories'
 
 const path = getTranslationPath(import.meta.url)
 
@@ -29,16 +32,6 @@ const path = getTranslationPath(import.meta.url)
  */
 type MergedEnv<TEnvSchema extends EnvSchema | undefined = undefined> = InferEnv<typeof BaseServerEnvSchema> &
   (TEnvSchema extends EnvSchema ? InferEnv<TEnvSchema> : Record<string, never>)
-
-/**
- * **EnvSecretsBundle**
- *
- * Represents a resolved combination of environment variables and secrets.
- */
-interface EnvSecretsBundle<TEnvSchema> {
-  env: TEnvSchema
-  secrets: Record<string, string>
-}
 
 /**
  * Merges the base TrackPlay schema with a service-specific one.
@@ -85,30 +78,6 @@ const prepareRuntime = async <TEnvSchema extends EnvSchema>(
     .filter(Boolean)
 
   return { env, secrets: resolvedSecrets, isDevelopment, corsOrigins, serverOptions }
-}
-
-/**
- * **DependencyLayers**
- *
- * Defines the shape of dependency layers in the hexagonal architecture.
- */
-interface DependencyLayers {
-  adapters: Record<string, unknown>
-  services: Record<string, unknown>
-  useCases: Record<string, unknown>
-  controllers: Record<string, unknown>
-}
-
-/**
- * **DependencyFactories**
- *
- * Factory functions for constructing each dependency layer in order.
- */
-interface DependencyFactories<TEnvSchema, TLayers extends DependencyLayers> {
-  adapters: (ctx: EnvSecretsBundle<TEnvSchema>) => TLayers['adapters']
-  services: (ctx: { adapters: TLayers['adapters'] }) => TLayers['services']
-  useCases: (ctx: { services: TLayers['services'] }) => TLayers['useCases']
-  controllers: (ctx: { useCases: TLayers['useCases'] }) => TLayers['controllers']
 }
 
 /**
