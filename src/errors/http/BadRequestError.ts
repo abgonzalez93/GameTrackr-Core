@@ -11,7 +11,7 @@ import { type Translatable } from '#types/translate/Translatable'
  *
  */
 export class BadRequestError extends TrackPlayError {
-  constructor(message: string | Translatable = 'Bad request', details?: unknown) {
+  constructor(message: string | Translatable = 'Bad request', details?: Record<string, unknown>) {
     super(message, HTTP_STATUS.BAD_REQUEST, 'Bad Request', details)
   }
 }

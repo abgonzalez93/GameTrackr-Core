@@ -10,7 +10,7 @@ import { type Translatable } from '#types/translate/Translatable'
  * - Typically used in APIs enforcing request quotas.
  */
 export class TooManyRequestsError extends TrackPlayError {
-  constructor(message: string | Translatable = 'Too many requests', details?: unknown) {
+  constructor(message: string | Translatable = 'Too many requests', details?: Record<string, unknown>) {
     super(message, HTTP_STATUS.TOO_MANY_REQUESTS, 'Too Many Requests', details)
   }
 }

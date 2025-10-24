@@ -12,7 +12,7 @@ import { type Translatable } from '#types/translate/Translatable'
  *
  */
 export class SecretValidationError extends TrackPlayError {
-  constructor(message: string | Translatable = 'Secret validation', details?: unknown) {
+  constructor(message: string | Translatable = 'Secret validation', details?: Record<string, unknown>) {
     super(message, HTTP_STATUS.INTERNAL_SERVER_ERROR, 'Secret Validation', details)
   }
 }

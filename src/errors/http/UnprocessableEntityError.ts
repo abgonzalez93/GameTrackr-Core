@@ -10,7 +10,7 @@ import { type Translatable } from '#types/translate/Translatable'
  * - Example: failed validation after parsing JSON body.
  */
 export class UnprocessableEntityError extends TrackPlayError {
-  constructor(message: string | Translatable = 'Unprocessable entity', details?: unknown) {
+  constructor(message: string | Translatable = 'Unprocessable entity', details?: Record<string, unknown>) {
     super(message, HTTP_STATUS.UNPROCESSABLE_ENTITY, 'Unprocessable Entity', details)
   }
 }

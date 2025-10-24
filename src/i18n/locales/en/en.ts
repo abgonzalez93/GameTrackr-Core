@@ -117,8 +117,8 @@ export const en = {
   },
   core: {
     config: {
-      createEnvConfig: {
-        invalid_configuration: 'Invalid {{section}} configuration',
+      parseConfig: {
+        invalid_configuration: 'The {{section}} configuration contains invalid or unsupported values.',
       },
       getSecrets: {
         missing_secret: 'Missing Docker secret: {{secret}}',

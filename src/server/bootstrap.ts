@@ -1,8 +1,8 @@
 import express, { type Express } from 'express'
 import { type i18n } from 'i18next'
 import { type Logger } from 'winston'
-import { createEnvConfig } from '#config/createEnvConfig'
 import { getSecrets } from '#config/getSecrets'
+import { getServerEnv } from '#config/getServerEnv'
 import { TrackPlayError } from '#errors/base/TrackPlayError'
 import { createI18n } from '#i18n/createI18n'
 import { initI18n } from '#i18n/initI18n'
@@ -10,12 +10,12 @@ import { createLogger } from '#logger/createLogger'
 import { applyMiddlewares } from '#middlewares/applyMiddlewares'
 import { createErrorHandler } from '#middlewares/createErrorHandler'
 import { createNotFoundHandler } from '#middlewares/createNotFoundHandler'
-import { BaseServerEnvSchema } from '#schemas/env/BaseServerEnvSchema'
+import { BaseServerEnvSchema } from '#schemas/config/BaseServerEnvSchema'
+import { type ConfigSchema } from '#types/config/ConfigSchema'
+import { type InferConfig } from '#types/config/InferConfig'
 import { type DependencyFactories } from '#types/container/DependencyFactories'
 import { type DependencyLayers } from '#types/container/DependencyLayers'
 import { type EnvSecretsBundle } from '#types/container/EnvSecretsBundle'
-import { type EnvSchema } from '#types/env/EnvSchema'
-import { type InferEnv } from '#types/env/InferEnv'
 import { type BaseURLOptions } from '#types/http/BaseURLOptions'
 import { type MiddlewareOptions } from '#types/middlewares/MiddlewareOptions'
 import { getBaseUrl } from '#utils/http/getBaseUrl'
@@ -25,45 +25,46 @@ import { translate } from '#utils/translate/translate'
 const path = getTranslationPath(import.meta.url)
 
 /**
- * **MergedEnv**
+ * Describes the full runtime configuration object returned by {@link prepareRuntime}.
+ * Includes environment variables, Docker secrets, and computed runtime options.
  *
- * Combines the base TrackPlay environment schema (`BaseServerEnvSchema`)
- * with a service-specific schema.
+ * @template EnvRawValue - The validated environment schema output.
+ * @template SecretRawValue - The validated secret schema output.
  */
-type MergedEnv<TEnvSchema extends EnvSchema | undefined = undefined> = InferEnv<typeof BaseServerEnvSchema> &
-  (TEnvSchema extends EnvSchema ? InferEnv<TEnvSchema> : Record<string, never>)
-
-/**
- * Merges the base TrackPlay schema with a service-specific one.
- */
-const mergeEnvSchemas = <Extra extends EnvSchema>(extra?: Extra): EnvSchema =>
-  Object.assign({}, BaseServerEnvSchema, extra ?? {})
-
-/**
- * **RuntimeConfig**
- *
- * Internal representation of the prepared runtime context
- * (environment, secrets, logger, i18n, etc.).
- */
-interface RuntimeConfig<TEnvSchema extends Record<string, unknown>> extends EnvSecretsBundle<TEnvSchema> {
+interface RuntimeConfig<EnvRawValue extends Record<string, unknown>, SecretRawValue extends Record<string, unknown>>
+  extends EnvSecretsBundle<EnvRawValue, SecretRawValue> {
+  /** Whether the current runtime is in development mode. */
   isDevelopment: boolean
+  /** List of allowed CORS origins, parsed from the env variable. */
   corsOrigins: string[]
+  /** Core server connection settings (protocol, host, port). */
   serverOptions: BaseURLOptions
 }
 
+type BaseServerEnv = InferConfig<typeof BaseServerEnvSchema>
+type SchemaOutput<T> = T extends ConfigSchema ? InferConfig<T> : Record<string, never>
+type EnvSchema<T extends ConfigSchema | undefined> = Readonly<BaseServerEnv & SchemaOutput<T>>
+type SecretSchema<T extends ConfigSchema | undefined> = Readonly<SchemaOutput<T>>
+
 /**
- * Prepares runtime dependencies and configuration.
+ * Prepares the runtime environment by validating env variables and secrets,
+ * merging the base server schema with custom schemas, and deriving
+ * server-related options such as protocol, CORS, and host details.
  *
- * - Loads env and secrets.
- * - Initializes logger and i18n.
- * - Computes server options and CORS origins.
+ * @template E - Optional Zod schema for environment variables.
+ * @template S - Optional Zod schema for secrets.
+ * @param {E} [envSchema] - Custom Zod schema for environment variables.
+ * @param {S} [secretSchema] - Custom Zod schema for secrets.
+ * @returns {Promise<RuntimeConfig<EnvSchema<E>, SecretSchema<S>>>}
+ * The fully prepared runtime configuration.
  */
-const prepareRuntime = async <TEnvSchema extends EnvSchema>(
-  envSchema: TEnvSchema,
-  secrets: string[] | undefined,
-): Promise<RuntimeConfig<MergedEnv<TEnvSchema>>> => {
-  const env = createEnvConfig({ server: mergeEnvSchemas(envSchema) }) as MergedEnv<TEnvSchema>
-  const resolvedSecrets = secrets?.length ? getSecrets(...secrets) : {}
+const prepareRuntime = async <E extends ConfigSchema | undefined, S extends ConfigSchema | undefined>(
+  envSchema?: E,
+  secretSchema?: S,
+): Promise<RuntimeConfig<EnvSchema<E>, SecretSchema<S>>> => {
+  const mixedEnvSchema = envSchema ? BaseServerEnvSchema.extend(envSchema.shape) : BaseServerEnvSchema
+  const env = getServerEnv(mixedEnvSchema) as EnvSchema<E>
+  const secrets = (secretSchema ? getSecrets(secretSchema) : {}) as SecretSchema<S>
 
   const isDevelopment = env.NODE_ENV === 'development'
 
@@ -77,49 +78,70 @@ const prepareRuntime = async <TEnvSchema extends EnvSchema>(
     .map((origin) => origin.trim())
     .filter(Boolean)
 
-  return { env, secrets: resolvedSecrets, isDevelopment, corsOrigins, serverOptions }
+  return { env, secrets, isDevelopment, corsOrigins, serverOptions }
 }
 
 /**
- * Builds dependency layers in sequence using provided factories.
+ * Builds the dependency graph defined by the service container.
+ * The build order is deterministic: Adapters → Services → UseCases → Controllers.
+ *
+ * @template L - Dependency layer type definition.
+ * @template E - Environment schema type.
+ * @template S - Secret schema type.
+ * @param {DependencyFactories<L, E, S>} factories - Factory functions for each layer.
+ * @param {EnvSecretsBundle<E, S>} ctx - Context containing environment and secret data.
+ * @returns {L} Fully constructed dependency graph.
  */
-const buildDependencies = <TEnvSchema, TLayers extends DependencyLayers>(
-  factories: DependencyFactories<TEnvSchema, TLayers>,
-  ctx: EnvSecretsBundle<TEnvSchema>,
-): TLayers => {
+const buildDependencies = <
+  L extends DependencyLayers,
+  E extends Record<string, unknown>,
+  S extends Record<string, unknown>,
+>(
+  factories: DependencyFactories<L, E, S>,
+  ctx: EnvSecretsBundle<E, S>,
+): L => {
   const adapters = factories.adapters(ctx)
   const services = factories.services({ adapters })
   const useCases = factories.useCases({ services })
   const controllers = factories.controllers({ useCases })
-  return { adapters, services, useCases, controllers } as TLayers
+  return { adapters, services, useCases, controllers } as L
 }
 
 /**
- * **HttpServerOptions**
+ * Options for configuring the Express HTTP server.
  *
- * Configuration for initializing an HTTP server instance.
+ * @template Controllers - Type of controller layer.
  */
 interface HttpServerOptions<Controllers> {
+  /** Optional route registration function. */
   routes?: (app: Express, deps: { controllers: Controllers }) => void
+  /** The controller instances to inject into the routes. */
   controllers: Controllers
+  /** Initialized i18n instance. */
   i18n: i18n
+  /** Application logger. */
   logger: Logger
-  middlewares?: MiddlewareOptions
+  /** Optional middleware configuration. */
+  middlewares?: Partial<MiddlewareOptions>
 }
 
 /**
- * **HttpServerInstance**
- *
- * Represents the initialized HTTP server with its Express application
- * and a start method to begin listening for incoming requests.
+ * Represents a running HTTP server instance.
  */
 interface HttpServerInstance {
+  /** Express application instance. */
   app: Express
+  /** Starts the server with the given options. */
   start: (serverOptions: BaseURLOptions) => void
 }
 
 /**
- * Creates an Express app and attaches routes, middlewares, and handlers.
+ * Creates and configures an Express HTTP server with predefined
+ * middleware, error handling, and route registration.
+ *
+ * @template Controllers - Type of controller layer.
+ * @param {HttpServerOptions<Controllers>} options - HTTP server setup options.
+ * @returns {HttpServerInstance} Configured HTTP server.
  */
 const createHttpServer = <Controllers extends Record<string, unknown>>(
   options: HttpServerOptions<Controllers>,
@@ -143,61 +165,89 @@ const createHttpServer = <Controllers extends Record<string, unknown>>(
 }
 
 /**
- * **BootstrapConfig**
+ * Configuration options for {@link bootstrap}.
  *
- * Defines configuration parameters for bootstrapping a TrackPlay service.
+ * @template L - Dependency layers type.
+ * @template E - Environment schema type.
+ * @template S - Secret schema type.
  */
-interface BootstrapConfig<TEnvSchema extends EnvSchema, TLayers extends DependencyLayers> {
+interface BootstrapConfig<
+  L extends DependencyLayers,
+  E extends ConfigSchema | undefined = undefined,
+  S extends ConfigSchema | undefined = undefined,
+> {
+  /** Name of the service, used in logging and diagnostics. */
   serviceName: string
-  envSchema: TEnvSchema
-  secrets?: string[]
-  container: DependencyFactories<MergedEnv<TEnvSchema>, TLayers>
-  routes: (app: Express, container: { controllers: TLayers['controllers'] }) => void
+  /** Optional Zod schema for environment variables. */
+  envSchema?: E
+  /** Optional Zod schema for Docker secrets. */
+  secretSchema?: S
+  /** Dependency container factory definitions. */
+  container: DependencyFactories<L, EnvSchema<E>, SecretSchema<S>>
+  /** Route registration function. */
+  routes: (app: Express, container: { controllers: L['controllers'] }) => void
+  /** Global middleware configuration. */
   middlewareOptions?: MiddlewareOptions
 }
 
 /**
- * **ServiceRuntime**
+ * Represents a fully bootstrapped TrackPlay service runtime.
  *
- * Represents the fully initialized runtime state of a TrackPlay service.
+ * @template L - Dependency layer type definition.
+ * @template E - Environment schema type.
+ * @template S - Secret schema type.
  */
 interface ServiceRuntime<
-  TLayers extends DependencyLayers,
-  TEnvSchema extends Record<string, unknown> = Record<string, unknown>,
-> extends EnvSecretsBundle<TEnvSchema> {
+  L extends DependencyLayers,
+  E extends Record<string, unknown> = Record<string, unknown>,
+  S extends Record<string, unknown> = Record<string, unknown>,
+> extends EnvSecretsBundle<E, S> {
+  /** Express application instance. */
   app: Express
+  /** Starts the service. */
   start: () => void
+  /** Logger instance. */
   logger: Logger
+  /** i18n instance. */
   i18n: i18n
-  container: TLayers
+  /** Dependency container. */
+  container: L
+  /** Whether the runtime is in development mode. */
   isDevelopment: boolean
 }
 
 /**
- * **bootstrap**
+ * Initializes and starts a TrackPlay service.
  *
- * Unified entrypoint for initializing and launching a TrackPlay service.
+ * Performs the following:
+ * 1. Validates environment variables and secrets.
+ * 2. Initializes i18n and logger.
+ * 3. Builds the dependency container.
+ * 4. Configures Express with routes and middleware.
+ * 5. Returns a fully initialized runtime ready to start.
  *
- * ### Flow
- * 1. Load and validate env + secrets.
- * 2. Initialize logger, i18n, and runtime context.
- * 3. Build dependency layers (adapters → services → useCases → controllers).
- * 4. Create and configure the Express app.
- * 5. Return runtime context with `start()` ready.
- *
- * @throws Logs and terminates process on unrecoverable setup errors.
+ * @template L - Dependency layer type definition.
+ * @template E - Optional environment schema type.
+ * @template S - Optional secret schema type.
+ * @param {BootstrapConfig<L, E, S>} options - Bootstrap configuration.
+ * @returns {Promise<ServiceRuntime<L, EnvSchema<E>, SecretSchema<S>>>}
+ * The fully bootstrapped service runtime.
  */
-export const bootstrap = async <TEnvSchema extends EnvSchema, TLayers extends DependencyLayers>(
-  options: BootstrapConfig<TEnvSchema, TLayers>,
-): Promise<ServiceRuntime<TLayers, MergedEnv<TEnvSchema>>> => {
-  const { serviceName, envSchema, secrets, container, routes, middlewareOptions } = options
+export const bootstrap = async <
+  L extends DependencyLayers,
+  E extends ConfigSchema | undefined = undefined,
+  S extends ConfigSchema | undefined = undefined,
+>(
+  options: BootstrapConfig<L, E, S>,
+): Promise<ServiceRuntime<L, EnvSchema<E>, SecretSchema<S>>> => {
+  const { serviceName, envSchema, secretSchema, container, routes, middlewareOptions } = options
 
   const logger = createLogger({ label: serviceName })
   const i18n = createI18n()
   await initI18n(i18n)
 
   try {
-    const runtime = await prepareRuntime(envSchema, secrets)
+    const runtime = await prepareRuntime(envSchema, secretSchema)
 
     const builtContainer = buildDependencies(container, {
       env: runtime.env,
