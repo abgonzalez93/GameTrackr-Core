@@ -55,6 +55,15 @@ export { type RedisClientType } from 'redis'
 export { type i18n } from 'i18next'
 export { type Logger } from 'winston'
 
+// --- Clients ---
+export { connectRedis } from '#clients/redis/connectRedis'
+export { createRedis } from '#clients/redis/createRedis'
+
+// --- Config ---
+export { getClientEnv } from '#config/getClientEnv'
+export { getSecrets } from '#config/getSecrets'
+export { getServerEnv } from '#config/getServerEnv'
+
 // --- Constants ---
 export { GAME } from '#constants/game'
 export { HTTP_STATUS } from '#constants/httpStatus'
@@ -71,6 +80,13 @@ export { NotFoundError } from '#errors/http/NotFoundError'
 export { TooManyRequestsError } from '#errors/http/TooManyRequestsError'
 export { UnauthorizedError } from '#errors/http/UnauthorizedError'
 export { UnprocessableEntityError } from '#errors/http/UnprocessableEntityError'
+
+// --- i18n ---
+export { createI18n } from '#i18n/createI18n'
+export { initI18n } from '#i18n/initI18n'
+
+// --- Logger ---
+export { createLogger } from '#logger/createLogger'
 
 // --- Ports ---
 export { type BlacklistPort } from '#ports/BlacklistPort'
@@ -162,3 +178,11 @@ export { type CreateUser } from '#types/user/CreateUser'
 export { type PublicUser } from '#types/user/PublicUser'
 export { type UserEmail } from '#types/user/UserEmail'
 export { type UserName } from '#types/user/UserName'
+
+// --- Utils ---
+export { apiFetch } from '#utils/fetch/apiFetch'
+export { getBaseUrl } from '#utils/http/getBaseUrl'
+export { getTranslationPath } from '#utils/translate/getTranslationPath'
+export { t } from '#utils/translate/t'
+export { translate } from '#utils/translate/translate'
+export { validateSchema } from '#utils/validate/validateSchema'
