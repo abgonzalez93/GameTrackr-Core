@@ -3,61 +3,9 @@ import { createRedis } from '#clients/redis/createRedis'
 import { getClientEnv } from '#config/getClientEnv'
 import { getSecrets } from '#config/getSecrets'
 import { getServerEnv } from '#config/getServerEnv'
-import { GAME } from '#constants/game'
-import { HTTP_STATUS } from '#constants/httpStatus'
-import { JWT } from '#constants/jwt'
-import { LOGGER } from '#constants/logger'
-import { NODE_ENV } from '#constants/nodeEnv'
-import { TrackPlayError } from '#errors/base/TrackPlayError'
-import { BadRequestError } from '#errors/http/BadRequestError'
-import { ConflictError } from '#errors/http/ConflictError'
-import { ForbiddenError } from '#errors/http/ForbiddenError'
-import { NotFoundError } from '#errors/http/NotFoundError'
-import { TooManyRequestsError } from '#errors/http/TooManyRequestsError'
-import { UnauthorizedError } from '#errors/http/UnauthorizedError'
-import { UnprocessableEntityError } from '#errors/http/UnprocessableEntityError'
 import { createI18n } from '#i18n/createI18n'
 import { initI18n } from '#i18n/initI18n'
 import { createLogger } from '#logger/createLogger'
-import { AuthorizationHeaderSchema } from '#schemas/auth/AuthorizationHeaderSchema'
-import { InternalAuthHeaderSchema } from '#schemas/auth/InternalAuthHeaderSchema'
-import { IdListSchema } from '#schemas/base/IdListSchema'
-import { IdSchema } from '#schemas/base/IdSchema'
-import { IpAddressSchema } from '#schemas/base/IpAddressSchema'
-import { NodeEnvSchema } from '#schemas/base/NodeEnvSchema'
-import { NonEmptyStringSchema } from '#schemas/base/NonEmptyStringSchema'
-import { OptionalStringArraySchema } from '#schemas/base/OptionalStringArraySchema'
-import { PortSchema } from '#schemas/base/PortSchema'
-import { PositiveNumberSchema } from '#schemas/base/PositiveNumberSchema'
-import { UrlSchema } from '#schemas/base/UrlSchema'
-import { CategoryListSchema } from '#schemas/category/CategoryListSchema'
-import { CategorySchema } from '#schemas/category/CategorySchema'
-import { BaseServerEnvSchema } from '#schemas/config/BaseServerEnvSchema'
-import { CreateGameSchema } from '#schemas/game/CreateGameSchema'
-import { GameFiltersSchema } from '#schemas/game/GameFiltersSchema'
-import { GameListSchema } from '#schemas/game/GameListSchema'
-import { GameSchema } from '#schemas/game/GameSchema'
-import { JWTExpSchema } from '#schemas/jwt/JWTExpSchema'
-import { JWTJtiSchema } from '#schemas/jwt/JWTJtiSchema'
-import { JWTSubSchema } from '#schemas/jwt/JWTSubSchema'
-import { ChangePasswordSchema } from '#schemas/login/ChangePasswordSchema'
-import { ChangeUsernameSchema } from '#schemas/login/ChangeUsernameSchema'
-import { ForgotPasswordSchema } from '#schemas/login/ForgotPasswordSchema'
-import { LoginInputSchema } from '#schemas/login/LoginInputSchema'
-import { LoginResponseSchema } from '#schemas/login/LoginResponseSchema'
-import { ProviderTokenSchema } from '#schemas/providers/ProviderTokenSchema'
-import { TokenGenerateInputSchema } from '#schemas/token/TokenGenerateInputSchema'
-import { TokenPairSchema } from '#schemas/token/TokenPairSchema'
-import { TokenRevocationStatusInputSchema } from '#schemas/token/TokenRevocationStatusInputSchema'
-import { TokenRevocationStatusSchema } from '#schemas/token/TokenRevocationStatusSchema'
-import { TokenRevokeInputSchema } from '#schemas/token/TokenRevokeInputSchema'
-import { TokenRotateInputSchema } from '#schemas/token/TokenRotateInputSchema'
-import { TrackGameSchema } from '#schemas/trackGame/TrackGameSchema'
-import { AdminUserSchema } from '#schemas/user/AdminUserSchema'
-import { CreateUserSchema } from '#schemas/user/CreateUserSchema'
-import { PublicUserSchema } from '#schemas/user/PublicUserSchema'
-import { UserEmailSchema } from '#schemas/user/UserEmailSchema'
-import { UserNameSchema } from '#schemas/user/UserNameSchema'
 import { apiFetch } from '#utils/fetch/apiFetch'
 import { getBaseUrl } from '#utils/http/getBaseUrl'
 import { getTranslationPath } from '#utils/translate/getTranslationPath'
@@ -66,12 +14,11 @@ import { translate } from '#utils/translate/translate'
 import { validateSchema } from '#utils/validate/validateSchema'
 
 /**
- * TrackPlay Core — Public API Entry Point
+ * The functional core of the TrackPlay ecosystem.
  *
- * Exposes the unified, public API surface of the **TrackPlay Core** package.
- * Serves as the foundation of the TrackPlay ecosystem by providing shared
- * constants, configuration utilities, error classes, translation helpers,
- * logger factories, and infrastructure clients.
+ * Provides the executable runtime API for initializing services,
+ * managing configuration, creating clients, and performing
+ * common operations such as logging, translation, and validation.
  *
  * @module core
  */
@@ -85,70 +32,12 @@ export const core = Object.freeze({
   getClientEnv,
   getServerEnv,
 
-  // --- Constants ---
-  GAME,
-  HTTP_STATUS,
-  JWT,
-  LOGGER,
-  NODE_ENV,
-
-  // --- Errors ---
-  TrackPlayError,
-  BadRequestError,
-  ConflictError,
-  ForbiddenError,
-  NotFoundError,
-  TooManyRequestsError,
-  UnauthorizedError,
-  UnprocessableEntityError,
-
   // --- i18n ---
   createI18n,
   initI18n,
 
   // --- Logger ---
   createLogger,
-
-  // --- Schemas ---
-  AuthorizationHeaderSchema,
-  InternalAuthHeaderSchema,
-  IdListSchema,
-  IdSchema,
-  IpAddressSchema,
-  NodeEnvSchema,
-  NonEmptyStringSchema,
-  OptionalStringArraySchema,
-  PortSchema,
-  PositiveNumberSchema,
-  UrlSchema,
-  CategoryListSchema,
-  CategorySchema,
-  BaseServerEnvSchema,
-  CreateGameSchema,
-  GameFiltersSchema,
-  GameListSchema,
-  GameSchema,
-  JWTExpSchema,
-  JWTJtiSchema,
-  JWTSubSchema,
-  ChangePasswordSchema,
-  ChangeUsernameSchema,
-  ForgotPasswordSchema,
-  LoginInputSchema,
-  LoginResponseSchema,
-  ProviderTokenSchema,
-  TokenGenerateInputSchema,
-  TokenPairSchema,
-  TokenRevocationStatusInputSchema,
-  TokenRevocationStatusSchema,
-  TokenRevokeInputSchema,
-  TokenRotateInputSchema,
-  TrackGameSchema,
-  AdminUserSchema,
-  CreateUserSchema,
-  PublicUserSchema,
-  UserEmailSchema,
-  UserNameSchema,
 
   // --- Utils ---
   apiFetch,
@@ -166,12 +55,70 @@ export { type RedisClientType } from 'redis'
 export { type i18n } from 'i18next'
 export { type Logger } from 'winston'
 
+// --- Constants ---
+export { GAME } from '#constants/game'
+export { HTTP_STATUS } from '#constants/httpStatus'
+export { JWT } from '#constants/jwt'
+export { LOGGER } from '#constants/logger'
+export { NODE_ENV } from '#constants/nodeEnv'
+
+// --- Errors ---
+export { TrackPlayError } from '#errors/base/TrackPlayError'
+export { BadRequestError } from '#errors/http/BadRequestError'
+export { ConflictError } from '#errors/http/ConflictError'
+export { ForbiddenError } from '#errors/http/ForbiddenError'
+export { NotFoundError } from '#errors/http/NotFoundError'
+export { TooManyRequestsError } from '#errors/http/TooManyRequestsError'
+export { UnauthorizedError } from '#errors/http/UnauthorizedError'
+export { UnprocessableEntityError } from '#errors/http/UnprocessableEntityError'
+
 // --- Ports ---
 export { type BlacklistPort } from '#ports/BlacklistPort'
 export { type CategoryPort } from '#ports/CategoryPort'
 export { type GamePort } from '#ports/GamePort'
 export { type ProviderTokenPort } from '#ports/ProviderTokenPort'
 export { type TokenPort } from '#ports/TokenPort'
+
+// --- Schemas ---
+export { AuthorizationHeaderSchema } from '#schemas/auth/AuthorizationHeaderSchema'
+export { InternalAuthHeaderSchema } from '#schemas/auth/InternalAuthHeaderSchema'
+export { IdListSchema } from '#schemas/base/IdListSchema'
+export { IdSchema } from '#schemas/base/IdSchema'
+export { IpAddressSchema } from '#schemas/base/IpAddressSchema'
+export { NodeEnvSchema } from '#schemas/base/NodeEnvSchema'
+export { NonEmptyStringSchema } from '#schemas/base/NonEmptyStringSchema'
+export { OptionalStringArraySchema } from '#schemas/base/OptionalStringArraySchema'
+export { PortSchema } from '#schemas/base/PortSchema'
+export { PositiveNumberSchema } from '#schemas/base/PositiveNumberSchema'
+export { UrlSchema } from '#schemas/base/UrlSchema'
+export { CategoryListSchema } from '#schemas/category/CategoryListSchema'
+export { CategorySchema } from '#schemas/category/CategorySchema'
+export { BaseServerEnvSchema } from '#schemas/config/BaseServerEnvSchema'
+export { CreateGameSchema } from '#schemas/game/CreateGameSchema'
+export { GameFiltersSchema } from '#schemas/game/GameFiltersSchema'
+export { GameListSchema } from '#schemas/game/GameListSchema'
+export { GameSchema } from '#schemas/game/GameSchema'
+export { JWTExpSchema } from '#schemas/jwt/JWTExpSchema'
+export { JWTJtiSchema } from '#schemas/jwt/JWTJtiSchema'
+export { JWTSubSchema } from '#schemas/jwt/JWTSubSchema'
+export { ChangePasswordSchema } from '#schemas/login/ChangePasswordSchema'
+export { ChangeUsernameSchema } from '#schemas/login/ChangeUsernameSchema'
+export { ForgotPasswordSchema } from '#schemas/login/ForgotPasswordSchema'
+export { LoginInputSchema } from '#schemas/login/LoginInputSchema'
+export { LoginResponseSchema } from '#schemas/login/LoginResponseSchema'
+export { ProviderTokenSchema } from '#schemas/providers/ProviderTokenSchema'
+export { TokenGenerateInputSchema } from '#schemas/token/TokenGenerateInputSchema'
+export { TokenPairSchema } from '#schemas/token/TokenPairSchema'
+export { TokenRevocationStatusInputSchema } from '#schemas/token/TokenRevocationStatusInputSchema'
+export { TokenRevocationStatusSchema } from '#schemas/token/TokenRevocationStatusSchema'
+export { TokenRevokeInputSchema } from '#schemas/token/TokenRevokeInputSchema'
+export { TokenRotateInputSchema } from '#schemas/token/TokenRotateInputSchema'
+export { TrackGameSchema } from '#schemas/trackGame/TrackGameSchema'
+export { AdminUserSchema } from '#schemas/user/AdminUserSchema'
+export { CreateUserSchema } from '#schemas/user/CreateUserSchema'
+export { PublicUserSchema } from '#schemas/user/PublicUserSchema'
+export { UserEmailSchema } from '#schemas/user/UserEmailSchema'
+export { UserNameSchema } from '#schemas/user/UserNameSchema'
 
 // --- Types ---
 export { type AuthorizationHeader } from '#types/auth/AuthorizationHeader'
