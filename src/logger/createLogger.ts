@@ -21,7 +21,7 @@ import { type LogLevel } from '#types/logger/LogLevel'
  * - Passed during infrastructure setup to unify logging behavior across all microservices.
  *
  */
-interface LoggerOptions {
+export interface LoggerOptions {
   /**
    * Optional label applied to every log entry.
    *

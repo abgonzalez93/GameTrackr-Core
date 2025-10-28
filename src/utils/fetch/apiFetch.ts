@@ -2,7 +2,7 @@ import { HTTP_STATUS } from '#constants/httpStatus'
 
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
-interface FetchOptions {
+export interface FetchOptions {
   headers?: Record<string, string>
   body?: BodyInit | null
   cache?: RequestCache

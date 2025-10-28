@@ -5,7 +5,7 @@
     "target": "esnext",
     "module": "nodenext",
     "moduleResolution": "NodeNext",
-    "types": ["node", "express", "cors", "compression"],
+    "types": ["node"],
     "esModuleInterop": true,
     "rewriteRelativeImportExtensions": true,
     "erasableSyntaxOnly": true,

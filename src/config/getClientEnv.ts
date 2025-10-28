@@ -23,7 +23,7 @@ const filterEnvByPrefix = (source: ConfigValues, prefix: string): ConfigValues =
  *
  * @see {@link GetEnvOptions}
  */
-interface GetClientEnvOptions extends GetEnvOptions {
+export interface GetClientEnvOptions extends GetEnvOptions {
   /**
    * Prefix used to identify client-exposed variables.
    *

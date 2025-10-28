@@ -2,7 +2,7 @@
   "type": "module",
   "name": "@trackplay/core",
   "author": "Antonio Bueno Gonzalez",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": false,
   "imports": {
     "#clients/*": "./dist/clients/*.js",
@@ -11,66 +11,15 @@
     "#errors/*": "./dist/errors/*.js",
     "#i18n/*": "./dist/i18n/*.js",
     "#logger/*": "./dist/logger/*.js",
-    "#middlewares/*": "./dist/middlewares/*.js",
     "#ports/*": "./dist/ports/*.js",
-    "#routes/*": "./dist/routes/*.js",
     "#schemas/*": "./dist/schemas/*.js",
-    "#server/*": "./dist/server/*.js",
     "#types/*": "./dist/types/*.js",
     "#utils/*": "./dist/utils/*.js"
   },
   "exports": {
-    "./clients/*": {
-      "import": "./dist/clients/*.js",
-      "types": "./dist/clients/*.d.ts"
-    },
-    "./config/*": {
-      "import": "./dist/config/*.js",
-      "types": "./dist/config/*.d.ts"
-    },
-    "./constants/*": {
-      "import": "./dist/constants/*.js",
-      "types": "./dist/constants/*.d.ts"
-    },
-    "./errors/*": {
-      "import": "./dist/errors/*.js",
-      "types": "./dist/errors/*.d.ts"
-    },
-    "./i18n/*": {
-      "import": "./dist/i18n/*.js",
-      "types": "./dist/i18n/*.d.ts"
-    },
-    "./logger/*": {
-      "import": "./dist/logger/*.js",
-      "types": "./dist/logger/*.d.ts"
-    },
-    "./middlewares/*": {
-      "import": "./dist/middlewares/*.js",
-      "types": "./dist/middlewares/*.d.ts"
-    },
-    "./ports/*": {
-      "import": "./dist/ports/*.js",
-      "types": "./dist/ports/*.d.ts"
-    },
-    "./routes/*": {
-      "import": "./dist/routes/*.js",
-      "types": "./dist/routes/*.d.ts"
-    },
-    "./schemas/*": {
-      "import": "./dist/schemas/*.js",
-      "types": "./dist/schemas/*.d.ts"
-    },
-    "./server/*": {
-      "import": "./dist/server/*.js",
-      "types": "./dist/server/*.d.ts"
-    },
-    "./types/*": {
-      "import": "./dist/types/*.js",
-      "types": "./dist/types/*.d.ts"
-    },
-    "./utils/*": {
-      "import": "./dist/utils/*.js",
-      "types": "./dist/utils/*.d.ts"
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "publishConfig": {
@@ -87,12 +36,6 @@
     "release": "pnpm build && rm -f trackplay-core-*.tgz && pnpm pack && pnpm publish --tag latest --no-git-checks"
   },
   "dependencies": {
-    "@t3-oss/env-core": "^0.13.8",
-    "compression": "^1.8.1",
-    "cors": "^2.8.5",
-    "express": "^5.1.0",
-    "express-rate-limit": "^8.1.0",
-    "helmet": "^8.1.0",
     "i18next": "^25.6.0",
     "jose": "^6.1.0",
     "redis": "^5.9.0",
@@ -101,9 +44,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.38.0",
-    "@types/compression": "^1.8.1",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.4",
     "@types/node": "^24.9.1",
     "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",

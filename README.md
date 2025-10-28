@@ -54,45 +54,19 @@ El paquete incluye:
 - Soporta etiquetas de servicio (`label`), niveles (`info`, `error`, `debug`) y salida formateada.
 - Usado en la inicialización y en el flujo de errores global.
 
-### ✅ Middlewares
-
-- Middlewares genéricos para Express:
-  - `applyMiddlewares`: aplicación masiva de middlewares.
-  - `createErrorHandler`: gestión centralizada de errores.
-  - `createNotFoundHandler`: control de rutas inexistentes.
-- Configurables mediante opciones (`MiddlewareOptions`).
-
 ### ✅ Ports
 
 - Interfaces contractuales que definen los límites entre dominio e infraestructura.
 - Permiten sustituir adaptadores sin romper la lógica de negocio.
-
-### ✅ Routes
-
-- Estandarizar cómo los módulos de la aplicación registran sus rutas dentro de Express.
-- Mantener el desacoplamiento total entre el framework web y la lógica de negocio.
-- Favorecer la composición y testabilidad de los módulos HTTP, sin dependencias directas del contenedor ni del servidor principal.
 
 ### ✅ Schemas (Zod)
 
 - Esquemas de validación centralizados por dominio (`/auth`, `/game`, `/user`, `/jwt`, `/provider`, etc.).
 - Garantizan validaciones consistentes y seguras.
 
-### ✅ Server
-
-- `bootstrap.ts` es el punto de entrada unificado para inicializar cualquier microservicio de TrackPlay.
-- Su función es preparar el entorno, cargar secretos, construir dependencias, configurar middlewares y levantar el servidor HTTP de forma tipada, consistente y extensible.
-- Su propósito es proveer un flujo de arranque estándar para todos los servicios del ecosistema TrackPlay, garantizando que:
-  - Las variables de entorno y secretos sean validados antes del inicio.
-  - El logger e i18n estén listos para su uso global.
-  - Las dependencias sigan una jerarquía hexagonal (`adapters → services → useCases → controllers`).
-  - El servidor Express se configure con middlewares, rutas y manejadores comunes.
-  - El arranque sea totalmente tipado y reutilizable entre servicios.
-
 ### ✅ Types
 
 - Interfaces y tipos globales compartidos:
-- `LoggerOptions`, `MiddlewareOptions`, `TranslationVariables`, etc.
 - Generan tipos inferidos (`z.infer`) para un tipado compartido entre backend y frontend.
 - Mantiene consistencia tipada entre microservicios y librerías.
 

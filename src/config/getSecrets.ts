@@ -50,7 +50,7 @@ const readSecretFile = (secretName: string, basePath: string): string => {
  *
  * @property basePath - Directory where secret files are stored.
  */
-interface SecretsConfigOptions {
+export interface SecretsConfigOptions {
   /**
    * Directory path where secrets are located.
    *
