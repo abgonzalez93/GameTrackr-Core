@@ -12,7 +12,7 @@ import { type Translatable } from '#types/translate/Translatable'
  *
  */
 export class EnvValidationError extends TrackPlayError {
-  constructor(message: string | Translatable = 'Environment validation', details?: Record<string, unknown>) {
+  constructor(message: string | Translatable = 'Environment validation', details?: unknown) {
     super(message, HTTP_STATUS.INTERNAL_SERVER_ERROR, 'Environment Validation', details)
   }
 }

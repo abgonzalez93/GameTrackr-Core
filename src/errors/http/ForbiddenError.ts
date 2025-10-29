@@ -10,7 +10,7 @@ import { type Translatable } from '#types/translate/Translatable'
  *   to perform the requested operation.
  */
 export class ForbiddenError extends TrackPlayError {
-  constructor(message: string | Translatable = 'Forbidden', details?: Record<string, unknown>) {
+  constructor(message: string | Translatable = 'Forbidden', details?: unknown) {
     super(message, HTTP_STATUS.FORBIDDEN, 'Forbidden', details)
   }
 }

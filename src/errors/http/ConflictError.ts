@@ -11,7 +11,7 @@ import { type Translatable } from '#types/translate/Translatable'
  * - Example: attempting to register an already existing email.
  */
 export class ConflictError extends TrackPlayError {
-  constructor(message: string | Translatable = 'Conflict', details?: Record<string, unknown>) {
+  constructor(message: string | Translatable = 'Conflict', details?: unknown) {
     super(message, HTTP_STATUS.CONFLICT, 'Conflict', details)
   }
 }

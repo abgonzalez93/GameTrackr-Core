@@ -10,7 +10,7 @@ import { type Translatable } from '#types/translate/Translatable'
  * - Indicates that re-authentication may resolve the issue.
  */
 export class UnauthorizedError extends TrackPlayError {
-  constructor(message: string | Translatable = 'Unauthorized', details?: Record<string, unknown>) {
+  constructor(message: string | Translatable = 'Unauthorized', details?: unknown) {
     super(message, HTTP_STATUS.UNAUTHORIZED, 'Unauthorized', details)
   }
 }

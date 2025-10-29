@@ -10,7 +10,7 @@ import { type Translatable } from '#types/translate/Translatable'
  * - Commonly used for missing database records or invalid IDs.
  */
 export class NotFoundError extends TrackPlayError {
-  constructor(message: string | Translatable = 'Not found', details?: Record<string, unknown>) {
+  constructor(message: string | Translatable = 'Not found', details?: unknown) {
     super(message, HTTP_STATUS.NOT_FOUND, 'Not Found', details)
   }
 }

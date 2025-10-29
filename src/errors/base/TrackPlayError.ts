@@ -57,7 +57,7 @@ export class TrackPlayError extends Error {
     message: string | Translatable,
     statusCode: number = HTTP_STATUS.INTERNAL_SERVER_ERROR,
     statusName: string = 'Internal Server',
-    details?: Record<string, unknown>,
+    details?: unknown,
   ) {
     super(typeof message === 'string' ? message : message.key)
 
