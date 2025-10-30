@@ -69,6 +69,7 @@ export interface SecretsConfigOptions {
  *
  * ### Responsibilities
  * - Read secret files from disk using the provided schema keys.
+ * - Secret filenames on disk are expected in lowercase (as commonly defined in `docker-compose.yml`), but are exposed to the application in uppercase form for consistency with environment variables and Zod schemas.
  * - Validate that each file exists and contains non-empty data.
  * - Parse and validate secrets using {@link parseConfig}.
  * - Return an immutable, type-safe configuration object.
@@ -100,7 +101,14 @@ export const getSecrets = <Schema extends ConfigSchema>(
 ): Readonly<InferConfig<Schema>> => {
   const { basePath = '/run/secrets' } = options ?? {}
 
-  const secrets = Object.fromEntries(Object.keys(schema.shape).map((key) => [key, readSecretFile(key, basePath)]))
+  const secrets = Object.fromEntries(
+    Object.keys(schema.shape).map((key) => {
+      const secretName = key.toLowerCase()
+      const value = readSecretFile(secretName, basePath)
+      return [key.toUpperCase(), value]
+    }),
+  )
+
   const validated = parseConfig(schema, secrets, { path, ErrorClass: SecretValidationError, label: 'secrets' })
 
   return Object.freeze(validated)
