@@ -6,37 +6,6 @@ import { getTranslationPath } from '#utils/translate/getTranslationPath'
 const passwordRequirementsRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/
 const path = getTranslationPath(import.meta.url)
 
-/**
- * **CreateUserSchema**
- *
- * Zod schema defining the **input payload** required to register a new user.
- *
- * ### Purpose
- * Ensures all necessary user data (email, password, username, etc.)
- * meet validation and security requirements before account creation.
- *
- * ### Structure
- * - `email`: User’s email address — validated by {@link UserEmailSchema}.
- * - `name`: Optional display name (nullable).
- * - `password`: User’s password — must meet complexity rules:
- *   - At least 8 characters
- *   - Includes uppercase and lowercase letters
- *   - Includes at least one digit
- *   - Includes at least one special character
- * - `username`: Unique public username, validated by {@link UserNameSchema}.
- * - `avatarUrl`: Optional profile picture URL (nullable).
- * - `bio`: Optional short biography (max 280 characters, nullable).
- * - `passwordConfirm`: Confirmation of the password; must match `password`.
- *
- * ### Validation Rules
- * - Password and confirmation must match.
- * - Invalid or weak passwords trigger `${path}.password_invalid`.
- * - Missing confirmation triggers `${path}.password_confirm_required`.
- * - Mismatched confirmation triggers `${path}.password_mismatch`.
- *
- * @see {@link UserEmailSchema}
- * @see {@link UserNameSchema}
- */
 export const CreateUserSchema = z
   .object({
     email: UserEmailSchema,

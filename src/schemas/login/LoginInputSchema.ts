@@ -5,24 +5,6 @@ import { getTranslationPath } from '#utils/translate/getTranslationPath'
 
 const path = getTranslationPath(import.meta.url)
 
-/**
- * **LoginInputSchema**
- *
- * Zod schema for validating **user login requests**.
- *
- * ### Purpose
- * Allows authentication using either:
- * - A **valid email address** (validated by {@link UserEmailSchema}), or
- * - A **valid username** (validated by {@link UserNameSchema})
- *
- * ### Behavior
- * - `identifier`: Must be a valid email or username (minimum 3 characters).
- * - `password`: Must be a non-empty string (at least 1 character).
- * - Automatically provides localized error keys using the translation path.
- *
- * @see {@link UserEmailSchema}
- * @see {@link UserNameSchema}
- */
 export const LoginInputSchema = z
   .object({
     identifier: z.string().min(3, `${path}.identifier_required`),

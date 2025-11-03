@@ -13,33 +13,15 @@ import { t } from '#utils/translate/t'
 import { translate } from '#utils/translate/translate'
 import { validateSchema } from '#utils/validate/validateSchema'
 
-/**
- * The functional core of the TrackPlay ecosystem.
- *
- * Provides the executable runtime API for initializing services,
- * managing configuration, creating clients, and performing
- * common operations such as logging, translation, and validation.
- *
- * @module core
- */
 export const core = Object.freeze({
-  // --- Clients ---
   connectRedis,
   createRedis,
-
-  // --- Config ---
   getSecrets,
   getClientEnv,
   getServerEnv,
-
-  // --- i18n ---
   createI18n,
   initI18n,
-
-  // --- Logger ---
   createLogger,
-
-  // --- Utils ---
   apiFetch,
   getBaseUrl,
   getTranslationPath,
@@ -50,28 +32,23 @@ export const core = Object.freeze({
 
 export default core
 
-// --- External types ---
 export { type RedisClientType } from 'redis'
 export { type i18n } from 'i18next'
 export { type Logger } from 'winston'
 
-// --- Clients ---
 export { connectRedis } from '#clients/redis/connectRedis'
 export { createRedis } from '#clients/redis/createRedis'
 
-// --- Config ---
 export { getClientEnv } from '#config/getClientEnv'
 export { getSecrets } from '#config/getSecrets'
 export { getServerEnv } from '#config/getServerEnv'
 
-// --- Constants ---
 export { GAME } from '#constants/game'
 export { HTTP_STATUS } from '#constants/httpStatus'
 export { JWT } from '#constants/jwt'
 export { LOGGER } from '#constants/logger'
 export { NODE_ENV } from '#constants/nodeEnv'
 
-// --- Errors ---
 export { TrackPlayError } from '#errors/base/TrackPlayError'
 export { BadRequestError } from '#errors/http/BadRequestError'
 export { ConflictError } from '#errors/http/ConflictError'
@@ -81,21 +58,17 @@ export { TooManyRequestsError } from '#errors/http/TooManyRequestsError'
 export { UnauthorizedError } from '#errors/http/UnauthorizedError'
 export { UnprocessableEntityError } from '#errors/http/UnprocessableEntityError'
 
-// --- i18n ---
 export { createI18n } from '#i18n/createI18n'
 export { initI18n } from '#i18n/initI18n'
 
-// --- Logger ---
 export { createLogger } from '#logger/createLogger'
 
-// --- Ports ---
 export { type BlacklistPort } from '#ports/BlacklistPort'
 export { type CategoryPort } from '#ports/CategoryPort'
 export { type GamePort } from '#ports/GamePort'
 export { type ProviderTokenPort } from '#ports/ProviderTokenPort'
 export { type TokenPort } from '#ports/TokenPort'
 
-// --- Schemas ---
 export { AuthorizationHeaderSchema } from '#schemas/auth/AuthorizationHeaderSchema'
 export { InternalAuthHeaderSchema } from '#schemas/auth/InternalAuthHeaderSchema'
 export { IdListSchema } from '#schemas/base/IdListSchema'
@@ -136,7 +109,6 @@ export { PublicUserSchema } from '#schemas/user/PublicUserSchema'
 export { UserEmailSchema } from '#schemas/user/UserEmailSchema'
 export { UserNameSchema } from '#schemas/user/UserNameSchema'
 
-// --- Types ---
 export { type AuthorizationHeader } from '#types/auth/AuthorizationHeader'
 export { type InternalAuthHeader } from '#types/auth/InternalAuthHeader'
 export { type Id } from '#types/base/Id'
@@ -176,7 +148,6 @@ export { type PublicUser } from '#types/user/PublicUser'
 export { type UserEmail } from '#types/user/UserEmail'
 export { type UserName } from '#types/user/UserName'
 
-// --- Utils ---
 export { apiFetch } from '#utils/fetch/apiFetch'
 export { getBaseUrl } from '#utils/http/getBaseUrl'
 export { getTranslationPath } from '#utils/translate/getTranslationPath'
