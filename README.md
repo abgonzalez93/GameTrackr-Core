@@ -13,19 +13,19 @@ El paquete incluye:
 
 ### ✅ Clients
 
-- Clientes reutilizables para servicios externos (ej. `createRedis`).
+- Clientes reutilizables para servicios externos.
 - Proveen una capa de abstracción sobre dependencias de terceros.
 - Pensados para inyección de dependencias y testabilidad.
 
 ### ✅ Config
 
-- `createEnvConfig`: valida y tipa las variables de entorno mediante Zod.
+- `getEnv.config.ts`: valida y tipa las variables de entorno mediante Zod.
   - Soporte dual para entornos servidor/cliente.
   - Normaliza cadenas vacías a `undefined` para evitar errores silenciosos.
   - Expone tipos inferidos en tiempo de compilación (`z.infer`).
   - Controla exposición pública mediante prefijo (`NEXT_PUBLIC_`).
   - Lanza errores tipados en caso de archivos ausentes o vacíos.
-- `getSecrets`: gestiona la lectura segura de secretos desde `/run/secrets` o variables de entorno.
+- `getSecrets.config.ts`: gestiona la lectura segura de secretos desde `/run/secrets` o variables de entorno.
   - Lanza errores tipados en caso de archivos ausentes o vacíos.
 
 ### ✅ Constants
@@ -37,9 +37,9 @@ El paquete incluye:
 
 - Sistema unificado de errores basado en clases tipadas y jerárquicas.
 - Agrupados por dominio funcional:
-  - `/base` → `TrackPlayError`.
-  - `/config` → `EnvValidationError`, `SecretValidationError`.
-  - `/http` → `BadRequestError`, `UnauthorizedError`, `ConflictError`, etc.
+  - `base` → `TrackPlayError`.
+  - `config` → `EnvValidationError`, `SecretValidationError`.
+  - `http` → `BadRequestError`, `UnauthorizedError`, `ConflictError`, etc.
 - Totalmente integrados con el sistema de traducciones (`i18next`).
 - Compatibles con el middleware global de manejo de errores.
 
@@ -61,7 +61,7 @@ El paquete incluye:
 
 ### ✅ Schemas (Zod)
 
-- Esquemas de validación centralizados por dominio (`/auth`, `/game`, `/user`, `/jwt`, `/provider`, etc.).
+- Esquemas de validación centralizados por dominio (`auth`, `game`, `user`, `jwt`, `provider`, etc.).
 - Garantizan validaciones consistentes y seguras.
 
 ### ✅ Types
@@ -73,10 +73,10 @@ El paquete incluye:
 ### ✅ Utils
 
 - Helpers reutilizables para tareas comunes:
-  - `/fetch`: peticiones HTTP tipadas.
-  - `/http`: utilidades de red.
-  - `/validate`: validaciones y transformaciones genéricas.
-  - `/translate`: helpers para traducciones y generación de paths (`getTranslationPath`, etc.).
+  - `fetch.util.ts`: peticiones HTTP tipadas.
+  - `http.util.ts`: utilidades de red.
+  - `translate.util.ts`: helpers para traducciones y generación de paths (`getTranslationPath`, etc.).
+  - `validate.util.ts`: validaciones y transformaciones genéricas.
 
 ---
 

@@ -2,7 +2,7 @@
   "type": "module",
   "name": "@trackplay/core",
   "author": "Antonio Bueno Gonzalez",
-  "version": "0.5.7",
+  "version": "0.6.0",
   "private": false,
   "main": "./dist/index.js",
   "imports": {
@@ -37,7 +37,7 @@
     "release": "pnpm build && rm -f trackplay-core-*.tgz && pnpm pack && pnpm publish --tag latest --no-git-checks"
   },
   "dependencies": {
-    "i18next": "^25.6.0",
+    "i18next": "^25.6.1",
     "jose": "^6.1.0",
     "redis": "^5.9.0",
     "winston": "^3.18.3",
