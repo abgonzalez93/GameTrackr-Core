@@ -1,200 +1,125 @@
 export const en = {
-  auth: {
-    application: {
-      useCases: {
-        token: {
-          tokenUseCase: {
-            expired_refresh: 'Refresh token is already expired',
-            revoked_refresh: 'Refresh token has been revoked and cannot be used',
-          },
-        },
-      },
+  core: {
+    errors: {
+      generic: 'An unexpected error occurred',
+      bad_request: 'Invalid request data',
+      unauthorized: 'Authentication required',
+      forbidden: 'Access denied',
+      not_found: 'Resource not found',
+      conflict: 'Resource conflict',
+      validation_failed: 'Validation failed',
+      too_many_requests: 'Too many requests',
+      internal_server_error: 'Unexpected system error',
+      service_unavailable: 'Service temporarily unavailable',
+      unexpected: 'An unexpected error occurred',
+      route_not_found: "The route '{{url}}' does not exist",
+      redis_connection: 'Could not connect to Redis',
+      database_connection: 'Could not connect to the database',
     },
-    infrastructure: {
-      middlewares: {
-        validateAuthToken: {
-          auth_token_missing: 'Authorization token is required',
-          auth_token_invalid: 'The provided authorization token is invalid or malformed',
-          internal_token_unauthorized: 'The internal service token is incorrect or unauthorized',
-        },
+    validation: {
+      required: 'This field is required',
+      invalid_format: 'Invalid format',
+      string: {
+        base: 'Value must be a text string',
+        empty: 'Text cannot be empty',
       },
-    },
-    interfaces: {
-      controllers: {
-        tokenController: {
-          invalid_generate_input: 'The data provided to generate tokens is invalid',
-          invalid_revoke_input: 'The data provided to revoke the token is invalid',
-          invalid_revocation_status_input: 'The query parameters to check the token status are invalid',
-          invalid_rotate_input: 'The data provided to rotate tokens is invalid',
-        },
+      number: {
+        base: 'Value must be a number',
+        integer: 'Value must be an integer',
+        positive: 'Value must be a positive number',
+      },
+      date: {
+        invalid: 'Invalid date format',
+      },
+      email: {
+        invalid: 'Invalid email address',
+      },
+      id: {
+        invalid: 'Invalid ID format',
+      },
+      uuid: {
+        invalid: 'Invalid UUID format',
+      },
+      url: {
+        invalid: 'Invalid URL format',
       },
     },
   },
-  backend: {
-    services: {
-      trackGameService: {
-        already_tracking: 'You are already tracking this game',
-      },
-      userService: {
-        user_not_found_by_id: 'We couldn’t find a user with that ID',
-        email_not_found: 'No account found with the email {{email}}',
-        username_not_found: 'No account found with the username {{username}}',
-        invalid_credentials: 'Invalid email, username or password. Please try again',
-        email_taken: 'The email {{email}} is already in use',
-        username_taken: 'The username {{username}} is already taken',
-      },
+  auth: {
+    token: {
+      missing: 'Authorization token is required',
+      invalid: 'Token is invalid or malformed',
+      expired: 'Session expired. Please log in again',
+      revoked: 'Token has been revoked',
+      type_mismatch: 'Invalid token type. Expected "{{expectedType}}"',
+      internal_invalid: 'Internal service token rejected',
     },
-    utils: {
-      auth: {
-        requireToken: {
-          token_missing: '{{token}} is required but was not provided',
-          token_header_invalid: '{{token}} is malformed or invalid',
-          token_payload_invalid: '{{token}} contains invalid data',
-        },
-        verifyToken: {
-          token_type_invalid: 'Token type mismatch. Expected "{{expectedType}}"',
-          token_expired: 'Your session has expired or the token is invalid. Please log in again',
-        },
-      },
-      password: {
-        passwordUtils: {
-          invalid_credentials: 'Incorrect email or password',
-        },
-      },
+    login: {
+      failed: 'Incorrect email or password',
+      credentials_invalid: 'Invalid email, username or password',
+    },
+    management: {
+      invalid_input_generate: 'Invalid data for token generation',
+      invalid_input_revoke: 'Invalid data for token revocation',
+      invalid_input_rotate: 'Invalid data for token rotation',
+    },
+  },
+  users: {
+    not_found: 'User not found',
+    not_found_id: 'User with ID {{id}} not found',
+    not_found_email: 'No account found for {{email}}',
+    not_found_username: 'No account found for {{username}}',
+    exists_email: 'Email {{email}} is already in use',
+    exists_username: 'Username {{username}} is already taken',
+    validation: {
+      username_pattern: 'Only letters, numbers and underscores allowed',
+      username_length: 'Username must be between 3 and 30 characters',
+      password_complexity: 'Password needs uppercase, lowercase, number and special char',
+      password_mismatch: 'Passwords do not match',
+      email_disposable: 'Disposable emails are not allowed',
     },
   },
   catalog: {
-    application: {
-      useCases: {
-        game: {
-          gameUseCase: {
-            game_not_found: 'No game found with the provided ID',
-          },
-        },
-      },
+    games: {
+      fetch_failed: 'Failed to fetch games from provider',
+      not_found: 'Game not found',
+      invalid_id: 'Invalid game ID format',
+      invalid_format: 'Invalid game data format',
+      tracking_exists: 'You are already tracking this game',
     },
-    infrastructure: {
-      adapters: {
-        auth: {
-          igdbAuthAdapter: {
-            invalid_format: 'Token response is not in a valid format',
-            auth_failed: 'Unable to authenticate with provider. Please check your credentials',
-          },
-        },
-        category: {
-          igdbCategoryAdapter: {
-            invalid_format: 'Category list response is not in a valid format',
-          },
-        },
-        game: {
-          igdbGameAdapter: {
-            invalid_format: 'Game list response is not in a valid format',
-          },
-        },
-      },
-      utils: {
-        container: {
-          resolveAdapters: {
-            unsupported_provider: 'The configured provider is not supported',
-          },
-        },
-        provider: {
-          fetchFromProvider: {
-            unsupported_method: 'The selected provider is not supported or has no authentication implementation',
-            fetch_failed: 'An error occurred while retrieving {{endpoint}} from provider',
-          },
-        },
-      },
+    platforms: {
+      fetch_failed: 'Failed to fetch platforms from provider',
+      not_found: 'Platform not found',
+      invalid_id: 'Invalid platform ID format',
+      invalid_format: 'Invalid platform data format',
     },
-    interfaces: {
-      controllers: {
-        gameController: {
-          invalid_filters: 'Invalid filters format in query parameters',
-          invalid_id: 'Invalid game ID format in path parameter',
-        },
-      },
+    themes: {
+      fetch_failed: 'Failed to fetch themes from provider',
+      not_found: 'Theme not found',
+      invalid_id: 'Invalid theme ID format',
+      invalid_format: 'Invalid theme data format',
     },
-  },
-  core: {
-    config: {
-      parseConfig: {
-        invalid_configuration: 'The {{section}} configuration contains invalid or unsupported values.',
-      },
-      getSecrets: {
-        missing_secret: 'Missing Docker secret: {{secret}}',
-        empty_secret: 'Empty Docker secret: {{secret}}',
-        read_failed: 'Failed to read Docker secret: {{secret}}',
-      },
+    genres: {
+      fetch_failed: 'Failed to fetch genres from provider',
+      not_found: 'Genre not found',
+      invalid_id: 'Invalid genre ID format',
+      invalid_format: 'Invalid genre data format',
     },
-    middlewares: {
-      createErrorHandler: {
-        unexpected_error: 'Unexpected error',
-      },
-      createNotFoundHandler: {
-        route_not_found: "The requested route '{{url}}' does not exist on this server",
-      },
+    filters: {
+      invalid_format: 'Invalid query filters format',
+      search_sort_conflict: 'Cannot sort results when performing a text search',
     },
-    schemas: {
-      base: {
-        IpAddressSchema: {
-          ip_address_invalid: 'The provided IP address is not valid',
-        },
-        NodeEnvSchema: {
-          node_env_invalid: "NODE_ENV must be 'development', 'production', or 'test'",
-        },
-        NonEmptyStringSchema: {
-          string_invalid: 'The value must be a string',
-          string_empty: 'The string cannot be empty',
-        },
-        PortSchema: {
-          port_invalid: 'The port must be a number between 1 and 9999',
-        },
-        UrlSchema: {
-          url_invalid: 'The provided URL is invalid or malformed',
-        },
-      },
-      login: {
-        LoginInputSchema: {
-          identifier_required: 'Email or username is required',
-          password_required: 'Password is required',
-          identifier_invalid: 'Please enter a valid email address or username',
-        },
-      },
-      user: {
-        CreateUserSchema: {
-          password_invalid: 'Password must include uppercase, lowercase, number and special character',
-          password_confirm_required: 'Password confirmation is required',
-          password_mismatch: 'Passwords must match',
-        },
-        UserEmailSchema: {
-          email_required: 'Email is required',
-          email_invalid: 'Invalid email address format',
-          email_disposable: 'Disposable email addresses are not allowed',
-        },
-        UserNameSchema: {
-          username_required: 'Username is required',
-          username_min: 'Username must be at least 3 characters',
-          username_max: 'Username must be at most 30 characters',
-          username_invalid: 'Only letters, numbers and underscores are allowed',
-        },
-      },
+    mapper: {
+      provider_data_null: 'Provider data is null or undefined',
+      domain_entity_null: 'Domain entity is null or undefined',
+      persistence_entity_null: 'Persistence entity is null or undefined',
     },
-    server: {
-      bootstrap: {
-        bootstrap_failed: 'The service failed to start due to a fatal error',
-      },
-    },
-    utils: {
-      translate: {
-        translate: {
-          missing_key: "Missing translation for '{{key}}' [language: {{language}}]",
-        },
-      },
-      validate: {
-        validateSchema: {
-          invalid_input: 'Invalid input',
-        },
-      },
+    providers: {
+      request_failed: 'Provider request failed with status {{status}}',
+      fetch_error: 'Error fetching data from provider endpoint {{endpoint}}',
+      invalid_response: 'Provider returned an invalid format',
+      connection_failed: 'Failed to connect to provider',
+      auth_failed: 'Provider authentication failed',
     },
   },
   notifications: {},

@@ -1,18 +1,49 @@
-import { z, type ZodType } from 'zod'
-import { getTranslationPath } from './translate.util.ts'
-import { BadRequestError } from '#errors/http.error'
-import { type TrackPlayErrorConstructor } from '#types/error.type'
-import { type Translatable } from '#types/translate.type'
+import type { z, ZodType } from 'zod'
+import { ValidationError, type HttpErrorConstructor } from '#errors/http.error'
 
-const path = getTranslationPath(import.meta.url)
+interface FormattedIssue {
+  path: string
+  message: string
+  code: string
+  expected?: string
+  received?: string
+}
+
+const formatZodIssues = (issues: z.core.$ZodIssue[]): FormattedIssue[] => {
+  return issues.map((issue) => ({
+    path: issue.path.join('.'),
+    message: issue.message,
+    code: issue.code,
+    expected: 'expected' in issue ? String(issue.expected) : undefined,
+    received: 'received' in issue ? String(issue.received) : undefined,
+  }))
+}
+
+interface ValidateOptions {
+  message?: string
+  i18nKey?: string
+  i18nArgs?: Record<string, unknown>
+  ErrorClass?: HttpErrorConstructor
+}
 
 export const validateSchema = <Schema extends ZodType>(
   schema: Schema,
   data: unknown,
-  message: string | Translatable = `${path}.invalid_input`,
-  ErrorClass: TrackPlayErrorConstructor = BadRequestError,
+  options: ValidateOptions = {},
 ): z.infer<Schema> => {
   const parsed = schema.safeParse(data)
-  if (!parsed.success) throw new ErrorClass(message, z.treeifyError(parsed.error))
+
+  if (!parsed.success) {
+    const { ErrorClass = ValidationError, message, i18nKey, i18nArgs } = options
+    const issues = formatZodIssues(parsed.error.issues)
+
+    throw new ErrorClass({
+      message,
+      i18nKey,
+      i18nArgs,
+      errors: issues,
+    })
+  }
+
   return parsed.data
 }

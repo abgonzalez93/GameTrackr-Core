@@ -1,38 +1,53 @@
-import fs from 'fs'
-import * as fPath from 'path'
-import { parseConfig } from './config.helpers.ts'
-import { SecretValidationError } from '#errors/config.error'
-import type { ConfigSchema, InferConfig } from '#types/config.type'
-import { t, getTranslationPath } from '#utils/translate.util'
-
-const path = getTranslationPath(import.meta.url)
+import { readFileSync } from 'fs'
+import { resolve, basename } from 'path'
+import { z } from 'zod'
+import { FileSystemError, ConfigurationError } from '#errors/infrastructure.error'
+import { type ConfigSchema } from '#types/config.type'
+import { validateSchema } from '#utils/validate.util'
 
 const readSecretFile = (secretName: string, basePath: string): string => {
-  const filePath = fPath.resolve(basePath, secretName)
+  const filePath = resolve(basePath, secretName)
 
   try {
-    const content = fs.readFileSync(filePath, 'utf8').trim()
-    if (!content) throw new SecretValidationError(t(`${path}.empty_secret`, { secret: secretName }))
+    const content = readFileSync(filePath, 'utf8').trim()
+    if (!content) throw new FileSystemError({ message: `Secret is empty: ${secretName}` })
     return content
-  } catch (error: unknown) {
+  } catch (error) {
+    if (error instanceof FileSystemError) throw error
+
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-      throw new SecretValidationError(t(`${path}.missing_secret`, { secret: secretName }))
+      throw new FileSystemError({
+        message: `Secret is missing: ${secretName}`,
+        errors: { error },
+      })
     }
 
-    const reason = error instanceof Error ? error.message : String(error)
-    throw new SecretValidationError(t(`${path}.read_failed`, { secret: secretName }), { reason })
+    throw new FileSystemError({
+      message: `Failed to read secret: ${secretName}`,
+      errors: { error },
+    })
   }
 }
 
 export interface SecretsConfigOptions {
   basePath?: string
+  isDevelopment?: boolean
+  serviceName?: string
 }
 
 export const getSecrets = <Schema extends ConfigSchema>(
   schema: Schema,
-  options?: SecretsConfigOptions,
-): Readonly<InferConfig<Schema>> => {
-  const { basePath = '/run/secrets' } = options ?? {}
+  options: SecretsConfigOptions = {},
+): Readonly<z.infer<Schema>> => {
+  let { basePath } = options
+  const { isDevelopment, serviceName } = options
+
+  if (isDevelopment && !basePath) {
+    const targetService = serviceName || basename(process.cwd())
+    basePath = resolve(process.cwd(), '../.secrets', targetService.toLowerCase())
+  }
+
+  if (!basePath) basePath = '/run/secrets'
 
   const secrets = Object.fromEntries(
     Object.keys(schema.shape).map((key) => {
@@ -42,7 +57,10 @@ export const getSecrets = <Schema extends ConfigSchema>(
     }),
   )
 
-  const validated = parseConfig(schema, secrets, { path, ErrorClass: SecretValidationError, label: 'secrets' })
+  const validated = validateSchema(schema, secrets, {
+    message: 'Invalid secrets configuration',
+    ErrorClass: ConfigurationError,
+  })
 
   return Object.freeze(validated)
 }

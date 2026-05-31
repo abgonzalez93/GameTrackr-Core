@@ -1,38 +1,23 @@
-import { fileURLToPath } from 'url'
-import { type i18n } from 'i18next'
-import { type Logger } from 'winston'
-import type { TranslationVariables, Translatable } from '#types/translate.type'
+import { type TFunction } from 'i18next'
+import { TrackPlayError } from '#errors/base.error'
 
-export const getTranslationPath = (url: string): string => {
-  const filePath = fileURLToPath(url)
-
-  const repoMatch = filePath.match(/trackplay-([a-zA-Z0-9_-]+)/)
-  const repoName = repoMatch?.[1] ?? 'unknown'
-
-  const relativeToSrcOrDist = filePath.split('/src/')[1] ?? filePath.split('/dist/')[1] ?? ''
-  const withoutExt = relativeToSrcOrDist.replace(/\.[cm]?[tj]s$/, '')
-  const dotPath = withoutExt.replaceAll('/', '.')
-
-  return `${repoName}.${dotPath}`
+export interface TranslateOptions {
+  i18nArgs?: Record<string, unknown>
+  fallback?: string
 }
 
-const path = getTranslationPath(import.meta.url)
+export const translate = (t: TFunction, key: unknown, options: TranslateOptions = {}): string => {
+  if (typeof key !== 'string' || key.trim().length === 0) return options.fallback ?? ''
 
-export const translate = (i18n: i18n, logger: Logger, input: string | Translatable, fallbackKey?: string): string => {
-  const language = i18n.language ?? i18n.resolvedLanguage ?? 'unknown'
-
-  const resolveFallback = (defaultValue: string): string => {
-    if (fallbackKey && i18n.exists(fallbackKey)) return i18n.t(fallbackKey)
-    return defaultValue
-  }
-
-  const key = typeof input === 'string' ? input : input.key
-  const vars = typeof input === 'string' ? undefined : input.variables
-
-  if (i18n.exists(key)) return i18n.t(key, vars)
-
-  logger.warn(`⚠️ ${i18n.t(`${path}.missing_key`, { key, language })}`)
-  return resolveFallback(key)
+  return t(key, {
+    ...(options.i18nArgs ?? {}),
+    defaultValue: options.fallback ?? key,
+  })
 }
 
-export const t = (key: string, variables?: TranslationVariables): Translatable => ({ key, variables })
+export const translateErrorMessage = (t: TFunction, error: unknown): string => {
+  if (error instanceof TrackPlayError)
+    return translate(t, error.i18nKey, { i18nArgs: error.i18nArgs, fallback: error.message })
+  if (error instanceof Error) return error.message
+  return String(error)
+}

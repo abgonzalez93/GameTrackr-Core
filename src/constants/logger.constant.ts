@@ -1,19 +1,7 @@
 export const LOGGER = {
-  LEVELS: {
-    DEBUG: 'debug',
-    INFO: 'info',
-    WARN: 'warn',
-    ERROR: 'error',
-  },
-  DEFAULT_LABEL: 'TrackPlay',
-  TIMESTAMP: {
-    LOCALE: 'es-ES',
-    TIMEZONE: 'Europe/Madrid',
-  },
-  EMOJIS: {
-    error: '❌',
-    warn: '⚠️',
-    info: 'ℹ️',
-    debug: '🐞',
+  LEVELS: ['debug', 'info', 'warn', 'error'],
+  DEFAULT_LEVEL: 'info',
+  BUFFER: {
+    DEFAULT_MAX_ENTRIES: 1000,
   },
 } as const

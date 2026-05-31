@@ -38,10 +38,12 @@ El paquete incluye:
 - Sistema unificado de errores basado en clases tipadas y jerárquicas.
 - Agrupados por dominio funcional:
   - `base` → `TrackPlayError`.
-  - `config` → `EnvValidationError`, `SecretValidationError`.
   - `http` → `BadRequestError`, `UnauthorizedError`, `ConflictError`, etc.
 - Totalmente integrados con el sistema de traducciones (`i18next`).
 - Compatibles con el middleware global de manejo de errores.
+- `TrackPlayError` expone `statusCode`, `i18nKey`, `i18nArgs` y `details`.
+- La propiedad `name` está pensada para mostrarse al cliente (por ejemplo en respuestas HTTP), y se formatea en una versión “legible” del nombre de la clase (ej. `ValidationError` → `Validation Error`).
+- Para lógica de negocio, evita depender del string de `name`; usa `instanceof TrackPlayError`, `statusCode` o `i18nKey`.
 
 ### ✅ i18n
 
@@ -51,8 +53,12 @@ El paquete incluye:
 ### ✅ Logger
 
 - Wrapper de Winston con configuración estándar y coloreado por entorno.
-- Soporta etiquetas de servicio (`label`), niveles (`info`, `error`, `debug`) y salida formateada.
+- Soporta etiquetas de servicio (`label`), niveles (`debug`, `info`, `warn`, `error`) y salida formateada.
 - Usado en la inicialización y en el flujo de errores global.
+- Buffer Logger: Sistema de logs en memoria para la fase de arranque (`startup`).
+  - Captura logs antes de que la configuración del entorno esté lista.
+  - Permite volcar los logs acumulados a Winston (`flushToLogger`) una vez inicializado, o a la consola (`flushToConsole`) en caso de error fatal.
+  - Soporta detección automática de colores TTY.
 
 ### ✅ Ports
 
@@ -66,7 +72,7 @@ El paquete incluye:
 
 ### ✅ Types
 
-- Interfaces y tipos globales compartidos:
+- Interfaces y tipos globales compartidos.
 - Generan tipos inferidos (`z.infer`) para un tipado compartido entre backend y frontend.
 - Mantiene consistencia tipada entre microservicios y librerías.
 
@@ -91,7 +97,7 @@ Modifica el campo `version` en `package.json` siguiendo [semver](https://semver.
 ```json
 {
   "name": "@trackplay/core",
-  "version": "1.2.0"
+  "version": "x.y.z"
 }
 ```
 
@@ -101,7 +107,7 @@ Asegúrate de guardar y subir los cambios a Git:
 
 ```bash
 git add .
-git commit -m "chore: bump version to 1.2.0"
+git commit -m "chore: bump version to x.y.z"
 git push origin develop
 ```
 
@@ -114,7 +120,13 @@ pnpm run build
 pnpm pack
 ```
 
-Esto generará un archivo como: `trackplay-core-1.2.0.tgz`
+Alternativa recomendada: usar el script de release del paquete:
+
+```bash
+pnpm run release
+```
+
+Esto generará un archivo como: `trackplay-core-x.y.z.tgz`
 
 ### 4. 🚀 Publicar en el registry
 
@@ -123,8 +135,8 @@ Para publicar en el registro de NPM (por ejemplo, GitHub Packages), necesitas te
 ✅ .npmrc mínimo para GitHub Packages:
 
 ```ini
-@YOUR_DIRECTORY:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
+@trackplay:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
 ```
 
 🔐 El authToken debe tener permisos de publicación (write:packages).

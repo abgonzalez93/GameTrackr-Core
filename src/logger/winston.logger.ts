@@ -1,32 +1,35 @@
-import { format, transports, type Logger, createLogger as WinstonCreateLogger } from 'winston'
+import { format, transports, type Logger, type LoggerOptions as WinstonLoggerOptions, createLogger } from 'winston'
+import { z } from 'zod'
+import { createConsoleFormat } from './formatters/console.formatter.ts'
+import { serializeErrorFields, jsonReplacer } from './serializers/error.serializer.ts'
 import { LOGGER } from '#constants/logger.constant'
-import { NODE_ENV } from '#constants/nodeEnv.constant'
-import { type LogLevel } from '#types/logger.type'
+import { BaseServerEnvSchema } from '#schemas/config.schema'
 
-const { combine, timestamp, label, printf, colorize } = format
+export type LogLevel = (typeof LOGGER.LEVELS)[number]
 
-const consoleFormat = printf(({ level, message, label, timestamp }) => `[${timestamp}] [${label}] ${level}: ${message}`)
+type ServerEnv = Readonly<z.infer<typeof BaseServerEnvSchema>>
+
+const { combine, timestamp, label, colorize, json, errors } = format
 
 export interface LoggerOptions {
-  label?: string
-  level?: LogLevel
+  label: string
+  env: Pick<ServerEnv, 'ENVIRONMENT' | 'LOG_LEVEL'>
 }
 
-export const initWinston = (options: LoggerOptions = {}): Logger => {
-  const { label: serviceLabel = LOGGER.DEFAULT_LABEL } = options
-  const isDevelopment = process.env.NODE_ENV !== NODE_ENV.PRODUCTION
+export const initWinston = (options: LoggerOptions): Logger => {
+  const { label: serviceLabel, env } = options
 
-  return WinstonCreateLogger({
-    level: isDevelopment ? 'debug' : 'info',
+  const isDevelopment = env.ENVIRONMENT === 'development'
+  const level: LogLevel = isDevelopment ? 'debug' : env.LOG_LEVEL
+
+  const config: WinstonLoggerOptions = {
+    level,
     format: combine(
       label({ label: serviceLabel }),
-      timestamp({
-        format: new Date().toLocaleString(LOGGER.TIMESTAMP.LOCALE, {
-          timeZone: LOGGER.TIMESTAMP.TIMEZONE,
-          hour12: false,
-        }),
-      }),
-      isDevelopment ? combine(colorize(), consoleFormat) : format.json(),
+      timestamp(),
+      errors({ stack: true }),
+      serializeErrorFields(),
+      isDevelopment ? combine(colorize(), createConsoleFormat()) : json({ replacer: jsonReplacer }),
     ),
     transports: [
       new transports.Console({
@@ -36,5 +39,7 @@ export const initWinston = (options: LoggerOptions = {}): Logger => {
     exceptionHandlers: [new transports.Console()],
     rejectionHandlers: [new transports.Console()],
     exitOnError: false,
-  })
+  }
+
+  return createLogger(config)
 }

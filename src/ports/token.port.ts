@@ -1,4 +1,4 @@
-import type { JWTPayload } from 'jose'
+import { type JWTPayload } from 'jose'
 
 export interface TokenPort {
   generateAccessToken(payload: Partial<JWTPayload>): Promise<string>

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { NonEmptyStringSchema } from './base.schema.ts'
+import { RequiredString } from './common.schema.ts'
 import { JWTSubSchema, JWTExpSchema, JWTJtiSchema } from './jwt.schema.ts'
 
 export const TokenGenerateInputSchema = z.object({
@@ -7,8 +7,8 @@ export const TokenGenerateInputSchema = z.object({
 })
 
 export const TokenPairSchema = z.object({
-  accessToken: NonEmptyStringSchema,
-  refreshToken: NonEmptyStringSchema,
+  accessToken: RequiredString,
+  refreshToken: RequiredString,
 })
 
 export const TokenRevocationStatusInputSchema = z.object({
